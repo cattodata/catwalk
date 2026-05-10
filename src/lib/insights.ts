@@ -2,6 +2,7 @@ import type { Insight, VitalCard } from '../types/campaign'
 import type { BizType, Shop } from '../types/shop'
 import type { WeatherSummary } from '../types/weather'
 import type { CompetitorCounts } from './overpass'
+import type { ChatswoodEvent } from '../data/events'
 
 interface InsightContext {
   bizType: BizType
@@ -12,6 +13,8 @@ interface InsightContext {
   hour: number
   /** 0=Sun..6=Sat */
   dayOfWeek: number
+  /** Today's curated Chatswood event (if any) */
+  todayEvent?: ChatswoodEvent | null
   isMobile?: boolean
 }
 
@@ -60,14 +63,16 @@ export function generateInsights(ctx: InsightContext): Insight[] {
     out.push({ icon: '🚇', color: '#5B9BD5', title: 'PM commute · 5–8pm', sub: 'Pre-plated dinners catch platform exits' })
   }
 
-  // Day-of-week
-  const dow = ctx.dayOfWeek
-  if (dow === 6) {
-    out.push({ icon: '📅', color: '#F5C842', title: 'Saturday · Family flow at Concourse', sub: 'Capture pre/post-event walk-bys' })
-  } else if (dow === 0) {
-    out.push({ icon: '📅', color: '#F5C842', title: 'Sunday · Markets day', sub: 'Mall Markets brings ~700 walk-bys 9am–2pm' })
-  } else if (dow >= 1 && dow <= 5) {
-    out.push({ icon: '📅', color: '#7BC97F', title: 'Weekday · 50K Opal taps', sub: 'Commuter ritual is your moment' })
+  // Day-of-week — prefer real curated event over generic message
+  if (ctx.todayEvent) {
+    out.push({
+      icon: ctx.todayEvent.emoji,
+      color: '#F5C842',
+      title: `${ctx.todayEvent.title} · ${ctx.todayEvent.venue}`,
+      sub: `${ctx.todayEvent.window ?? 'today'} · ${ctx.todayEvent.footTraffic ?? 'mid'} foot traffic`,
+    })
+  } else if (ctx.dayOfWeek >= 1 && ctx.dayOfWeek <= 5) {
+    out.push({ icon: '📅', color: '#7BC97F', title: 'Weekday · 47.8K Opal taps', sub: 'Commuter ritual is your moment' })
   }
 
   // Business type
@@ -144,12 +149,12 @@ export function buildVitals(args: {
       id: 'station',
       emoji: '🚇',
       num: `${(stationDailyAvg / 1000).toFixed(1)}K`,
-      label: 'Station daily avg',
-      sub: 'Opal taps · monthly avg',
+      label: 'Avg daily Opal taps',
+      sub: 'TfNSW · 2024 monthly avg',
       accent: '#7BC97F',
       bg: 'rgba(123,201,127,.14)',
       isLive: false,
-      source: 'TfNSW Opal Aug 2024',
+      source: 'TfNSW Opal Aug 2024 monthly aggregate',
     },
     {
       id: 'comp',

@@ -30,10 +30,10 @@ export function Footer() {
       <div>
         <h5>Pilot proposal</h5>
         <p>
-          <b>10 shops · Victoria Avenue · 30 days</b>
+          <b>30-day pilot · 10 opt-in Chatswood CBD shops</b>
           <br />
-          Opt-in measurement. Council adjusts multipliers as a policy lever for underserved streets (Help St,
-          Spring St).
+          Currently demo'd with <b>6 fictional pilot personas</b> across Victoria Ave, Help St, Spring St &amp; Albert
+          Ave. Council adjusts multipliers as a measurable policy lever for underserved streets.
         </p>
       </div>
       <div>

@@ -17,9 +17,11 @@ export const STRATEGIES: Strategy[] = [
 ]
 
 export const COUNCIL_OUTCOMES = [
-  { em: '🌱', b: 'Outcome 1 · Green city',                t: 'Net Zero 2025 — every walk logs CO₂ saved, visible in the reward card.' },
-  { em: '🌏', b: 'Outcome 2 · Connected & inclusive',     t: 'Every campaign in EN + 中文 + 한국어 — serving the 40% Chinese & 8% Korean demographic.' },
-  { em: '💰', b: 'Outcome 4 · Prosperous & vibrant',      t: 'Revives the CBD per the 2024 Discussion Paper. Multipliers steer foot-traffic to underserved streets.' },
+  { em: '🌱', b: 'Outcome 1 · Green city',                t: 'Net Zero 2025 — every walk logs CO₂ saved (vs. driving), visible on the reward card.' },
+  { em: '🌏', b: 'Outcome 2 · Connected & inclusive',     t: 'Every campaign in EN + 中文 + 한국어 — serving the 40% Chinese & 8% Korean Chatswood demographic (ABS 2021).' },
+  { em: '🚶', b: 'Outcome 3 · Liveable & walkable',       t: '100m geofence-verified walks; transport multipliers reward foot/bike/scooter over driving.' },
+  { em: '💰', b: 'Outcome 4 · Prosperous & vibrant',      t: 'Revives the CBD per the 2024 Discussion Paper. Boosted multipliers steer foot-traffic to underserved streets (Help St 4×, Spring St 3×).' },
+  { em: '📊', b: 'Outcome 5 · Effective government',      t: 'Real-time aggregate dashboard via Supabase; council can adjust multipliers as a measurable policy lever (10-shop, 30-day pilot).' },
 ]
 
 export const DATA_SOURCES = [

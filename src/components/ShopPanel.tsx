@@ -60,7 +60,7 @@ export function ShopPanel({
             <div className="sc-head" style={{ marginBottom: 0 }}>
               <div className="sc-emoji">{shop.emoji}</div>
               <div>
-                <h3>{shop.name}</h3>
+                <h2>{shop.name}</h2>
                 <div className="sc-meta">
                   {shop.type.toUpperCase()} · {shop.dist}M FROM STATION
                 </div>
@@ -90,7 +90,7 @@ export function ShopPanel({
       {(shop || bizType) && (
         <div className="cc-card cc-insights">
           <div className="ins-head">
-            <h3>👁️ What Catto sees right now</h3>
+            <h2>👁️ What Catto sees right now</h2>
             <span
               className="cc-eyebrow"
               style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--sage)' }}
@@ -184,12 +184,15 @@ export function ShopPanel({
         role="switch"
         aria-checked={liveAi}
         style={{ cursor: 'pointer' }}
+        title={liveAi ? 'Currently calling Claude — click to switch to instant Demo' : 'Currently using sample data — click to enable Live Claude AI'}
       >
         <div className="ai-track" />
         <div>
-          <div className="ai-label">{liveAi ? '● Live AI' : 'Demo mode'}</div>
+          <div className="ai-label">
+            Mode: {liveAi ? <b style={{ color: 'var(--coral)' }}>● Live Claude AI</b> : <b style={{ color: 'var(--ink-soft)' }}>Demo (sample)</b>}
+          </div>
           <div style={{ fontSize: 12, color: 'var(--ink-soft)' }}>
-            {liveAi ? 'Calls Claude · slower' : 'Instant · sample data'}
+            {liveAi ? 'Real AI · ~5s · uses your photo' : 'Instant · pre-baked sample · click to enable real AI'}
           </div>
         </div>
       </div>

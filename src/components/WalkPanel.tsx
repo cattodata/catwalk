@@ -10,6 +10,8 @@ interface WalkPanelProps {
   onStart: () => void
   onConfirm: () => void
   onReset: () => void
+  onSmartPick?: () => void
+  smartPickReasons?: string[]
   transport: TransportId
   setTransport: (t: TransportId) => void
   totalCo2: number
@@ -29,6 +31,8 @@ export function WalkPanel({
   onStart,
   onConfirm,
   onReset,
+  onSmartPick,
+  smartPickReasons,
   transport,
   setTransport,
   totalCo2,
@@ -177,13 +181,43 @@ export function WalkPanel({
       <div className="cc-side-stack">
         <div className="cc-card cc-empty">
           <div className="e-emoji">👆</div>
-          <h3>Pick a shop on the map</h3>
+          <h2>Pick a shop on the map</h2>
           <p>Further shops + bigger multipliers = bigger rewards. Filter by cuisine or tap any pin to start.</p>
           <div style={{ display: 'flex', gap: 6, marginTop: 6, flexWrap: 'wrap' }}>
             <span className="cc-chip"><span className="cc-chip-dot" style={{ background: '#5B9BD5' }} /> 1× near</span>
             <span className="cc-chip"><span className="cc-chip-dot" style={{ background: '#F5C842' }} /> 2× mid</span>
             <span className="cc-chip"><span className="cc-chip-dot" style={{ background: '#FF6B9D' }} /> 3× far</span>
           </div>
+          {onSmartPick && (
+            <button
+              onClick={onSmartPick}
+              style={{
+                marginTop: 14,
+                width: '100%',
+                background: 'linear-gradient(135deg, #FF6B9D, #F5C842)',
+                color: '#fff',
+                border: 0,
+                borderRadius: 999,
+                padding: '12px 18px',
+                fontFamily: 'Outfit, sans-serif',
+                fontWeight: 700,
+                fontSize: 14,
+                cursor: 'pointer',
+              }}
+            >
+              ✨ Smart pick for now — best ROI
+            </button>
+          )}
+          {smartPickReasons && smartPickReasons.length > 0 && (
+            <div style={{ fontSize: 11, color: 'var(--ink-soft)', marginTop: 8, lineHeight: 1.5 }}>
+              <b>Why this shop?</b>
+              <ul style={{ margin: '4px 0 0 18px', padding: 0 }}>
+                {smartPickReasons.map((r, i) => (
+                  <li key={i}>{r}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
         {transportRow}
         {geolocationCard}
@@ -200,7 +234,7 @@ export function WalkPanel({
         <div className="sc-head">
           <div className="sc-emoji">{shop.emoji}</div>
           <div>
-            <h3>{shop.name}</h3>
+            <h2>{shop.name}</h2>
             <div className="sc-meta">
               {shop.dist}M · {mins} MIN · {t.emoji}
               {t.label.toUpperCase()}

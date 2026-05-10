@@ -25,7 +25,8 @@ A production-ready React SPA that combines **GPS-verified walk-to-earn** with an
 | Feature | Source | Status |
 |---|---|---|
 | Live weather (temp, code, precipitation) | **Open-Meteo** | ✅ Browser fetch, no key |
-| Live competitor count (cafes/restaurants/bakeries) | **OSM Overpass** | ✅ Browser fetch, 24h cache |
+| **Live competitor count + real shop list** (cafes/restaurants/bakeries) | **OSM Overpass** | ✅ Browser fetch, 24h cache, falls back to pilot personas if API down |
+| Today's Chatswood event (Markets, Family Day, etc.) | **Willoughby Council schedule** (curated weekly) | ✅ Built-in, V2: nightly scrape |
 | Demographics (population, ancestry %) | **ABS ArcGIS Census 2021** | ✅ Browser fetch, no key |
 | Walk verification | **Browser Geolocation API** | ✅ 100m geofence + Demo mode |
 | AI vision + multilingual generation | **Anthropic Claude Sonnet 4** | ✅ Vercel Function proxy |
@@ -103,6 +104,35 @@ catto-compass/
 ├── vercel.json              # Sydney region + function timeouts + CORS
 └── package.json
 ```
+
+## How the forecast model works ($+285 number)
+
+The "+$285 extra revenue" prediction is **not regression on historical data** — it's an **LLM reasoning over real-time signals**:
+
+**Input signals** (all real, all live):
+- Current weather (Open-Meteo): temp, weather code, precipitation
+- Hour of day + day of week (Sydney local)
+- Competitor density (OSM Overpass: real cafe/restaurant counts within 700m)
+- Demographics (ABS Census 2021: population, ancestry %)
+- Today's curated event from Willoughby Council schedule
+- Selected business type + uploaded product photo
+- Geolocation distance from Chatswood Station (multiplier tier)
+
+**Model** (when `liveAi=true`):
+- Anthropic Claude Sonnet 4 (or Azure OpenAI gpt-4o) reads the signals
+- Picks one strategy (discount / bundle / traffic / stock / aware)
+- Estimates revenue uplift, orders, avg ticket, time window
+- Generates campaign + 5 assets in 3 languages
+
+**Demo fallback** (when `liveAi=false`):
+- Hand-crafted campaign per business type from `src/data/mockCampaigns.ts`
+- Honest label "DEMO" in result header
+
+**Smart Pick model** for walk recommendations (always runs):
+- Score = `(points × multiplier) / walking_minutes`
+- Adjustments: +20% rain→indoor, +20% hot→drinks, +30% morning→bakery, etc.
+- Penalty: −10% for walks > 600m
+- Deterministic, transparent, reasons shown to user
 
 ## Three modes
 

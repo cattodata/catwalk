@@ -2,14 +2,18 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 /**
  * POST /api/claude
- * Proxies Anthropic Claude Sonnet 4 multimodal vision + multilingual asset generation.
- * Falls back to mock campaign if Anthropic fails.
+ * Proxies an LLM (Anthropic Claude Sonnet 4 OR Azure OpenAI gpt-4o) for
+ * multimodal vision + multilingual asset generation.
  *
- * Env vars required:
+ * Provider selected by env (Azure preferred when both present so credit is used):
+ *   AZURE_OPENAI_ENDPOINT     + AZURE_OPENAI_API_KEY + AZURE_OPENAI_DEPLOYMENT
+ *   OR
  *   ANTHROPIC_API_KEY
+ *
+ * Falls back to 502 (frontend then uses MOCK_CAMPAIGNS).
  */
 
-const MODEL = 'claude-sonnet-4-20250514'
+const ANTHROPIC_MODEL = 'claude-sonnet-4-20250514'
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages'
 const MAX_TOKENS = 4000
 
@@ -94,16 +98,87 @@ OUTPUT — return ONLY valid JSON, no markdown, exactly this shape:
 }`
 }
 
+async function callAzure(body: ReqBody, systemPrompt: string): Promise<string> {
+  const endpoint = process.env.AZURE_OPENAI_ENDPOINT!
+  const apiKey = process.env.AZURE_OPENAI_API_KEY!
+  const deployment = process.env.AZURE_OPENAI_DEPLOYMENT!
+  const apiVersion = process.env.AZURE_OPENAI_API_VERSION ?? '2024-08-01-preview'
+
+  const url = `${endpoint.replace(/\/$/, '')}/openai/deployments/${deployment}/chat/completions?api-version=${apiVersion}`
+
+  const azureRes = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'api-key': apiKey },
+    body: JSON.stringify({
+      messages: [
+        { role: 'system', content: systemPrompt },
+        {
+          role: 'user',
+          content: [
+            { type: 'text', text: 'Generate the marketing campaign now. Output JSON only — no preamble.' },
+            { type: 'image_url', image_url: { url: `data:${body.photoMime || 'image/jpeg'};base64,${body.photoBase64}` } },
+          ],
+        },
+      ],
+      max_tokens: MAX_TOKENS,
+      response_format: { type: 'json_object' },
+    }),
+  })
+  if (!azureRes.ok) {
+    const errText = await azureRes.text()
+    throw new Error(`Azure OpenAI ${azureRes.status}: ${errText.slice(0, 300)}`)
+  }
+  const data = (await azureRes.json()) as { choices?: { message?: { content?: string } }[] }
+  return data.choices?.[0]?.message?.content ?? ''
+}
+
+async function callAnthropic(body: ReqBody, systemPrompt: string): Promise<string> {
+  const apiKey = process.env.ANTHROPIC_API_KEY!
+
+  const anthropicRes = await fetch(ANTHROPIC_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify({
+      model: ANTHROPIC_MODEL,
+      max_tokens: MAX_TOKENS,
+      system: systemPrompt,
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'image',
+              source: { type: 'base64', media_type: body.photoMime || 'image/jpeg', data: body.photoBase64 },
+            },
+            { type: 'text', text: 'Generate the marketing campaign now. Output JSON only — no preamble.' },
+          ],
+        },
+      ],
+    }),
+  })
+  if (!anthropicRes.ok) {
+    const errText = await anthropicRes.text()
+    throw new Error(`Anthropic ${anthropicRes.status}: ${errText.slice(0, 300)}`)
+  }
+  const payload = (await anthropicRes.json()) as { content: { type: string; text?: string }[] }
+  return payload.content?.find((c) => c.type === 'text')?.text ?? ''
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'POST only' })
   }
 
-  const apiKey = process.env.ANTHROPIC_API_KEY
-  if (!apiKey) {
+  const hasAzure = !!(process.env.AZURE_OPENAI_ENDPOINT && process.env.AZURE_OPENAI_API_KEY && process.env.AZURE_OPENAI_DEPLOYMENT)
+  const hasAnthropic = !!process.env.ANTHROPIC_API_KEY
+  if (!hasAzure && !hasAnthropic) {
     return res.status(503).json({
-      error: 'ANTHROPIC_API_KEY not configured',
-      hint: 'Set in Vercel project env vars',
+      error: 'No LLM provider configured',
+      hint: 'Set ANTHROPIC_API_KEY or AZURE_OPENAI_{ENDPOINT,API_KEY,DEPLOYMENT}',
     })
   }
 
@@ -114,60 +189,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const t0 = Date.now()
   const systemPrompt = buildSystemPrompt(body)
+  const provider = hasAzure ? 'azure' : 'anthropic'
 
   try {
-    const anthropicRes = await fetch(ANTHROPIC_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        max_tokens: MAX_TOKENS,
-        system: systemPrompt,
-        messages: [
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'image',
-                source: {
-                  type: 'base64',
-                  media_type: body.photoMime || 'image/jpeg',
-                  data: body.photoBase64,
-                },
-              },
-              {
-                type: 'text',
-                text: `Generate the marketing campaign now. Output JSON only — no preamble.`,
-              },
-            ],
-          },
-        ],
-      }),
-    })
-
-    if (!anthropicRes.ok) {
-      const errText = await anthropicRes.text()
-      console.error('Anthropic error:', anthropicRes.status, errText)
-      return res.status(502).json({
-        error: `Anthropic ${anthropicRes.status}`,
-        detail: errText.slice(0, 500),
-      })
+    const rawText = hasAzure ? await callAzure(body, systemPrompt) : await callAnthropic(body, systemPrompt)
+    if (!rawText) {
+      return res.status(502).json({ error: `${provider} returned empty text` })
     }
 
-    const payload = (await anthropicRes.json()) as {
-      content: { type: string; text?: string }[]
-    }
-    const textBlock = payload.content?.find((c) => c.type === 'text')?.text
-    if (!textBlock) {
-      return res.status(502).json({ error: 'Anthropic returned no text content' })
-    }
-
-    // Strip markdown fences if present
-    const cleaned = textBlock
+    const cleaned = rawText
       .replace(/^```json\s*/i, '')
       .replace(/^```\s*/, '')
       .replace(/\s*```$/, '')
@@ -176,22 +206,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     let campaign
     try {
       campaign = JSON.parse(cleaned)
-    } catch (parseErr) {
-      console.error('JSON parse failed:', cleaned.slice(0, 500))
-      return res.status(502).json({
-        error: 'Anthropic returned non-JSON output',
-        snippet: cleaned.slice(0, 200),
-      })
+    } catch {
+      console.error(`${provider} non-JSON:`, cleaned.slice(0, 500))
+      return res.status(502).json({ error: `${provider} returned non-JSON`, snippet: cleaned.slice(0, 200) })
     }
 
     return res.status(200).json({
       campaign,
       source: 'live',
+      provider,
       durationMs: Date.now() - t0,
     })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'
     console.error('claude.ts handler error:', message)
-    return res.status(500).json({ error: message })
+    return res.status(500).json({ error: message, provider })
   }
 }

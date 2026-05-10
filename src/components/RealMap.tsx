@@ -78,6 +78,26 @@ function FlyToShop({ shop }: { shop: Shop | null }) {
   return null
 }
 
+/**
+ * Auto-fit map to include both Chatswood and user position (if user is far away).
+ * Useful for users at e.g. Macquarie Park (~5km away) so they can see the whole journey.
+ */
+function FitToUser({ userPosition, hasShop }: { userPosition: GeoPosition | null; hasShop: boolean }) {
+  const map = useMap()
+  useEffect(() => {
+    if (!userPosition || hasShop) return
+    const userLatLng = L.latLng(userPosition.lat, userPosition.lng)
+    const stationLatLng = L.latLng(CHATSWOOD.station.lat, CHATSWOOD.station.lng)
+    const dist = userLatLng.distanceTo(stationLatLng)
+    if (dist > 1500) {
+      // Far away — fit both into view
+      const bounds = L.latLngBounds([userLatLng, stationLatLng])
+      map.fitBounds(bounds, { padding: [60, 60], maxZoom: 14 })
+    }
+  }, [userPosition, hasShop, map])
+  return null
+}
+
 export function RealMap({
   shops,
   selectedShop,
@@ -111,7 +131,7 @@ export function RealMap({
         center={center}
         zoom={16}
         scrollWheelZoom={false}
-        style={{ width: '100%', height: 520, borderRadius: 16 }}
+        style={{ width: '100%', height: 'clamp(360px, 60vh, 520px)', borderRadius: 16 }}
         attributionControl={true}
       >
         {/* CartoDB Positron — clean light tiles, no API key required */}
@@ -123,6 +143,7 @@ export function RealMap({
         />
 
         <FlyToShop shop={selectedShop} />
+        <FitToUser userPosition={userPosition ?? null} hasShop={!!selectedShop} />
 
         {/* Station */}
         <Marker position={center} icon={stationIcon}>

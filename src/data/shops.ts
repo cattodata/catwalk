@@ -1,5 +1,10 @@
 import type { Shop, CuisineOption, ShopTag, Transport } from '../types/shop'
 
+/**
+ * 6 fictional pilot personas modelled on real Chatswood shop archetypes (Cafe / Restaurant / Bakery × cuisine mix).
+ * In a real V2 launch, these would be replaced with opted-in shop owners — onboarded via the Shop Booster mode.
+ * Coordinates are real Chatswood streets but the shop names are fictional.
+ */
 export const SHOPS: Shop[] = [
   {
     id: 'croissant',

@@ -2,8 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { Shop, BizType, CuisineId, ShopTag, TransportId } from './types/shop'
 import type { Campaign } from './types/campaign'
 import type { AppMode } from './components/ModeToggle'
-import { SHOPS } from './data/shops'
 import { MOCK_CAMPAIGNS } from './data/mockCampaigns'
+import { getTodayEvent } from './data/events'
 
 import { Header } from './components/Header'
 import { PulseTicker } from './components/PulseTicker'
@@ -19,10 +19,12 @@ import { CouncilDashboard } from './components/CouncilDashboard'
 import { ResultSection } from './components/ResultSection'
 import { Footer } from './components/Footer'
 import { MobileNav } from './components/MobileNav'
+import { RewardOverlay } from './components/RewardOverlay'
 
 import { useTheme } from './hooks/useTheme'
 import { useWeather } from './hooks/useWeather'
 import { useCompetitorCounts } from './hooks/useCompetitorCounts'
+import { useRealShops } from './hooks/useRealShops'
 import { useDemographics } from './hooks/useDemographics'
 import { useGeolocation } from './hooks/useGeolocation'
 import { useSupabaseAuth } from './hooks/useSupabaseAuth'
@@ -33,6 +35,7 @@ import { useNow } from './hooks/useNow'
 
 import { generateInsights, buildVitals } from './lib/insights'
 import { generateCampaign } from './lib/claude'
+import { smartPick } from './lib/smartPick'
 
 const STATION_DAILY_AVG = 47832 // TfNSW Aug 2024 monthly aggregate
 
@@ -66,11 +69,19 @@ export function App() {
   // ---------- Council state ----------
   const [boostedExtra, setBoostedExtra] = useState<{ walks: number; kg: number; rev: number } | null>(null)
 
+  // ---------- Reward overlay ----------
+  const [showRewardOverlay, setShowRewardOverlay] = useState(false)
+
+  // ---------- Smart pick reasons (shown after auto-pick) ----------
+  const [smartPickReasons, setSmartPickReasons] = useState<string[] | null>(null)
+
   // ---------- Real-data hooks ----------
   const now = useNow(60_000)
   const { weather } = useWeather()
   const { counts: competitors } = useCompetitorCounts()
   const { demographics } = useDemographics()
+  const { shops, isReal: shopsAreReal } = useRealShops()
+  const todayEvent = useMemo(() => getTodayEvent(now), [now])
 
   // ---------- Supabase auth + user stats ----------
   const auth = useSupabaseAuth()
@@ -107,6 +118,15 @@ export function App() {
     if (mode === 'council') setShowHeatmap(true)
   }, [mode])
 
+  // ---------- Auto-reset walk session when leaving Walk tab ----------
+  // Prevents the requestAnimationFrame loop from firing on a hidden flow.
+  useEffect(() => {
+    if (mode !== 'walk' && walkSession.phase !== 'idle') {
+      walkSession.reset()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode])
+
   // ---------- Photo URL lifecycle ----------
   const lastObjectUrlRef = useRef<string | null>(null)
   useEffect(() => {
@@ -133,8 +153,9 @@ export function App() {
       competitors,
       hour: now.getHours(),
       dayOfWeek: now.getDay(),
+      todayEvent,
     })
-  }, [bizType, selectedShop, weather, competitors, now])
+  }, [bizType, selectedShop, weather, competitors, now, todayEvent])
 
   // ---------- Vitals ----------
   const vitals = useMemo(() => {
@@ -164,14 +185,24 @@ export function App() {
     walkSession.start()
   }, [walkSession])
 
-  const confirmArrival = useCallback(() => {
-    walkSession.confirmArrival()
+  const confirmArrival = useCallback(async () => {
+    await walkSession.confirmArrival()
+    setShowRewardOverlay(true)
   }, [walkSession])
 
   const resetWalk = useCallback(() => {
     setSelectedShop(null)
+    setSmartPickReasons(null)
     walkSession.reset()
   }, [walkSession])
+
+  const onSmartPickClick = useCallback(() => {
+    const pick = smartPick(shops, weather, now.getHours())
+    if (!pick) return
+    setSelectedShop(pick.shop)
+    setSmartPickReasons(pick.reasons)
+    walkSession.reset()
+  }, [shops, weather, now, walkSession])
 
   // ---------- Campaign generation (real Claude API) ----------
   const fileToBase64 = (file: File): Promise<{ base64: string; mime: string }> =>
@@ -306,7 +337,7 @@ export function App() {
             <div className="cc-eyebrow">
               {mode === 'council'
                 ? 'Chatswood CBD · live foot traffic + boosted streets'
-                : `Chatswood CBD · 6 shops · 5 landmarks · 4 bike racks${competitors ? ` · ${competitors.cafes + competitors.restaurants} eateries (live OSM)` : ''}`}
+                : `Chatswood CBD · ${shops.length} shops${shopsAreReal ? ' (live OSM)' : ' (pilot personas)'}${competitors ? ` · ${competitors.cafes + competitors.restaurants} eateries within 700m` : ''}`}
             </div>
             <div className="cc-map-legend">
               <span className="cc-chip"><span className="cc-chip-dot" style={{ background: '#5B9BD5' }} /> 1× near</span>
@@ -331,7 +362,7 @@ export function App() {
           )}
 
           <RealMap
-            shops={SHOPS}
+            shops={shops}
             selectedShop={selectedShop}
             walkProgress={walkSession.phase === 'idle' ? null : walkSession.progress}
             walking={walkSession.phase === 'walking'}
@@ -355,6 +386,8 @@ export function App() {
               onStart={startWalk}
               onConfirm={confirmArrival}
               onReset={resetWalk}
+              onSmartPick={onSmartPickClick}
+              smartPickReasons={smartPickReasons ?? undefined}
               transport={transport}
               setTransport={setTransport}
               totalCo2={totalCo2}
@@ -417,6 +450,21 @@ export function App() {
       <Footer />
 
       <MobileNav mode={mode} setMode={setMode} />
+
+      {showRewardOverlay && walkSession.rewardSummary && selectedShop && (
+        <RewardOverlay
+          shopName={selectedShop.name}
+          points={walkSession.rewardSummary.points}
+          co2Kg={walkSession.rewardSummary.co2Kg}
+          discount={walkSession.rewardSummary.discount}
+          totalCo2After={totalCo2 + walkSession.rewardSummary.co2Kg}
+          isVerifiedGps={walkSession.isVerifiedGps}
+          onClose={() => {
+            setShowRewardOverlay(false)
+            resetWalk()
+          }}
+        />
+      )}
     </div>
   )
 }
