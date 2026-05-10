@@ -2192,3 +2192,134 @@ button { font-family: inherit; cursor: pointer; }
   0% { transform: scale(0.7); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
+
+/* ============================================================
+   Competitor Radar card
+   ============================================================ */
+.cc-radar-card .ins-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.cc-radar-rank {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cc-radar-rank-num {
+  font-family: 'Outfit', sans-serif;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.cc-radar-rank-num b {
+  font-size: 28px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #FF6B9D, #F5C842);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.cc-radar-rank-num small {
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 1.2px;
+}
+.cc-radar-rank-sub {
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+.cc-radar-bar {
+  position: relative;
+  height: 6px;
+  background: rgba(154, 128, 90, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.cc-radar-bar-fill {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #FF6B9D, #F5C842);
+  border-radius: 999px;
+  transition: width 0.4s ease-out;
+}
+.cc-radar-empty {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  padding: 4px 0;
+}
+.cc-radar-comp-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cc-radar-comp-list li {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  padding: 4px 0;
+  border-bottom: 1px dashed rgba(154, 128, 90, 0.12);
+}
+.cc-radar-comp-list li:last-child { border-bottom: 0; }
+.cc-radar-comp-emoji { font-size: 16px; line-height: 1; }
+.cc-radar-comp-name {
+  color: var(--ink);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cc-radar-comp-dist {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+/* ============================================================
+   Demand Forecast bar chart
+   ============================================================ */
+.cc-demand-card .ins-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.cc-demand-sub {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-bottom: 12px;
+}
+.cc-demand-sub b { color: var(--ink); }
+.cc-demand-chart {
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+  gap: 2px;
+  align-items: end;
+  height: 64px;
+  padding: 0 2px;
+}
+.cc-demand-bar {
+  border-radius: 3px 3px 0 0;
+  transition: background 0.2s, height 0.3s ease-out;
+  min-height: 4px;
+}
+.cc-demand-bar.is-current { box-shadow: 0 0 0 2px rgba(91, 155, 213, 0.4); }
+.cc-demand-bar.is-peak { box-shadow: 0 0 0 2px rgba(255, 107, 157, 0.5); }
+.cc-demand-axis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  color: var(--ink-soft);
+  letter-spacing: 1.2px;
+}

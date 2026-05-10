@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import type { Shop, BizType, CuisineId, ShopTag, TransportId } from './types/shop'
 import type { Campaign } from './types/campaign'
 import type { AppMode } from './components/ModeToggle'
@@ -11,15 +12,21 @@ import { Hero } from './components/Hero'
 import { Vitals } from './components/Vitals'
 import { ModeToggle } from './components/ModeToggle'
 import { MapFilters } from './components/MapFilters'
-import { RealMap } from './components/RealMap'
 import { WalkPanel } from './components/WalkPanel'
 import { ShopPanel } from './components/ShopPanel'
 import { CouncilPanel } from './components/CouncilPanel'
-import { CouncilDashboard } from './components/CouncilDashboard'
-import { ResultSection } from './components/ResultSection'
 import { Footer } from './components/Footer'
 import { MobileNav } from './components/MobileNav'
 import { RewardOverlay } from './components/RewardOverlay'
+
+// Heavy chunks lazy-loaded for faster first paint
+const RealMap = lazy(() => import('./components/RealMap').then((m) => ({ default: m.RealMap })))
+const ResultSection = lazy(() =>
+  import('./components/ResultSection').then((m) => ({ default: m.ResultSection })),
+)
+const CouncilDashboard = lazy(() =>
+  import('./components/CouncilDashboard').then((m) => ({ default: m.CouncilDashboard })),
+)
 
 import { useTheme } from './hooks/useTheme'
 import { useWeather } from './hooks/useWeather'
@@ -43,8 +50,20 @@ export function App() {
   // ---------- Theme ----------
   const { theme, toggle } = useTheme()
 
-  // ---------- Mode ----------
-  const [mode, setMode] = useState<AppMode>('walk')
+  // ---------- Mode (URL-driven via ?mode=walk|shop|council) ----------
+  const navigate = useNavigate()
+  const location = useLocation()
+  const urlParams = useMemo(() => new URLSearchParams(location.search), [location.search])
+  const modeFromUrl = (urlParams.get('mode') as AppMode | null) ?? 'walk'
+  const mode: AppMode = ['walk', 'shop', 'council'].includes(modeFromUrl) ? modeFromUrl : 'walk'
+  const setMode = useCallback(
+    (m: AppMode) => {
+      const next = new URLSearchParams(location.search)
+      next.set('mode', m)
+      navigate({ search: '?' + next.toString() }, { replace: true })
+    },
+    [navigate, location.search],
+  )
 
   // ---------- Walk-mode state ----------
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null)
@@ -309,6 +328,21 @@ export function App() {
 
   return (
     <div className="shell">
+      <a
+        href="#main-content"
+        style={{
+          position: 'absolute',
+          left: '-9999px',
+          top: 'auto',
+          width: 1,
+          height: 1,
+          overflow: 'hidden',
+        }}
+        onFocus={(e) => Object.assign(e.currentTarget.style, { left: '20px', top: '20px', width: 'auto', height: 'auto', padding: '12px 16px', background: 'var(--card)', borderRadius: 8, zIndex: 10000 })}
+        onBlur={(e) => Object.assign(e.currentTarget.style, { left: '-9999px', top: 'auto', width: '1px', height: '1px' })}
+      >
+        Skip to main content
+      </a>
       <Header totalCo2={totalCo2} theme={theme} onToggleTheme={toggle} todayLabel={todayLabel} />
 
       <PulseTicker
@@ -331,7 +365,7 @@ export function App() {
 
       <ModeToggle mode={mode} setMode={setMode} />
 
-      <div className="cc-grid">
+      <main id="main-content" className="cc-grid" tabIndex={-1} aria-labelledby="main-content">
         <div className="cc-map-card">
           <div className="cc-map-head">
             <div className="cc-eyebrow">
@@ -361,19 +395,40 @@ export function App() {
             />
           )}
 
-          <RealMap
-            shops={shops}
-            selectedShop={selectedShop}
-            walkProgress={walkSession.phase === 'idle' ? null : walkSession.progress}
-            walking={walkSession.phase === 'walking'}
-            completed={walkSession.phase === 'completed' || walkSession.phase === 'arrived'}
-            onSelect={onMapSelect}
-            cuisineFilter={cuisine}
-            tagFilter={tagFilter}
-            showHeatmap={showHeatmap || mode === 'council'}
-            transport={transport}
-            userPosition={geo.position}
-          />
+          <Suspense
+            fallback={
+              <div
+                style={{
+                  height: 360,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 16,
+                  background: 'rgba(91,155,213,.08)',
+                  fontFamily: 'JetBrains Mono, monospace',
+                  fontSize: 11,
+                  color: 'var(--ink-soft)',
+                  letterSpacing: 1.4,
+                }}
+              >
+                LOADING MAP …
+              </div>
+            }
+          >
+            <RealMap
+              shops={shops}
+              selectedShop={selectedShop}
+              walkProgress={walkSession.phase === 'idle' ? null : walkSession.progress}
+              walking={walkSession.phase === 'walking'}
+              completed={walkSession.phase === 'completed' || walkSession.phase === 'arrived'}
+              onSelect={onMapSelect}
+              cuisineFilter={cuisine}
+              tagFilter={tagFilter}
+              showHeatmap={showHeatmap || mode === 'council'}
+              transport={transport}
+              userPosition={geo.position}
+            />
+          </Suspense>
         </div>
 
         <div className="cc-side">
@@ -412,6 +467,10 @@ export function App() {
               scanStep={scanStep}
               onGenerate={generate}
               insights={insights}
+              allShops={shops}
+              weather={weather}
+              hour={now.getHours()}
+              dayOfWeek={now.getDay()}
             />
           )}
           {mode === 'council' && (
@@ -425,27 +484,31 @@ export function App() {
             />
           )}
         </div>
-      </div>
 
       {mode === 'council' && (
-        <CouncilDashboard
-          stats={council.stats}
-          topStreets={council.topStreets}
-          dailyWalks={council.dailyWalks}
-          boostedExtra={boostedExtra}
-          fallbackProjections={
-            isDemo || !council.stats.loaded
-              ? { walks: 1247, co2Kg: 84.6, extraRev: 14200, walkingNow: 0 }
-              : undefined
-          }
-        />
+        <Suspense fallback={<div style={{ height: 280 }} />}>
+          <CouncilDashboard
+            stats={council.stats}
+            topStreets={council.topStreets}
+            dailyWalks={council.dailyWalks}
+            boostedExtra={boostedExtra}
+            fallbackProjections={
+              isDemo || !council.stats.loaded
+                ? { walks: 1247, co2Kg: 84.6, extraRev: 14200, walkingNow: 0 }
+                : undefined
+            }
+          />
+        </Suspense>
       )}
 
       <div id="cc-result-anchor">
         {mode === 'shop' && campaign && (
-          <ResultSection campaign={campaign} photoUrl={photoUrl} source={campaignSource} />
+          <Suspense fallback={<div style={{ height: 200 }} />}>
+            <ResultSection campaign={campaign} photoUrl={photoUrl} source={campaignSource} />
+          </Suspense>
         )}
       </div>
+      </main>
 
       <Footer />
 

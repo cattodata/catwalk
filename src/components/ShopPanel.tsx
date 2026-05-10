@@ -1,6 +1,9 @@
 import { useRef, useState } from 'react'
 import type { Shop, BizType } from '../types/shop'
 import type { Insight } from '../types/campaign'
+import type { WeatherSummary } from '../types/weather'
+import { CompetitorRadar } from './CompetitorRadar'
+import { DemandForecast } from './DemandForecast'
 
 const BIZ_TYPES: { id: BizType; emoji: string }[] = [
   { id: 'Cafe', emoji: '☕' },
@@ -20,6 +23,11 @@ interface ShopPanelProps {
   scanStep: number
   onGenerate: () => void
   insights: Insight[]
+  /** Optional cards (data-driven, hidden if no data) */
+  allShops?: Shop[]
+  weather?: WeatherSummary | null
+  hour?: number
+  dayOfWeek?: number
 }
 
 export function ShopPanel({
@@ -34,6 +42,10 @@ export function ShopPanel({
   scanStep,
   onGenerate,
   insights,
+  allShops,
+  weather,
+  hour,
+  dayOfWeek,
 }: ShopPanelProps) {
   const fileRef = useRef<HTMLInputElement>(null)
   const [drag, setDrag] = useState(false)
@@ -125,6 +137,14 @@ export function ShopPanel({
           </div>
           <div className="cc-ins-foot">— Catto will turn these into one campaign 🐾 —</div>
         </div>
+      )}
+
+      {allShops && allShops.length > 0 && (
+        <CompetitorRadar shop={shop} bizType={bizType} allShops={allShops} />
+      )}
+
+      {hour != null && dayOfWeek != null && (
+        <DemandForecast bizType={bizType} weather={weather ?? null} dayOfWeek={dayOfWeek} currentHour={hour} />
       )}
 
       <div className="cc-card">

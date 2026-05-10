@@ -120,7 +120,9 @@ async function callAzure(body: ReqBody, systemPrompt: string): Promise<string> {
           ],
         },
       ],
-      max_tokens: MAX_TOKENS,
+      // Azure GPT-4.1-nano / gpt-5-nano require max_completion_tokens (not max_tokens).
+      // Budget needs to cover reasoning tokens + visible content. 5000 = ~250 reasoning + 4750 content.
+      max_completion_tokens: MAX_TOKENS + 1000,
       response_format: { type: 'json_object' },
     }),
   })
