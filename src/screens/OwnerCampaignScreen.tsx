@@ -18,6 +18,35 @@ import { getTodayEvent } from '../data/events'
 type Step = 1 | 2 | 3
 type Lang = 'en' | 'zh' | 'ko'
 
+const STATE_KEY = 'cc:owner-campaign'
+interface PersistedState {
+  step?: Step
+  bizType?: BizType
+  lang?: Lang
+}
+function readCampaignState(): PersistedState {
+  if (typeof window === 'undefined') return {}
+  try {
+    const raw = window.localStorage.getItem(STATE_KEY)
+    return raw ? (JSON.parse(raw) as PersistedState) : {}
+  } catch {
+    return {}
+  }
+}
+function writeCampaignState(s: PersistedState) {
+  try {
+    window.localStorage.setItem(STATE_KEY, JSON.stringify(s))
+  } catch {
+    /* ignore */
+  }
+}
+function defaultBizFromShopName(name: string): BizType {
+  const n = name.toLowerCase()
+  if (/(bakery|patisserie|honor|crois|cake|pastry|donut)/.test(n)) return 'Bakery'
+  if (/(restaurant|ramen|sushi|thai|pho|noodle|grill|kitchen)/.test(n)) return 'Restaurant'
+  return 'Cafe'
+}
+
 const LANGS: { id: Lang; label: string }[] = [
   { id: 'en', label: 'EN' },
   { id: 'zh', label: '中文' },
@@ -54,12 +83,20 @@ export function OwnerCampaignScreen() {
   const { counts } = useCompetitorCounts()
   const todayEvent = getTodayEvent(now)
 
-  const [step, setStep] = useState<Step>(1)
-  const [bizType, setBizType] = useState<BizType>('Cafe')
+  // Persisted state — survives accidental refresh during demo.
+  // Shop name "Saint Honoré" → Bakery as default (real bakery)
+  const persisted = readCampaignState()
+  const [step, setStep] = useState<Step>(persisted.step ?? 1)
+  const [bizType, setBizType] = useState<BizType>(persisted.bizType ?? defaultBizFromShopName('Saint Honoré'))
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
-  const [lang, setLang] = useState<Lang>('en')
+  const [lang, setLang] = useState<Lang>(persisted.lang ?? 'en')
   const [copied, setCopied] = useState(false)
+
+  // Persist on every change so a mid-form refresh doesn't lose work
+  useEffect(() => {
+    writeCampaignState({ step, bizType, lang })
+  }, [step, bizType, lang])
 
   const lastUrlRef = useRef<string | null>(null)
   useEffect(() => {

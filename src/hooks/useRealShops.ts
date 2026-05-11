@@ -4,7 +4,7 @@ import type { Shop } from '../types/shop'
 import { SHOPS as FALLBACK_SHOPS } from '../data/shops'
 import { getActiveCityId } from '../config/cities'
 
-const CACHE_PREFIX = 'cc-real-shops-cache-v2'
+const CACHE_PREFIX = 'cc-real-shops-cache-v3'
 const CACHE_TTL_MS = 24 * 60 * 60_000 // 24h
 
 function cacheKey(cityId: string) {
@@ -33,7 +33,7 @@ function writeCache(cityId: string, shops: Shop[]) {
 export function useRealShops() {
   const cityId = getActiveCityId()
   const query = useQuery({
-    queryKey: ['real-shops', cityId],
+    queryKey: ['real-shops-v3', cityId],
     queryFn: async ({ signal }) => {
       const cached = readCache(cityId)
       if (cached && cached.length) return cached

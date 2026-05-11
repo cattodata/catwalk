@@ -1,5 +1,5 @@
 import type { Shop, TransportId } from '../types/shop'
-import { Footprints, ChevronLeft } from 'lucide-react'
+import { Footprints, ChevronLeft, Star } from 'lucide-react'
 import { Stat3Grid } from './Stat3Grid'
 import { TransportModesRow } from './TransportModesRow'
 import { DroveHint } from './DroveHint'
@@ -29,6 +29,16 @@ export function ShopDetailSheet({ shop, transport, onTransport, onStart, onBack 
             {shop.name} <span aria-hidden="true">{shop.emoji}</span>
           </h3>
           <span className="cc-sd-meta">
+            {shop.rating != null && (
+              <span className="cc-rating cc-rating-lg" title={shop.ratingReal ? 'Google rating' : 'Estimated'}>
+                <Star size={12} strokeWidth={2.4} fill="currentColor" />
+                {shop.rating.toFixed(1)}
+                {shop.reviewCount != null && (
+                  <span className="cc-rating-n">({shop.reviewCount})</span>
+                )}
+                {' · '}
+              </span>
+            )}
             {shop.dist}M · {walkMin} MIN · <Footprints size={11} strokeWidth={2.4} aria-hidden="true" /> WALK
           </span>
         </div>

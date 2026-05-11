@@ -51,6 +51,12 @@ export function PlanDayScreen() {
   const onPreset = (presetId: string) => {
     const preset = DAY_PRESETS.find((p) => p.id === presetId)
     if (!preset) return
+    if (stops.length > 0) {
+      const ok = window.confirm(
+        `Replace your ${stops.length} stop${stops.length === 1 ? '' : 's'} with the "${preset.label}" preset?`,
+      )
+      if (!ok) return
+    }
     const next = buildDayFromPreset(preset, shops)
     setStops(next)
     syncBasket(next)

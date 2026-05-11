@@ -2,7 +2,6 @@ import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Camera, Repeat, Footprints, CloudRain, Zap } from 'lucide-react'
 
-import { BottomNav } from '../components/BottomNav'
 import { SwitchRoleGear } from '../components/SwitchRoleSheet'
 import { CattoPill } from '../components/CattoPill'
 import { OwnerReading } from '../components/OwnerReading'
@@ -186,8 +185,6 @@ export function OwnerForecastScreen() {
         </div>
       </div>
 
-      <div style={{ height: 72 }} aria-hidden="true" />
-      <BottomNav />
     </div>
   )
 }

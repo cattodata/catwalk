@@ -24,6 +24,14 @@ export interface Shop {
   lng?: number
   /** Street name for council aggregation */
   street?: string
+  /** 1.0–5.0 Google Places rating (real when API key set, else deterministic seed) */
+  rating?: number
+  /** Google Places user_ratings_total */
+  reviewCount?: number
+  /** 1–4 = $ to $$$$ */
+  priceLevel?: 1 | 2 | 3 | 4
+  /** Provenance flag — true when rating came from Google Places API */
+  ratingReal?: boolean
 }
 
 export interface CuisineOption {

@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { Download } from 'lucide-react'
+import { downloadCouncilBriefing } from '../lib/councilBriefing'
 
 import { BottomNav } from '../components/BottomNav'
 import { SwitchRoleGear } from '../components/SwitchRoleSheet'
@@ -43,6 +45,22 @@ export function CouncilSandboxScreen() {
           </span>
         </div>
         <div className="cc-council-bar-actions">
+          <button
+            type="button"
+            className="cc-council-dl"
+            onClick={() =>
+              downloadCouncilBriefing({
+                walking_now: council.stats.walking_now || 12,
+                total_walks: council.stats.total_walks || 1247,
+                total_co2: council.stats.total_co2 || 84.6,
+                shop_spend: Math.round((council.stats.total_walks || 1247) * 6.7),
+              })
+            }
+            aria-label="Download briefing CSV"
+            title="Download briefing CSV"
+          >
+            <Download size={16} strokeWidth={2.4} />
+          </button>
           <SwitchRoleGear />
         </div>
       </header>

@@ -93,6 +93,13 @@ function normalize(node: OverpassNode, stLat: number, stLng: number, stX: number
     [Math.round(x), Math.round(y)],
   ]
 
+  // Deterministic seed rating/review count from node ID — stable across reloads,
+  // realistic-looking. Replaced with real Google Places values by useGooglePlaces hook.
+  const seed = hashId(String(node.id))
+  const rating = +(3.8 + (seed % 110) / 100).toFixed(1) // 3.8 – 4.9
+  const reviewCount = 42 + (seed % 690) // 42 – 731
+  const priceLevel: 1 | 2 | 3 | 4 = (((seed >> 4) % 3) + 1) as 1 | 2 | 3
+
   return {
     id: `osm-${node.id}`,
     name: tags.name ?? 'Unknown',
@@ -112,7 +119,20 @@ function normalize(node: OverpassNode, stLat: number, stLng: number, stX: number
     lat: node.lat,
     lng: node.lon,
     street: tags['addr:street'],
+    rating,
+    reviewCount,
+    priceLevel,
+    ratingReal: false,
   }
+}
+
+function hashId(s: string): number {
+  let h = 2166136261
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i)
+    h = Math.imul(h, 16777619)
+  }
+  return Math.abs(h)
 }
 
 function getEmoji(type: BizType, cuisine: Shop['cuisine']): string {

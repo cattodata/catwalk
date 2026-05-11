@@ -1,5 +1,5 @@
 import type { Shop } from '../types/shop'
-import { Flame, Plus, Check } from 'lucide-react'
+import { Flame, Plus, Check, Star } from 'lucide-react'
 
 interface Props {
   shops: Shop[]
@@ -38,6 +38,13 @@ export function LiveDealsRail({ shops, onSelect, onAdd, pickedIds = [] }: Props)
                 <span className="cc-deal-em" aria-hidden="true">{s.emoji}</span>
                 <span className="cc-deal-name">{s.name}</span>
                 <span className="cc-deal-meta">
+                  {s.rating != null && (
+                    <span className="cc-rating" title={s.ratingReal ? 'Google rating' : 'Estimated'}>
+                      <Star size={10} strokeWidth={2.4} fill="currentColor" />
+                      {s.rating.toFixed(1)}
+                      {' · '}
+                    </span>
+                  )}
                   {s.dist}m · {Math.max(1, Math.round(s.dist / 75))} min
                 </span>
               </button>

@@ -14,10 +14,12 @@ import { CuisineRow } from '../components/CuisineRow'
 import { LiveDealsRail } from '../components/LiveDealsRail'
 import { PlanBasketPill } from '../components/PlanBasketPill'
 import { PlanBasketToast } from '../components/PlanBasketToast'
+import { ShopSearchBar, type SortBy } from '../components/ShopSearchBar'
 import { RealMap } from '../components/RealMap'
 
 import { usePlanBasket } from '../hooks/usePlanBasket'
 import { planBasket } from '../lib/planBasket'
+import { useGooglePlaces } from '../hooks/useGooglePlaces'
 import { useRealShops } from '../hooks/useRealShops'
 import { useWeather } from '../hooks/useWeather'
 import { useGeolocation } from '../hooks/useGeolocation'
@@ -31,7 +33,8 @@ import { getTodayEvent } from '../data/events'
 export function WalkerHomeScreen() {
   const navigate = useNavigate()
   const now = useNow(60_000)
-  const { shops } = useRealShops()
+  const { shops: rawShops } = useRealShops()
+  const shops = useGooglePlaces(rawShops)
   const { weather } = useWeather()
   const geo = useGeolocation(true) // try real GPS; falls back to demo coords if denied
   const auth = useSupabaseAuth()
@@ -45,6 +48,8 @@ export function WalkerHomeScreen() {
   const [transport, setTransport] = useState<TransportId>('walk')
   const [recenterNonce, setRecenterNonce] = useState(0)
   const [cuisine, setCuisine] = useState<CuisineId>('all')
+  const [search, setSearch] = useState('')
+  const [sortBy, setSortBy] = useState<SortBy>('distance')
   const basketIds = usePlanBasket()
 
   const onTogglePlan = (s: Shop) => {
@@ -71,7 +76,25 @@ export function WalkerHomeScreen() {
     }
     return shops.filter((s) => s.cuisine === cuisine)
   }, [shops, cuisine])
-  const railShops = useMemo(() => filteredShops.slice(0, 4), [filteredShops])
+
+  const searchedShops = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    if (!q) return filteredShops
+    return filteredShops.filter((s) => s.name.toLowerCase().includes(q))
+  }, [filteredShops, search])
+
+  const sortedShops = useMemo(() => {
+    const arr = [...searchedShops]
+    if (sortBy === 'rating') arr.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+    else if (sortBy === 'points') arr.sort((a, b) => b.pts - a.pts)
+    else arr.sort((a, b) => a.dist - b.dist)
+    return arr
+  }, [searchedShops, sortBy])
+
+  const railShops = useMemo(
+    () => (search.trim() ? sortedShops.slice(0, 12) : sortedShops.slice(0, 4)),
+    [sortedShops, search],
+  )
 
   // Live deals — shops with discount >= 15%. Sorted by discount desc, then dist
   const dealShops = useMemo(
@@ -167,7 +190,7 @@ export function WalkerHomeScreen() {
           <>
             <h4 className="cc-sheet-h4">Where to today?</h4>
             {conditionRow && <div className="cc-sheet-cond">{conditionRow}</div>}
-            <SmartPickCta subtext={smartSubtext} onClick={onSmartPick} />
+            <SmartPickCta subtext={smartSubtext} reasons={smart?.reasons} onClick={onSmartPick} />
             <button
               type="button"
               className="cc-plan-entry"
@@ -186,16 +209,26 @@ export function WalkerHomeScreen() {
               onAdd={onTogglePlan}
               pickedIds={basketIds}
             />
+            <ShopSearchBar
+              query={search}
+              onQueryChange={setSearch}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+            />
             <CuisineRow active={cuisine} onChange={setCuisine} />
             {railShops.length > 0 ? (
               <ShopMiniRail
-                shops={railShops.slice(0, 4)}
+                shops={railShops.slice(0, search.trim() ? 12 : 4)}
                 onSelect={(s) => setSelectedShop(s)}
                 onAdd={onTogglePlan}
                 pickedIds={basketIds}
               />
             ) : (
-              <div className="cc-empty-row">No {cuisine === 'all' ? 'shops' : cuisine.toLowerCase()} nearby. Try a different filter.</div>
+              <div className="cc-empty-row">
+                {search.trim()
+                  ? `No shops match "${search}". Try a different name or clear search.`
+                  : `No ${cuisine === 'all' ? 'shops' : cuisine.toLowerCase()} nearby. Try a different filter.`}
+              </div>
             )}
           </>
         )}

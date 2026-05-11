@@ -1,5 +1,5 @@
 import type { Shop } from '../types/shop'
-import { Plus, Check } from 'lucide-react'
+import { Plus, Check, Star } from 'lucide-react'
 
 interface Props {
   shop: Shop
@@ -22,7 +22,19 @@ export function ShopMini({ shop, walkMin, onSelect, onAdd, picked = false }: Pro
               {shop.mult}×
             </span>
           </span>
-          <small>{shop.dist}m · {walkMin} min · {shop.pts} pts</small>
+          <small>
+            {shop.rating != null && (
+              <span className="cc-rating" title={shop.ratingReal ? 'Google rating' : 'Estimated rating'}>
+                <Star size={10} strokeWidth={2.4} fill="currentColor" />
+                {shop.rating.toFixed(1)}
+                {shop.reviewCount != null && (
+                  <span className="cc-rating-n">({shop.reviewCount})</span>
+                )}
+                {' · '}
+              </span>
+            )}
+            {shop.dist}m · {walkMin} min · {shop.pts} pts
+          </small>
         </span>
       </button>
       {onAdd && (
