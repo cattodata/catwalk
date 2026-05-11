@@ -1,4 +1,4 @@
-import { CHATSWOOD } from '../config/chatswood'
+import { getActiveCity } from '../config/cities'
 
 /**
  * ABS ArcGIS FeatureServer — Census 2021 G01 (age/population) for Chatswood SA2.
@@ -27,7 +27,7 @@ interface AbsFeature {
 }
 
 export async function fetchAbsDemographics(signal?: AbortSignal): Promise<AbsDemographics> {
-  const where = `SA2_CODE_2021='${CHATSWOOD.absSa2.east}'`
+  const where = `SA2_CODE_2021='${getActiveCity().absSa2.east}'`
   const params = new URLSearchParams({
     where,
     outFields: 'Tot_P_P,Median_age_persons',

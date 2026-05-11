@@ -123,7 +123,13 @@ export function WalkerHomeScreen() {
             {conditionRow && <div className="cc-sheet-cond">{conditionRow}</div>}
             <SmartPickCta subtext={smartSubtext} onClick={onSmartPick} />
             {railShops.length > 0 && <ShopMiniRail shops={railShops} onSelect={(s) => setSelectedShop(s)} />}
-            <TransportModesRow active={transport} onChange={setTransport} walkMin={smart ? Math.max(1, Math.round(smart.shop.dist / 75)) : undefined} />
+            <TransportModesRow
+              active={transport}
+              onChange={setTransport}
+              walkMin={smart ? Math.max(1, Math.round(smart.shop.dist / 75)) : 4}
+              basePts={smart?.shop.pts ?? 180}
+              baseCo2={smart?.shop.co2 ?? 0.05}
+            />
           </>
         )}
       </section>

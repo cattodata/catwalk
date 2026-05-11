@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { Footprints, Store, BarChart3, ArrowRight } from 'lucide-react'
 import { useUserRole, roleHomePath, type UserRole } from '../context/UserRoleContext'
+import { CityPickerChip } from '../components/CityPickerChip'
 
 interface RoleDef {
   id: UserRole
@@ -27,6 +28,9 @@ export function OnboardingScreen() {
 
   return (
     <div className="cc-onb">
+      <div className="cc-onb-citybar">
+        <CityPickerChip />
+      </div>
       <div className="cc-onb-top">
         <div className="cc-onb-mascot" aria-hidden="true">
           <span>🐱</span>

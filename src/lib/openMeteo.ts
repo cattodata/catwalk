@@ -1,15 +1,16 @@
 import type { OpenMeteoResponse, WeatherSummary } from '../types/weather'
-import { CHATSWOOD } from '../config/chatswood'
+import { getActiveCity } from '../config/cities'
 
 const ENDPOINT = 'https://api.open-meteo.com/v1/forecast'
 
 export async function fetchWeather(signal?: AbortSignal): Promise<OpenMeteoResponse> {
+  const city = getActiveCity()
   const params = new URLSearchParams({
-    latitude: String(CHATSWOOD.weather.lat),
-    longitude: String(CHATSWOOD.weather.lng),
+    latitude: String(city.weather.lat),
+    longitude: String(city.weather.lng),
     current: 'temperature_2m,weather_code,wind_speed_10m',
     daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code',
-    timezone: CHATSWOOD.weather.timezone,
+    timezone: city.weather.timezone,
   })
   const res = await fetch(`${ENDPOINT}?${params}`, { signal })
   if (!res.ok) throw new Error(`Open-Meteo ${res.status}`)

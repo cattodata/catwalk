@@ -1,7 +1,9 @@
 import { Drawer } from 'vaul'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Settings, ArrowRight } from 'lucide-react'
+import { Settings, ArrowRight, MapPin, Check } from 'lucide-react'
 import { useUserRole } from '../context/UserRoleContext'
+import { CITY_LIST, getActiveCityId, setActiveCityId } from '../config/cities'
 
 export function SwitchRoleGear() {
   return (
@@ -29,10 +31,20 @@ export function SwitchRoleGear() {
 function SwitchRoleSheetContent() {
   const { switchRole } = useUserRole()
   const navigate = useNavigate()
+  const [activeCity, setActiveCity] = useState(() => getActiveCityId())
+  const isJudge =
+    typeof window !== 'undefined' &&
+    new URLSearchParams(window.location.search).get('judge') === '1'
 
-  const handleSwitch = () => {
+  const handleSwitchRole = () => {
     switchRole()
     navigate('/onboarding')
+  }
+
+  const handleSwitchCity = (slug: string) => {
+    setActiveCityId(slug)
+    setActiveCity(slug)
+    window.location.reload()
   }
 
   return (
@@ -41,13 +53,37 @@ function SwitchRoleSheetContent() {
       <Drawer.Description className="cc-srs-desc">
         Demo this app from a different perspective
       </Drawer.Description>
-      <button type="button" className="cc-srs-action" onClick={handleSwitch}>
+      <button type="button" className="cc-srs-action" onClick={handleSwitchRole}>
         <span className="cc-srs-action-body">
           <b>Switch role</b>
           <small>Go back to the role picker</small>
         </span>
         <ArrowRight size={16} aria-hidden="true" />
       </button>
+
+      {!isJudge && (
+        <div className="cc-srs-section">
+          <h4>
+            <MapPin size={12} strokeWidth={2.4} aria-hidden="true" /> Pilot city
+          </h4>
+          <div className="cc-city-list">
+            {CITY_LIST.map((c) => (
+              <button
+                key={c.slug}
+                type="button"
+                className={`cc-city-row${c.slug === activeCity ? ' is-active' : ''}`}
+                onClick={() => handleSwitchCity(c.slug)}
+              >
+                <span className="cc-city-row-body">
+                  <b>{c.name}</b>
+                  <small>{c.council}</small>
+                </span>
+                {c.slug === activeCity && <Check size={16} aria-hidden="true" />}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import type { Shop, BizType } from '../types/shop'
-import { CHATSWOOD } from '../config/chatswood'
+import { getActiveCity } from '../config/cities'
 
 const ENDPOINT = 'https://overpass-api.de/api/interpreter'
 
@@ -16,8 +16,9 @@ interface OverpassNode {
  * Returns a normalized list of Shop objects with computed distance/multiplier.
  */
 export async function fetchRealShops(signal?: AbortSignal): Promise<Shop[]> {
-  const { lat, lng, x, y } = CHATSWOOD.station
-  const r = CHATSWOOD.overpass.radius_m
+  const city = getActiveCity()
+  const { lat, lng, x, y } = city.station
+  const r = city.overpass.radius_m
   const query = `[out:json][timeout:25];
 (
   node["amenity"="cafe"]["name"](around:${r},${lat},${lng});
