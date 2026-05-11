@@ -26,7 +26,7 @@ if (BASIC_AUTH_PASSWORD) {
       const password = decoded.split(':')[1] ?? ''
       if (password === BASIC_AUTH_PASSWORD) return next()
     }
-    res.setHeader('WWW-Authenticate', 'Basic realm="Catto Compass — team preview"')
+    res.setHeader('WWW-Authenticate', 'Basic realm="Catto Compass team preview"')
     res.status(401).send('Authentication required')
   })
 }
