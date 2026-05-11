@@ -43,15 +43,29 @@ export function WalkingLiveScreen() {
     if (shop && session.phase === 'idle') session.start()
   }, [shop, session])
 
-  // On arrival (auto in demo mode), confirm + navigate to reward
+  // On arrival (auto in demo mode), confirm + persist + navigate to reward
   useEffect(() => {
-    if (session.phase === 'arrived') {
+    if (session.phase === 'arrived' && shop) {
       session.confirmArrival().then(() => {
+        if (session.rewardSummary) {
+          sessionStorage.setItem(
+            'cc:reward',
+            JSON.stringify({
+              shopName: shop.name,
+              shopEmoji: shop.emoji,
+              dist: shop.dist,
+              points: session.rewardSummary.points,
+              co2Kg: session.rewardSummary.co2Kg,
+              discount: session.rewardSummary.discount,
+              isVerifiedGps: session.isVerifiedGps,
+            }),
+          )
+        }
         // small delay so user sees the arrive button briefly
         setTimeout(() => navigate('/walk/reward'), 400)
       })
     }
-  }, [session.phase, session, navigate])
+  }, [session.phase, session, navigate, shop])
 
   const totalMeters = shop?.dist ?? 480
   const metersLeft = Math.round(totalMeters * (1 - session.progress))

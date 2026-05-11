@@ -3955,3 +3955,132 @@ button { font-family: inherit; cursor: pointer; }
   pointer-events: auto;
   animation: pls 1.4s infinite;
 }
+
+/* ---------- S5 REWARD ---------- */
+.cc-reward {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 22px 22px;
+  background: var(--g-reward-bg);
+  overflow: hidden;
+  position: relative;
+}
+.cc-reward-inner {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.cc-reward-eb {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.cc-reward-verif {
+  color: var(--sage);
+  font-size: 14px;
+  vertical-align: middle;
+}
+.cc-reward-mascot {
+  margin: 18px auto 0;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--card);
+  display: grid;
+  place-items: center;
+  box-shadow: var(--shadow-hero);
+}
+.cc-reward-mascot span {
+  font-size: 74px;
+  line-height: 1;
+}
+.cc-pts {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 78px;
+  line-height: 1;
+  letter-spacing: -3px;
+  margin: 18px 0 0;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: baseline;
+}
+.cc-pts small {
+  font-size: 24px;
+  letter-spacing: 0;
+  font-weight: 800;
+  margin-left: 4px;
+}
+.cc-tier-up {
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--ink);
+}
+
+.cc-reward-cards {
+  width: 100%;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cc-rc {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 18px;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.cc-rc-action {
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+.cc-rc-em {
+  flex: 0 0 28px;
+  width: 32px;
+  display: grid;
+  place-items: center;
+  color: var(--coral);
+}
+.cc-rc-body {
+  flex: 1;
+  min-width: 0;
+}
+.cc-rc-body b {
+  font-family: var(--font-display);
+  font-weight: 800;
+}
+
+.cc-reward-cta {
+  margin-top: 14px;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 18px;
+  background: var(--ink);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14.5px;
+  cursor: pointer;
+}
