@@ -2819,9 +2819,11 @@ button { font-family: inherit; cursor: pointer; }
     color: #fff;
   }
   .cc-mshell-inner {
+    width: 393px;
     height: 844px;
     min-height: 844px;
-    max-height: calc(100vh - 120px);
+    max-height: 844px;
+    flex-shrink: 0;
     border-radius: 38px;
     overflow: hidden;
     box-shadow:
