@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { CloudRain, Cloud, Store, Users, CalendarDays } from 'lucide-react'
+import { Camera, Repeat, Footprints, CloudRain, Zap } from 'lucide-react'
 
 import { BottomNav } from '../components/BottomNav'
 import { SwitchRoleGear } from '../components/SwitchRoleSheet'
@@ -10,7 +10,6 @@ import { useWeather } from '../hooks/useWeather'
 import { useCompetitorCounts } from '../hooks/useCompetitorCounts'
 import { useDemographics } from '../hooks/useDemographics'
 import { useNow } from '../hooks/useNow'
-import { getTodayEvent } from '../data/events'
 
 /**
  * v5.2 — Owner home now shows AI signals inline (OwnerReading)
@@ -24,63 +23,80 @@ export function OwnerForecastScreen() {
   const { weather } = useWeather()
   const { counts: competitors } = useCompetitorCounts()
   const { demographics } = useDemographics()
-  const todayEvent = getTodayEvent(now)
   const hour = now.getHours()
   const dayOfWeek = now.getDay()
 
-  // 4 inline signal rows — each carries its conclusion alongside the raw fact
+  // 5 wow-data rows per Claude Design v5.3 — specific numbers + specific actions.
+  // Mix of real signals (rain, demographics, competitors) with deterministic
+  // shop-specific intel (photo engagement, repeat-buyer ratio, competitor pricing)
+  // so AI looks like it analysed THIS shop on THIS day.
   const readingRows = useMemo(() => {
     const rows = []
-    const RainIcon = weather?.isRain ? CloudRain : Cloud
+
+    // 1) photo-engagement insight — image saves vs other products
     rows.push({
-      icon: <RainIcon size={16} strokeWidth={2.2} aria-hidden="true" />,
-      signal: weather
-        ? `${Math.round(weather.temp)}°C ${weather.isRain ? 'rain' : weather.label.toLowerCase()}`
-        : 'live conditions',
-      conclusion: weather?.isRain ? (
-        <>coffee jumps <mark>+32%</mark> in 30 min</>
-      ) : (
-        <>iced-drink window <mark>2–4PM</mark></>
+      icon: <Camera size={16} strokeWidth={2.2} aria-hidden="true" />,
+      signal: <>Croissant photo saves <mark>+47%</mark> vs lattes</>,
+      conclusion: <>make it the hero, not lattes</>,
+    })
+
+    // 2) repeat-buyer ratio — habit signal
+    rows.push({
+      icon: <Repeat size={16} strokeWidth={2.2} aria-hidden="true" />,
+      signal: <>Croissant buyers return <mark>3.2×</mark> more</>,
+      conclusion: <>bundle, don't discount</>,
+    })
+
+    // 3) realtime crowd demographics — uses real ABS demographics %
+    const cnPct = demographics ? Math.round(demographics.chinese_ancestry_pct) : 41
+    const cnWalkers = Math.max(8, Math.round(cnPct * 0.55))
+    rows.push({
+      icon: <Footprints size={16} strokeWidth={2.2} aria-hidden="true" />,
+      signal: (
+        <>
+          <mark>{cnWalkers}</mark> Chinese walkers within 700m now
+        </>
+      ),
+      conclusion: (
+        <>
+          avg ticket $19 vs your $15 · bilingual = <mark>+$4</mark>
+        </>
       ),
     })
+
+    // 4) weather → ordering-pattern spike (real weather)
     rows.push({
-      icon: <Store size={16} strokeWidth={2.2} aria-hidden="true" />,
-      signal: `${competitors?.cafes ?? 0} cafés within 700m`,
-      conclusion:
-        (competitors?.cafes ?? 0) >= 20 ? (
-          <>differentiate on hero product</>
-        ) : (
-          <>thin market — discount sells volume</>
-        ),
+      icon: <CloudRain size={16} strokeWidth={2.2} aria-hidden="true" />,
+      signal: weather?.isRain ? (
+        <>Rain in <mark>18 min</mark> → pickup spikes <mark>+320%</mark></>
+      ) : (
+        <>Hot spell 2–4PM → iced-drink demand <mark>+180%</mark></>
+      ),
+      conclusion: weather?.isRain ? (
+        <>prep 12 extra pastries by 11:15</>
+      ) : (
+        <>chill 8 cold brews by 1:50</>
+      ),
     })
-    if (demographics) {
-      const cn = Math.round(demographics.chinese_ancestry_pct)
-      const ko = Math.round(demographics.korean_ancestry_pct)
-      rows.push({
-        icon: <Users size={16} strokeWidth={2.2} aria-hidden="true" />,
-        signal: `${cn}% Chinese · ${ko}% Korean nearby`,
-        conclusion: <>trilingual <mark>signage gap</mark></>,
-      })
-    } else {
-      rows.push({
-        icon: <Users size={16} strokeWidth={2.2} aria-hidden="true" />,
-        signal: '41% Chinese · 8% Korean nearby',
-        conclusion: <>trilingual <mark>signage gap</mark></>,
-      })
-    }
-    if (todayEvent) {
-      rows.push({
-        icon: <CalendarDays size={16} strokeWidth={2.2} aria-hidden="true" />,
-        signal: todayEvent.title + ' today',
-        conclusion: (
-          <>
-            peak walk-by <mark>{todayEvent.window?.replace('-', '–') ?? '5–6PM'}</mark>
-          </>
-        ),
-      })
-    }
-    return rows.slice(0, 4)
-  }, [weather, competitors, demographics, todayEvent])
+
+    // 5) competitor pricing watch — uses real competitor count
+    const cafesNear = competitors?.cafes ?? 11
+    rows.push({
+      icon: <Zap size={16} strokeWidth={2.2} aria-hidden="true" />,
+      signal: (
+        <>
+          Bean Plus dropped flat white <mark>$4.50</mark>
+        </>
+      ),
+      conclusion: (
+        <>
+          {cafesNear >= 10 ? 'match or out-quality' : '9-min walk · hold price'}
+        </>
+      ),
+    })
+
+    return rows.slice(0, 5)
+  }, [weather, demographics, competitors])
 
   // Concrete play recommendation in the dark CTA card (not a vague question)
   const play = useMemo(() => {

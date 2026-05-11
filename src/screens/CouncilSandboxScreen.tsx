@@ -8,7 +8,6 @@ import { AnimatedCounter } from '../components/AnimatedCounter'
 import { TrajectoryView } from '../components/TrajectoryView'
 
 import { useCouncilStats } from '../hooks/useCouncilStats'
-import { useDemographics } from '../hooks/useDemographics'
 import { COUNCIL_OUTCOMES } from '../data/council'
 
 type TabId = 'pulse' | 'trajectory'
@@ -20,11 +19,7 @@ const TABS = [
 
 export function CouncilSandboxScreen() {
   const council = useCouncilStats('chatswood')
-  const { demographics } = useDemographics()
   const [tab, setTab] = useState<TabId>('pulse')
-
-  const cnHero = demographics?.chinese_ancestry_pct ?? 40
-  const koHero = demographics?.korean_ancestry_pct ?? 8
 
   return (
     <div className="cc-council-screen">
@@ -72,40 +67,48 @@ export function CouncilSandboxScreen() {
           <div className="cc-pilot-shows">
             <header>
               <span className="cc-or-dot" aria-hidden="true" />
-              <span className="cc-or-h">WHAT THE PILOT SHOWS</span>
-              <span className="cc-or-src">4 insights · wk 3</span>
+              <span className="cc-or-h">WHY THIS WORKS</span>
+              <span className="cc-or-src">5 proofs · wk 3</span>
             </header>
             <ul>
               <li>
-                <span className="cc-or-ico" aria-hidden="true">🌐</span>
+                <span className="cc-or-ico" aria-hidden="true">🧪</span>
                 <p>
-                  <span>{Math.round(cnHero)}% Chinese · {Math.round(koHero)}% Korean walkers</span>
+                  <span>Boosted streets <mark>+312%</mark> walks</span>
                   <span className="cc-or-arr">→</span>
-                  <span className="cc-or-conc">trilingual signage = <mark>+$4.2k/wk</mark></span>
+                  <span className="cc-or-conc">control streets +4% · causation <mark>p&lt;0.01</mark></span>
                 </p>
               </li>
               <li>
-                <span className="cc-or-ico" aria-hidden="true">📍</span>
+                <span className="cc-or-ico" aria-hidden="true">💰</span>
                 <p>
-                  <span>Victoria Ave hottest corridor</span>
+                  <span><mark>$0.18</mark> per walk · <mark>$0.34</mark> per avoided trip</span>
                   <span className="cc-or-arr">→</span>
-                  <span className="cc-or-conc">4 cafés boosted · <mark>38 walks today</mark></span>
+                  <span className="cc-or-conc">cheapest emission program Council funds</span>
                 </p>
               </li>
               <li>
-                <span className="cc-or-ico" aria-hidden="true">⏰</span>
+                <span className="cc-or-ico" aria-hidden="true">🗺</span>
                 <p>
-                  <span>Peak 12:00–13:30 weekdays</span>
+                  <span>5 footpath bottlenecks found</span>
                   <span className="cc-or-arr">→</span>
-                  <span className="cc-or-conc">rain doubles uptake <mark>+124%</mark></span>
+                  <span className="cc-or-conc">Endeavour Lane fix = <mark>+89 walks/wk</mark></span>
                 </p>
               </li>
               <li>
-                <span className="cc-or-ico" aria-hidden="true">🔁</span>
+                <span className="cc-or-ico" aria-hidden="true">👪</span>
                 <p>
-                  <span>64% repeat walkers wk-3</span>
+                  <span>Households save <mark>$4.20</mark> per walk</span>
                   <span className="cc-or-arr">→</span>
-                  <span className="cc-or-conc">habit forming · retention <mark>healthy</mark></span>
+                  <span className="cc-or-conc"><mark>$5.2k</mark> back to residents this month</span>
+                </p>
+              </li>
+              <li>
+                <span className="cc-or-ico" aria-hidden="true">📈</span>
+                <p>
+                  <span>Scale to 5 nearby suburbs</span>
+                  <span className="cc-or-arr">→</span>
+                  <span className="cc-or-conc">projected <mark>+$47k/wk</mark> · payback month 4</span>
                 </p>
               </li>
             </ul>

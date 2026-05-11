@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 
 interface ReadingRow {
   icon: ReactNode
-  signal: string
+  signal: ReactNode
   conclusion: ReactNode
 }
 
@@ -20,8 +20,8 @@ export function OwnerReading({ rows }: Props) {
     <section className="cc-or" role="region" aria-label="Catto reading">
       <header className="cc-or-head">
         <span className="cc-or-dot" aria-hidden="true" />
-        <span className="cc-or-h">READING NOW</span>
-        <span className="cc-or-src">{rows.length} signals · live</span>
+        <span className="cc-or-h">CATTO SEES</span>
+        <span className="cc-or-src">{rows.length} signals · 0.8s</span>
       </header>
       <ul className="cc-or-list">
         {rows.map((r, i) => (

@@ -6556,7 +6556,7 @@ a.cc-owner-cta {
   color: var(--ink-soft);
   font-weight: 500;
 }
-.cc-or-conc mark {
+.cc-or-row p mark {
   background: transparent;
   color: #b62963;
   font-weight: 700;

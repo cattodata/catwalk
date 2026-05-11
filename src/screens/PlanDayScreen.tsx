@@ -13,7 +13,7 @@ import type { Shop } from '../types/shop'
 
 export function PlanDayScreen() {
   const navigate = useNavigate()
-  const { shops } = useRealShops()
+  const { shops, isReal } = useRealShops()
   const geo = useGeolocation(true)
   const origin = geo.position ? { lat: geo.position.lat, lng: geo.position.lng } : null
   const basketIds = usePlanBasket()
@@ -21,20 +21,20 @@ export function PlanDayScreen() {
   const [stops, setStops] = useState<Shop[]>([])
   const [hydrated, setHydrated] = useState(false)
 
-  // hydrate from basket once shops load
+  // hydrate from basket once REAL shops load (fallback shops have different IDs)
   useEffect(() => {
     if (hydrated) return
-    if (shops.length === 0) return
     if (basketIds.length === 0) {
       setHydrated(true)
       return
     }
+    if (!isReal || shops.length === 0) return
     const fromBasket = basketIds
       .map((id) => shops.find((s) => s.id === id))
       .filter((s): s is Shop => Boolean(s))
     if (fromBasket.length > 0) setStops(fromBasket)
     setHydrated(true)
-  }, [shops, basketIds, hydrated])
+  }, [shops, isReal, basketIds, hydrated])
   const [picking, setPicking] = useState(false)
   const totals = useMemo(() => computePlanTotals(stops, origin), [stops, origin])
 
