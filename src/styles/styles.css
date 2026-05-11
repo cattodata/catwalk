@@ -3451,9 +3451,10 @@ button { font-family: inherit; cursor: pointer; }
   min-width: 0;
 }
 .cc-shop-mini-add {
-  flex: 0 0 28px;
-  width: 28px;
-  height: 28px;
+  position: relative;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   border: 1.5px solid var(--coral);
   background: #fff;
@@ -3463,6 +3464,12 @@ button { font-family: inherit; cursor: pointer; }
   cursor: pointer;
   padding: 0;
   transition: background-color 0.15s ease, color 0.15s ease;
+}
+.cc-shop-mini-add::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
 }
 .cc-shop-mini-add:hover { background: #fff7fa; }
 .cc-shop-mini-add.is-on {
@@ -4808,7 +4815,7 @@ button { font-family: inherit; cursor: pointer; }
   display: flex;
   flex-direction: column;
   background: var(--g-pol-bg);
-  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
 }
 .cc-council-bar {
   display: flex;
@@ -6973,8 +6980,8 @@ a.cc-owner-cta {
   position: absolute;
   bottom: 8px;
   right: 8px;
-  width: 26px;
-  height: 26px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   border: 1.5px solid var(--coral);
   background: #fff;
@@ -6984,6 +6991,12 @@ a.cc-owner-cta {
   cursor: pointer;
   padding: 0;
   z-index: 2;
+}
+.cc-deal-add::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
 }
 .cc-deal-add.is-on {
   background: var(--coral);
@@ -7573,11 +7586,19 @@ a.cc-owner-cta {
   max-width: 393px;
   background: #fff;
   border-radius: 20px 20px 0 0;
-  padding: 16px 18px 24px;
+  padding: 10px 18px 24px;
   max-height: 70vh;
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+.cc-plan-picker-grabber {
+  width: 38px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--line);
+  margin: 0 auto 6px;
+  display: block;
 }
 .cc-plan-picker > header {
   display: flex;
@@ -7654,7 +7675,7 @@ a.cc-owner-cta {
 /* ---------- PLAN BASKET FLOATING PILL ---------- */
 .cc-basket-pill {
   position: fixed;
-  bottom: calc(74px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(82px + env(safe-area-inset-bottom, 0px));
   left: 12px;
   right: 12px;
   max-width: 369px;

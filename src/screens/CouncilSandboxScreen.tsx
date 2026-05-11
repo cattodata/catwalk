@@ -210,7 +210,6 @@ export function CouncilSandboxScreen() {
         </div>
       )}
 
-      <div style={{ height: 72 }} aria-hidden="true" />
       <BottomNav />
     </div>
   )

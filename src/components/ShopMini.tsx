@@ -33,6 +33,7 @@ export function ShopMini({ shop, walkMin, onSelect, onAdd, picked = false }: Pro
             e.stopPropagation()
             onAdd(shop)
           }}
+          aria-pressed={picked}
           aria-label={picked ? `Remove ${shop.name} from plan` : `Add ${shop.name} to plan`}
         >
           {picked ? <Check size={14} strokeWidth={3} /> : <Plus size={14} strokeWidth={3} />}

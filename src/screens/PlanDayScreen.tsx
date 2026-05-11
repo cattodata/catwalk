@@ -82,6 +82,15 @@ export function PlanDayScreen() {
     navigate('/walk/live')
   }
 
+  useEffect(() => {
+    if (!picking) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setPicking(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [picking])
+
   return (
     <div className="cc-plan-screen">
       <header className="cc-plan-bar">
@@ -201,9 +210,16 @@ export function PlanDayScreen() {
       {/* shop picker sheet */}
       {picking && (
         <div className="cc-plan-picker-veil" onClick={() => setPicking(false)}>
-          <div className="cc-plan-picker" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="cc-plan-picker"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="cc-plan-picker-h"
+          >
+            <span className="cc-plan-picker-grabber" aria-hidden="true" />
             <header>
-              <span className="cc-plan-picker-h">Add a stop</span>
+              <span id="cc-plan-picker-h" className="cc-plan-picker-h">Add a stop</span>
               <button
                 type="button"
                 className="cc-plan-picker-x"

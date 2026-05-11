@@ -49,6 +49,7 @@ export function LiveDealsRail({ shops, onSelect, onAdd, pickedIds = [] }: Props)
                     e.stopPropagation()
                     onAdd(s)
                   }}
+                  aria-pressed={picked}
                   aria-label={picked ? `Remove ${s.name} from plan` : `Add ${s.name} to plan`}
                 >
                   {picked ? <Check size={13} strokeWidth={3} /> : <Plus size={13} strokeWidth={3} />}
