@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Plus, X, Footprints, Leaf, Coins, ArrowRight } from 'lucide-react'
 
@@ -7,6 +7,8 @@ import { CattoPill } from '../components/CattoPill'
 import { useRealShops } from '../hooks/useRealShops'
 import { useGeolocation } from '../hooks/useGeolocation'
 import { computePlanTotals, DAY_PRESETS, buildDayFromPreset } from '../lib/planMath'
+import { planBasket } from '../lib/planBasket'
+import { usePlanBasket } from '../hooks/usePlanBasket'
 import type { Shop } from '../types/shop'
 
 export function PlanDayScreen() {
@@ -14,8 +16,25 @@ export function PlanDayScreen() {
   const { shops } = useRealShops()
   const geo = useGeolocation(true)
   const origin = geo.position ? { lat: geo.position.lat, lng: geo.position.lng } : null
+  const basketIds = usePlanBasket()
 
   const [stops, setStops] = useState<Shop[]>([])
+  const [hydrated, setHydrated] = useState(false)
+
+  // hydrate from basket once shops load
+  useEffect(() => {
+    if (hydrated) return
+    if (shops.length === 0) return
+    if (basketIds.length === 0) {
+      setHydrated(true)
+      return
+    }
+    const fromBasket = basketIds
+      .map((id) => shops.find((s) => s.id === id))
+      .filter((s): s is Shop => Boolean(s))
+    if (fromBasket.length > 0) setStops(fromBasket)
+    setHydrated(true)
+  }, [shops, basketIds, hydrated])
   const [picking, setPicking] = useState(false)
   const totals = useMemo(() => computePlanTotals(stops, origin), [stops, origin])
 
@@ -24,19 +43,34 @@ export function PlanDayScreen() {
     [shops, stops],
   )
 
+  const syncBasket = (next: Shop[]) => {
+    planBasket.clear()
+    next.slice(0, 4).forEach((s) => planBasket.add(s.id))
+  }
+
   const onPreset = (presetId: string) => {
     const preset = DAY_PRESETS.find((p) => p.id === presetId)
     if (!preset) return
-    setStops(buildDayFromPreset(preset, shops))
+    const next = buildDayFromPreset(preset, shops)
+    setStops(next)
+    syncBasket(next)
   }
 
   const onAddStop = (shop: Shop) => {
-    setStops((cur) => [...cur, shop])
+    setStops((cur) => {
+      const next = [...cur, shop]
+      syncBasket(next)
+      return next
+    })
     setPicking(false)
   }
 
   const onRemoveStop = (id: string) => {
-    setStops((cur) => cur.filter((s) => s.id !== id))
+    setStops((cur) => {
+      const next = cur.filter((s) => s.id !== id)
+      syncBasket(next)
+      return next
+    })
   }
 
   const onStartDay = () => {
@@ -44,6 +78,7 @@ export function PlanDayScreen() {
     sessionStorage.setItem('cc:plan', JSON.stringify({ stopIds: stops.map((s) => s.id), index: 0 }))
     sessionStorage.setItem('cc:selectedShopId', stops[0].id)
     sessionStorage.setItem('cc:transport', 'walk')
+    planBasket.clear()
     navigate('/walk/live')
   }
 

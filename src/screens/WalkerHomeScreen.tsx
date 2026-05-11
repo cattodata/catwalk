@@ -12,8 +12,11 @@ import { ShopMiniRail } from '../components/ShopMini'
 import { ShopDetailSheet } from '../components/ShopDetailSheet'
 import { CuisineRow } from '../components/CuisineRow'
 import { LiveDealsRail } from '../components/LiveDealsRail'
+import { PlanBasketPill } from '../components/PlanBasketPill'
 import { RealMap } from '../components/RealMap'
 
+import { usePlanBasket } from '../hooks/usePlanBasket'
+import { planBasket } from '../lib/planBasket'
 import { useRealShops } from '../hooks/useRealShops'
 import { useWeather } from '../hooks/useWeather'
 import { useGeolocation } from '../hooks/useGeolocation'
@@ -41,6 +44,12 @@ export function WalkerHomeScreen() {
   const [transport, setTransport] = useState<TransportId>('walk')
   const [recenterNonce, setRecenterNonce] = useState(0)
   const [cuisine, setCuisine] = useState<CuisineId>('all')
+  const basketIds = usePlanBasket()
+
+  const onTogglePlan = (s: Shop) => {
+    if (basketIds.includes(s.id)) planBasket.remove(s.id)
+    else planBasket.add(s.id)
+  }
 
   const filteredShops = useMemo(
     () => (cuisine === 'all' ? shops : shops.filter((s) => s.cuisine === cuisine)),
@@ -155,12 +164,19 @@ export function WalkerHomeScreen() {
               </span>
               <span className="cc-plan-entry-arr" aria-hidden="true">›</span>
             </button>
-            <LiveDealsRail shops={dealShops} onSelect={(s) => setSelectedShop(s)} />
+            <LiveDealsRail
+              shops={dealShops}
+              onSelect={(s) => setSelectedShop(s)}
+              onAdd={onTogglePlan}
+              pickedIds={basketIds}
+            />
             <CuisineRow active={cuisine} onChange={setCuisine} />
             {railShops.length > 0 ? (
               <ShopMiniRail
                 shops={railShops.slice(0, 4)}
                 onSelect={(s) => setSelectedShop(s)}
+                onAdd={onTogglePlan}
+                pickedIds={basketIds}
               />
             ) : (
               <div className="cc-empty-row">No {cuisine === 'all' ? 'shops' : cuisine.toLowerCase()} nearby. Try a different filter.</div>
@@ -169,6 +185,7 @@ export function WalkerHomeScreen() {
         )}
       </section>
 
+      <PlanBasketPill shops={shops} />
       <BottomNav />
     </div>
   )
