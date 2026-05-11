@@ -6,12 +6,19 @@ on:
   workflow_dispatch:
 
 permissions:
-  id-token: write   # required for OIDC azure/login
+  id-token: write   # for OIDC azure/login
   contents: read
+
+env:
+  RG: personal-ai-rg
+  APP: cattocompass
+  STORAGE: cattocompassdeploy
+  CONTAINER: deploy
+  BLOB: cattocompass.zip
 
 jobs:
   build-and-deploy:
-    name: Build + deploy to cattocompass.azurewebsites.net
+    name: Build + deploy via Run From Package
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -41,18 +48,49 @@ jobs:
           zip -rq cattocompass.zip server dist node_modules package.json -x "*.DS_Store"
           ls -lh cattocompass.zip
 
-      - name: Azure login (OIDC, no secrets stored)
+      - name: Azure login (OIDC)
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Deploy zip to Azure App Service
+      - name: Upload zip to Azure Storage
         run: |
-          az webapp deploy \
-            --resource-group personal-ai-rg \
-            --name cattocompass \
-            --src-path cattocompass.zip \
-            --type zip \
-            --async false
+          CONN=$(az storage account show-connection-string -g $RG -n $STORAGE --query connectionString -o tsv)
+          az storage blob upload \
+            --connection-string "$CONN" \
+            --container-name $CONTAINER \
+            --name $BLOB \
+            --file cattocompass.zip \
+            --overwrite
+
+      - name: Generate fresh SAS URL + update WEBSITE_RUN_FROM_PACKAGE
+        run: |
+          CONN=$(az storage account show-connection-string -g $RG -n $STORAGE --query connectionString -o tsv)
+          EXPIRY=$(date -u -d "+1 year" +"%Y-%m-%dT%H:%MZ")
+          SAS_URL=$(az storage blob generate-sas \
+            --connection-string "$CONN" \
+            --container-name $CONTAINER --name $BLOB \
+            --permissions r --expiry "$EXPIRY" \
+            --full-uri --output tsv)
+          az webapp config appsettings set -g $RG -n $APP \
+            --settings WEBSITE_RUN_FROM_PACKAGE="$SAS_URL" --output none
+
+      - name: Restart App Service to pick up new package
+        run: az webapp restart -g $RG -n $APP
+
+      - name: Wait + smoke-test live URL
+        run: |
+          for i in $(seq 1 20); do
+            code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 15 https://$APP.azurewebsites.net/api/health || echo "000")
+            echo "[$i/20] HTTP $code"
+            if [ "$code" = "200" ]; then
+              echo "[ready]"
+              curl -sS https://$APP.azurewebsites.net/api/health
+              exit 0
+            fi
+            sleep 20
+          done
+          echo "::warning::App did not become healthy in 6m40s"
+          exit 1
