@@ -2781,3 +2781,154 @@ button { font-family: inherit; cursor: pointer; }
 .marker-cluster-large div {
   background-color: transparent !important;
 }
+
+/* ---------- F5 SHELL + ROUTE SKELETON (will fill in S1-S7) ---------- */
+.cc-mshell {
+  min-height: 100dvh;
+  background: var(--paper);
+  display: flex;
+  justify-content: center;
+}
+.cc-mshell-inner {
+  width: 100%;
+  max-width: 393px;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  position: relative;
+}
+
+.cc-icon-btn {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  cursor: pointer;
+  text-decoration: none;
+  padding: 0 10px;
+}
+
+/* Placeholder (used until each screen ships) */
+.cc-placeholder {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 18px 22px;
+}
+.cc-placeholder-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.cc-placeholder-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.cc-placeholder-body h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.3px;
+  margin: 0 0 6px;
+}
+.cc-placeholder-body code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  background: var(--cream);
+  padding: 4px 8px;
+  border-radius: 6px;
+  align-self: flex-start;
+}
+.cc-placeholder-link {
+  display: block;
+  padding: 12px 14px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  color: var(--ink);
+  text-decoration: none;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Vaul drawer (Switch role sheet) */
+.cc-vaul-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(45, 36, 24, 0.32);
+  z-index: 50;
+}
+.cc-vaul-content {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--card);
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+  padding: 8px 18px 28px;
+  z-index: 51;
+  box-shadow: var(--shadow-sheet);
+  max-width: 393px;
+  margin: 0 auto;
+}
+.cc-vaul-grab {
+  width: 42px;
+  height: 4px;
+  border-radius: 3px;
+  background: #d8cdb8;
+  margin: 4px auto 12px;
+}
+.cc-srs {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.cc-srs-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.3px;
+  margin: 0;
+}
+.cc-srs-desc {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin: 0;
+}
+.cc-srs-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 12px 14px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--ink);
+  font-family: var(--font-ui);
+}
+.cc-srs-action-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cc-srs-action-body b {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+}
+.cc-srs-action-body small {
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
