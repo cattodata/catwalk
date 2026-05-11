@@ -44,7 +44,6 @@ import { generateInsights, buildOwnerVitals, buildWalkerVitals } from './lib/ins
 import { generateCampaign } from './lib/claude'
 import { smartPick } from './lib/smartPick'
 import { tierFromCo2 } from './data/tiers'
-import { PhoneFrame } from './components/PhoneFrame'
 
 const STATION_DAILY_AVG = 47832 // TfNSW Aug 2024 monthly aggregate
 
@@ -380,23 +379,9 @@ export function App() {
 
       <ModeToggle mode={mode} setMode={setMode} />
 
-      {/* Phone-framed walker/owner content (desktop only — mobile bypasses frame) */}
+      {/* Walker / owner — real web 2-column on desktop, single column on mobile */}
       {(mode === 'walk' || mode === 'shop') ? (
-        <PhoneFrame
-          annotations={
-            mode === 'walk'
-              ? [
-                  { emoji: '📍', title: 'Real shops, real GPS', body: 'Pins from live OSM Overpass. Walk verified via geolocation + 100m geofence.' },
-                  { emoji: '🌱', title: 'CO₂ vs driving', body: 'Each walk logs kg saved vs a car trip. Persists on-device + Supabase.' },
-                  { emoji: '🎯', title: 'Tap "Smart Pick"', body: 'Picks the best shop right now by ROI (points × multiplier ÷ time) and weather/time bonuses.' },
-                ]
-              : [
-                  { emoji: '📸', title: 'Drop a product photo', body: 'Vision-LLM reads the photo + live weather + foot-traffic to write a campaign.' },
-                  { emoji: '🌏', title: 'EN · 中文 · 한국어', body: 'Three hand-translated tracks targeting the 40% Chinese + 8% Korean Chatswood demographic.' },
-                  { emoji: '⚡', title: 'Real signals', body: 'Open-Meteo weather, OSM competitor count, ABS Census demographics, today\'s Willoughby event.' },
-                ]
-          }
-        >
+        <>
           <Hero mode={mode} onSmartPick={onSmartPickClick} smartPickReady={shops.length > 0} hasSelectedShop={!!selectedShop} />
           <Vitals cards={vitals} />
           <main id="main-content" className="cc-grid" tabIndex={-1}>
@@ -519,7 +504,7 @@ export function App() {
         )}
       </div>
       </main>
-        </PhoneFrame>
+        </>
       ) : (
         /* Council mode — full-width dashboard (no phone frame) */
         <main id="main-content" className="cc-grid" tabIndex={-1}>
