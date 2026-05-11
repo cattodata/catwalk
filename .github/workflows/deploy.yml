@@ -1,0 +1,55 @@
+name: Deploy to Azure App Service (cattocompass)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+    name: Build + deploy to cattocompass.azurewebsites.net
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Build SPA
+        run: npm run build
+
+      - name: Prune dev dependencies for runtime
+        run: |
+          # Remove devDeps so deploy zip is small + production-only
+          npm prune --omit=dev --legacy-peer-deps || true
+
+      - name: Zip artifact
+        run: |
+          # Include only what the runtime needs:
+          #  - server/ (Express + handler)
+          #  - dist/ (built SPA)
+          #  - node_modules/ (production deps)
+          #  - package.json (npm start)
+          zip -r cattocompass.zip server dist node_modules package.json -x "*.DS_Store"
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: cattocompass
+          slot-name: production
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_CATTOCOMPASS }}
+          package: cattocompass.zip
