@@ -6245,3 +6245,147 @@ a.cc-owner-cta {
 .cc-forecast-card-v5-q b {
   color: var(--amber);
 }
+
+/* ---------- V5 OWNER CAMPAIGN — single-screen ship ---------- */
+.cc-camp-bar-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  margin-left: auto;
+  margin-right: 6px;
+}
+.cc-camp-v5 {
+  padding: 0 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cc-camp-hero-photo {
+  position: relative;
+  display: block;
+  height: 240px;
+  border-radius: 22px;
+  overflow: hidden;
+  cursor: pointer;
+  background:
+    repeating-linear-gradient(45deg, transparent 0 12px, rgba(245, 200, 66, 0.05) 12px 14px),
+    linear-gradient(135deg, #FFE6CB, #FFD8E6);
+  box-shadow: var(--shadow-card);
+}
+.cc-camp-hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cc-camp-hero-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--ink-soft);
+  text-align: center;
+  padding: 0 24px;
+}
+.cc-camp-hero-placeholder b {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--ink);
+}
+.cc-camp-hero-placeholder small {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+}
+.cc-camp-hero-meta {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 14px 16px 14px;
+  background: linear-gradient(180deg, transparent, rgba(26, 20, 16, 0.72));
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+}
+.cc-camp-hero-meta h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -0.3px;
+  color: #fff;
+  margin: 0;
+}
+
+.cc-camp-caption {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cc-camp-caption-head {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: -0.2px;
+}
+.cc-camp-caption-body {
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink);
+  margin: 0;
+}
+.cc-camp-uplift {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--line);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+}
+.cc-camp-uplift b {
+  margin-left: auto;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.3px;
+  background: var(--g-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.cc-camp-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.cc-camp-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 11px 10px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12.5px;
+  color: var(--ink);
+  cursor: pointer;
+}
