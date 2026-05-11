@@ -58,7 +58,8 @@ export function OwnerForecastScreen() {
     <div className="cc-owner-forecast">
       <header className="cc-owner-bar">
         <div className="cc-owner-bar-title">
-          <h2>Saint Honoré · Daily</h2>
+          <h2>Saint Honoré</h2>
+          <small>Yesterday's takings</small>
         </div>
         <div className="cc-owner-bar-actions">
           <SwitchRoleGear />

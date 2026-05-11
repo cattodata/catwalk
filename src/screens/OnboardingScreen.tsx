@@ -28,9 +28,14 @@ export function OnboardingScreen() {
 
   return (
     <div className="cc-onb">
-      <div className="cc-onb-citybar">
-        <CityPickerChip />
-      </div>
+      {/* City picker moved into Settings/Switch-role sheet to keep onboarding clean.
+          Surface it here only when ?city=picker query is present for testing. */}
+      {typeof window !== 'undefined' &&
+        new URLSearchParams(window.location.search).get('city') === 'picker' && (
+          <div className="cc-onb-citybar">
+            <CityPickerChip />
+          </div>
+        )}
       <div className="cc-onb-top">
         <div className="cc-onb-mascot" aria-hidden="true">
           <span>🐱</span>

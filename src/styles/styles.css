@@ -6424,3 +6424,14 @@ a.cc-owner-cta {
   align-self: flex-start;
   text-align: left;
 }
+
+/* Owner appbar subtitle */
+.cc-owner-bar-title { display: flex; flex-direction: column; gap: 2px; }
+.cc-owner-bar-title small {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
