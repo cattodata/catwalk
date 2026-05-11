@@ -2,9 +2,9 @@
 
 ## 🚀 LIVE — verified rendering in real browser
 
-**URLs:**
-- https://cattocompass.azurewebsites.net (Azure default)
-- https://cattocompass.cattodata.com (custom — once SSL provisions)
+**URLs (both live, both valid HTTPS):**
+- https://cattocompass.cattodata.com — **primary, share this**
+- https://cattocompass.azurewebsites.net (Azure default fallback)
 
 **How to login:**
 1. Open URL → browser pops up auth dialog
