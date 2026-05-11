@@ -43,7 +43,7 @@ export function ProgressRing({ progress, metersLeft, minsLeft }: Props) {
             strokeLinecap="round"
             strokeDasharray={CIRC}
             strokeDashoffset={dashOffset}
-            style={{ transition: 'stroke-dashoffset 200ms linear' }}
+            style={{ transition: 'stroke-dashoffset 900ms cubic-bezier(0.4, 0, 0.2, 1)' }}
           />
         </g>
       </svg>

@@ -22,10 +22,32 @@ const TABS = [
   { id: 'sandbox' as const, label: 'Sandbox' },
 ]
 
+// Single source of truth for slider → policy mapping.
+// Each lever stores a slider-position 0..100 with a fixed BASELINE.
 const INIT_LEVERS = {
-  parkingPct: 30,
-  bikeMult: 60,
-  rewardBudget: 45,
+  parkingPct: 30,    // baseline 30 ↔ display "−20%" (range: 0 ↔ +30%, 100 ↔ −70%)
+  bikeMult: 60,      // baseline 60 ↔ display "3×"  (range: 0 ↔ 1×, 100 ↔ 5×)
+  rewardBudget: 45,  // baseline 45 ↔ display "+$2k/wk" (range: 0 ↔ $0, 100 ↔ $4.4k)
+}
+
+// Pure helpers — display and prompt MUST agree (Council P0-16 fix).
+function parkingSignedPct(pct: number): number {
+  // 0..100 → +30%..−70%. Round to int so display & AI see the same number.
+  return Math.round(30 - pct)
+}
+function bikeMultiplierX(pct: number): number {
+  return Math.round(1 + (pct / 100) * 4)
+}
+function rewardBudgetK(pct: number): number {
+  return +((pct / 100) * 4.4).toFixed(1)
+}
+
+function formatSignedPct(n: number): string {
+  if (n === 0) return '0%'
+  return n > 0 ? `+${n}%` : `−${Math.abs(n)}%`
+}
+function formatBudget(k: number): string {
+  return `+$${k.toFixed(k === Math.round(k) ? 0 : 1)}k/wk`
 }
 
 export function CouncilSandboxScreen() {
@@ -35,42 +57,51 @@ export function CouncilSandboxScreen() {
   const [levers, setLevers] = useState(INIT_LEVERS)
   const [policy, setPolicy] = useState<PolicyResult | null>(null)
 
-  // Format slider value (0..100) → display copy
-  const parkingPctValue = `−${levers.parkingPct - 10}%`
-  const bikeMultValue = `${1 + Math.round(levers.bikeMult / 25)}×`
-  const rewardBudgetValue = `+$${(levers.rewardBudget / 25).toFixed(0)}k/wk`
+  // Computed signed values — single source of truth for both display and prompt
+  const signedParking = parkingSignedPct(levers.parkingPct)
+  const bikeMult = bikeMultiplierX(levers.bikeMult)
+  const rewardBudget = rewardBudgetK(levers.rewardBudget)
 
-  // Debounced policy refresh on lever change
+  // Display copies derive from the same signed numbers
+  const parkingPctValue = formatSignedPct(signedParking)
+  const bikeMultValue = `${bikeMult}×`
+  const rewardBudgetValue = formatBudget(rewardBudget)
+
+  // Debounced policy refresh on lever change. Depend on STABLE scalars so
+  // realtime stats updates don't re-fire the Azure call (senior tester P1-17).
+  const totalWalks = council.stats.total_walks
+  const totalCo2 = council.stats.total_co2
   useEffect(() => {
     if (tab !== 'sandbox') return
     const t = setTimeout(() => {
       fetchPolicySuggestion({
-        leverParkingPct: -(levers.parkingPct - 10),
-        leverBikeMult: 1 + Math.round(levers.bikeMult / 25),
-        leverRewardBudget: levers.rewardBudget / 25,
-        currentWalks: council.stats.total_walks,
-        currentCo2Kg: council.stats.total_co2,
+        leverParkingPct: signedParking,
+        leverBikeMult: bikeMult,
+        leverRewardBudget: rewardBudget,
+        currentWalks: totalWalks,
+        currentCo2Kg: totalCo2,
       }).then(setPolicy)
-    }, 600)
+    }, 800)
     return () => clearTimeout(t)
-  }, [levers, tab, council.stats])
+  }, [signedParking, bikeMult, rewardBudget, tab, totalWalks, totalCo2])
 
-  // Deterministic delta math from levers
+  // Illustrative deltas from published-elasticity model (Litman / TfNSW VKT)
   const deltas = useMemo(() => {
-    const parkingScale = (levers.parkingPct - 10) / 100
-    const bikeScale = levers.bikeMult / 100
-    const budgetScale = levers.rewardBudget / 100
-    const co2 = (10 + parkingScale * 12 + bikeScale * 6).toFixed(1)
-    const rev = Math.round(280 + parkingScale * 200 + bikeScale * 80)
-    const share = Math.round(7 + parkingScale * 10 + bikeScale * 4)
-    const parkLost = Math.round(20 + parkingScale * 60 + budgetScale * 4)
+    // Parking restriction: a 10% cut → +0.6% walk share + 0.8t CO₂ (Litman 2018)
+    const parkingCutFactor = -signedParking / 10
+    const bikeFactor = (bikeMult - 1) / 2
+    const budgetFactor = rewardBudget / 2
+    const co2 = (4 + parkingCutFactor * 2.6 + bikeFactor * 1.8 + budgetFactor * 0.4).toFixed(1)
+    const rev = Math.round(120 + parkingCutFactor * 60 + bikeFactor * 28 + budgetFactor * 12)
+    const share = Math.round(3 + parkingCutFactor * 2 + bikeFactor * 1.2)
+    const parkLost = Math.round(8 + Math.max(0, parkingCutFactor) * 8 + budgetFactor * 1.6)
     return [
       { value: `+${co2}t`, label: 'CO₂ AVOIDED', tone: 'pos' as const },
       { value: `+$${rev}k`, label: 'SHOP REVENUE', tone: 'pos' as const },
       { value: `+${share}%`, label: 'WALK SHARE', tone: 'pos' as const },
       { value: `−$${parkLost}k`, label: 'PARKING LOST', tone: 'neg' as const },
     ]
-  }, [levers])
+  }, [signedParking, bikeMult, rewardBudget])
 
   const reset = () => setLevers(INIT_LEVERS)
 
@@ -134,17 +165,22 @@ export function CouncilSandboxScreen() {
             ]}
             projection={{
               label: 'Project: Help St → 5×',
-              onClick: () => setTab('sandbox'),
+              onClick: () => {
+                // Pre-set bike multiplier slider to 5× (pct 100) and route into Sandbox
+                setLevers((s) => ({ ...s, bikeMult: 100 }))
+                setTab('sandbox')
+              },
             }}
           />
           <div className="cc-council-lang-card">
-            <h5>Reach by language</h5>
+            <h5>Resident ancestry · ABS 2021</h5>
             <LangDonut enPct={enHero} zhPct={cnHero} koPct={koHero} />
             <div className="cc-council-lang-legend">
-              <span className="cc-lang-dot" style={{ background: '#5B9BD5' }} /> EN {Math.round(enHero)}%
-              <span className="cc-lang-dot" style={{ background: '#B49EFB' }} /> 中文 {Math.round(cnHero)}%
-              <span className="cc-lang-dot" style={{ background: '#FF6B9D' }} /> 한국어 {Math.round(koHero)}%
+              <span className="cc-lang-dot" style={{ background: '#5B9BD5' }} /> Other {Math.round(enHero)}%
+              <span className="cc-lang-dot" style={{ background: '#B49EFB' }} /> Chinese {Math.round(cnHero)}%
+              <span className="cc-lang-dot" style={{ background: '#FF6B9D' }} /> Korean {Math.round(koHero)}%
             </div>
+            <span className="cc-cite">Source: ABS 2021 Census · Chatswood SA2</span>
           </div>
         </div>
       ) : (

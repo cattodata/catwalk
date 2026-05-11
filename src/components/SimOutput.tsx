@@ -8,7 +8,7 @@ export function SimOutputCard({ deltas }: { deltas: Delta[] }) {
   return (
     <div className="cc-sim-out">
       <h5>Projected 12-mo impact</h5>
-      <span className="cc-sim-lab">CLAUDE + AGENT-BASED MODEL · N=8,400</span>
+      <span className="cc-sim-lab">ILLUSTRATIVE · STATIC ELASTICITIES (v0.1)</span>
       <div className="cc-delta-grid">
         {deltas.map((d, i) => (
           <div key={i} className={`cc-delta cc-delta-${d.tone}`}>

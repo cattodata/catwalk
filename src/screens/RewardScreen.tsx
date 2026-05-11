@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Gift, Leaf, Car, ArrowRight } from 'lucide-react'
 
 import { ConfettiBurst } from '../components/ConfettiBurst'
@@ -25,25 +25,35 @@ const DEMO: RewardData = {
   points: 96,
   co2Kg: 0.08,
   discount: 15,
-  isVerifiedGps: true,
+  isVerifiedGps: false,
 }
 
 export function RewardScreen() {
   const navigate = useNavigate()
+  const [search] = useSearchParams()
+  const isDemo = search.get('demo') === '1'
   const auth = useSupabaseAuth()
   const { total_co2 } = useUserStats(auth.user?.id ?? null)
 
-  const [data, setData] = useState<RewardData>(DEMO)
+  const [data, setData] = useState<RewardData | null>(null)
   useEffect(() => {
     const raw = sessionStorage.getItem('cc:reward')
     if (raw) {
       try {
         setData(JSON.parse(raw))
+        return
       } catch {
-        /* keep demo */
+        /* fall through */
       }
     }
-  }, [])
+    if (isDemo) {
+      setData(DEMO)
+      return
+    }
+    navigate('/walk', { replace: true })
+  }, [navigate, isDemo])
+
+  if (!data) return null
 
   const tierBefore = useMemo(() => tierFromCo2(Math.max(0, total_co2 - data.co2Kg)), [total_co2, data.co2Kg])
   const tierAfter = useMemo(() => tierFromCo2(total_co2), [total_co2])
@@ -56,7 +66,7 @@ export function RewardScreen() {
       <ConfettiBurst />
       <div className="cc-reward-inner">
         <span className="cc-reward-eb">
-          ✓ GPS VERIFIED · {data.dist}M · WALK <span className="cc-reward-verif" aria-hidden="true">●</span>
+          {data.isVerifiedGps ? '✓ GPS VERIFIED' : '◇ DEMO MODE'} · {data.dist}M · WALK <span className="cc-reward-verif" aria-hidden="true">●</span>
         </span>
 
         <div className="cc-reward-mascot" aria-hidden="true">

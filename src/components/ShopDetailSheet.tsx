@@ -42,7 +42,7 @@ export function ShopDetailSheet({ shop, transport, onTransport, onStart, onBack 
         ]}
       />
 
-      <TransportModesRow active={transport} onChange={onTransport} compact />
+      <TransportModesRow active={transport} onChange={onTransport} walkMin={walkMin} />
 
       <button type="button" className="cc-sd-cta" onClick={onStart}>
         <span aria-hidden="true">🐾</span> Start the walk

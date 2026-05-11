@@ -48,6 +48,13 @@ export function useWalkSession({
   const startDistRef = useRef<number | null>(null)
   const rafRef = useRef<number | null>(null)
   const phaseRef = useRef<WalkPhase>('idle')
+  // Latest position mirror so the RAF animate() always sees fresh GPS, not the
+  // closure-captured value at start() time. (Senior tester P0-4 fix.)
+  const positionRef = useRef<GeoPosition | null>(position)
+  useEffect(() => { positionRef.current = position }, [position])
+  // Latest verified-GPS flag for confirmArrival (senior tester P0-5 fix).
+  const verifiedRef = useRef<boolean>(false)
+  useEffect(() => { verifiedRef.current = state.isVerifiedGps }, [state.isVerifiedGps])
 
   // Mirror phase to ref so async callbacks always see latest value
   useEffect(() => {
@@ -69,11 +76,16 @@ export function useWalkSession({
   const start = useCallback(() => {
     if (!shop) return
     const t = TRANSPORT.find((x) => x.id === transport) ?? TRANSPORT[0]
+    // Cancel any in-flight RAF before starting a new one (senior tester P1-12)
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
+    rafRef.current = null
+
     startedAtRef.current = performance.now()
-    startPosRef.current = position
+    const startPos = positionRef.current
+    startPosRef.current = startPos
     startDistRef.current =
-      position && shop.lat && shop.lng
-        ? haversineMeters(position, { lat: shop.lat, lng: shop.lng })
+      startPos && shop.lat && shop.lng
+        ? haversineMeters(startPos, { lat: shop.lat, lng: shop.lng })
         : null
 
     setState((s) => ({
@@ -85,7 +97,7 @@ export function useWalkSession({
       rewardSummary: null,
     }))
 
-    if (demoMode || !position || !shop.lat || !shop.lng) {
+    if (demoMode || !startPos || !shop.lat || !shop.lng) {
       // Demo: animate progress over 3.5s × speed mult, then auto-arrive
       const dur = CHATSWOOD.timings.walk * t.speed
       const tick = (tt: number) => {
@@ -95,18 +107,26 @@ export function useWalkSession({
         if (p < 1 && phaseRef.current === 'walking') {
           rafRef.current = requestAnimationFrame(tick)
         } else if (p >= 1 && phaseRef.current === 'walking') {
+          rafRef.current = null
           setState((s) => ({ ...s, phase: 'arrived', isVerifiedGps: false }))
+        } else {
+          rafRef.current = null
         }
       }
       rafRef.current = requestAnimationFrame(tick)
     } else {
-      // Real-walk mode: use live position to compute progress
-      // (geofence effect above flips to 'arrived' when user actually arrives)
+      // Real-walk mode: read positionRef live (P0-4 fix)
       const sd = startDistRef.current ?? 1
       const animate = () => {
-        if (phaseRef.current !== 'walking') return
-        const here = position
-        if (!here || !shop.lat || !shop.lng) return
+        if (phaseRef.current !== 'walking') {
+          rafRef.current = null
+          return
+        }
+        const here = positionRef.current
+        if (!here || !shop.lat || !shop.lng) {
+          rafRef.current = requestAnimationFrame(animate)
+          return
+        }
         const remaining = haversineMeters(here, { lat: shop.lat, lng: shop.lng })
         const p = Math.max(0, Math.min(1, 1 - remaining / sd))
         setState((s) => (s.phase === 'walking' ? { ...s, progress: p } : s))
@@ -114,7 +134,7 @@ export function useWalkSession({
       }
       rafRef.current = requestAnimationFrame(animate)
     }
-  }, [shop, transport, position, demoMode])
+  }, [shop, transport, demoMode])
 
   /** Confirm arrival → save walk to Supabase + return reward */
   const confirmArrival = useCallback(async () => {
@@ -126,7 +146,7 @@ export function useWalkSession({
 
     setState((s) => ({ ...s, phase: 'completed', rewardSummary: reward }))
 
-    // Persist to Supabase if available
+    // Persist to Supabase if available — read verifiedRef (P0-5 fix, fresh value)
     const sb = supabase
     if (sb && userId) {
       try {
@@ -137,18 +157,18 @@ export function useWalkSession({
           distance_m: shop.dist,
           co2_saved_kg: co2,
           points_earned: points,
-          verified_geolocation: state.isVerifiedGps,
+          verified_geolocation: verifiedRef.current,
           start_lat: startPosRef.current?.lat ?? null,
           start_lng: startPosRef.current?.lng ?? null,
-          end_lat: position?.lat ?? null,
-          end_lng: position?.lng ?? null,
+          end_lat: positionRef.current?.lat ?? null,
+          end_lng: positionRef.current?.lng ?? null,
         })
         if (error) console.warn('walks insert failed:', error.message)
       } catch (err) {
         console.warn('walks insert threw:', err)
       }
     }
-  }, [shop, transport, position, state.isVerifiedGps, userId])
+  }, [shop, transport, userId])
 
   const reset = useCallback(() => {
     if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)

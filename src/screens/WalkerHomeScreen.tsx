@@ -46,19 +46,18 @@ export function WalkerHomeScreen() {
       ? 'granted'
       : geo.isSupported ? 'prompt' : 'unknown'
 
-  const top3 = useMemo(() => shops.slice(0, 3), [shops])
-  const railShops = useMemo(() => top3.slice(0, 2), [top3])
+  const railShops = useMemo(() => shops.slice(0, 4), [shops])
 
-  const smart = useMemo(() => smartPick(shops, weather, now.getHours()), [shops, weather, now])
+  const hour = now.getHours()
+  const smart = useMemo(() => smartPick(shops, weather, hour), [shops, weather, hour])
   const smartSubtext = useMemo(() => {
-    if (!smart) return 'Pick a shop on the map'
-    const tags: string[] = [`${smart.shop.mult}×`]
-    if (weather?.isRain) tags.push('beat the rain')
-    if (smart.shop.tags?.includes('Late-night')) tags.push('open late')
-    if (now.getHours() >= 17) tags.push('peak window')
-    if (tags.length < 3) tags.push(smart.shop.name)
-    return tags.slice(0, 3).join(' · ')
-  }, [smart, weather, now])
+    if (!smart) return 'Finding the best pick…'
+    const bits: string[] = [`${smart.shop.mult}× points`]
+    if (weather?.isRain) bits.push('indoor pick')
+    else if (smart.shop.tags?.includes('Late-night') && hour >= 18) bits.push('open late')
+    else if (hour >= 17) bits.push('great for tonight')
+    return `${bits.join(' · ')} · ${smart.shop.name}`
+  }, [smart, weather, hour])
 
   const onSmartPick = () => {
     if (smart) setSelectedShop(smart.shop)
@@ -67,21 +66,23 @@ export function WalkerHomeScreen() {
   const onStartWalk = () => {
     if (!selectedShop) return
     sessionStorage.setItem('cc:selectedShopId', selectedShop.id)
+    sessionStorage.setItem('cc:transport', transport)
     navigate('/walk/live')
   }
 
   const conditionRow = useMemo(() => {
     const parts: string[] = []
-    if (weather) parts.push(`${Math.round(weather.temp)} °C · ${weather.label.toUpperCase()}`)
-    if (todayEvent) parts.push(`${todayEvent.title.toUpperCase()} @ ${todayEvent.window?.split('-')[0] ?? 'TODAY'}`)
-    return parts.join(' · ')
+    if (weather) parts.push(`${Math.round(weather.temp)}°C · ${weather.label}`)
+    else parts.push('Live conditions')
+    if (todayEvent) parts.push(`${todayEvent.title} @ ${todayEvent.window?.split('-')[0] ?? 'today'}`)
+    return parts.join('  ·  ')
   }, [weather, todayEvent])
 
   const shopsCount = shops.length
 
   return (
     <div className="cc-walker">
-      <AppBarLockup hasUnread />
+      <AppBarLockup />
       <TierRibbon tierLevel={tierLevel} tierName="Walker" progressPct={tierPct} kgSaved={total_co2} />
       <div className="cc-geo-row">
         <GeoStatus permission={geoPermission} accuracy={geo.position?.accuracy ?? null} />
@@ -122,7 +123,7 @@ export function WalkerHomeScreen() {
             {conditionRow && <div className="cc-sheet-cond">{conditionRow}</div>}
             <SmartPickCta subtext={smartSubtext} onClick={onSmartPick} />
             {railShops.length > 0 && <ShopMiniRail shops={railShops} onSelect={(s) => setSelectedShop(s)} />}
-            <TransportModesRow active={transport} onChange={setTransport} />
+            <TransportModesRow active={transport} onChange={setTransport} walkMin={smart ? Math.max(1, Math.round(smart.shop.dist / 75)) : undefined} />
           </>
         )}
       </section>

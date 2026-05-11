@@ -109,6 +109,10 @@ function ShopClusterLayer({
       },
     })
 
+    const esc = (raw: string) =>
+      String(raw).replace(/[&<>"']/g, (c) =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] || c),
+      )
     for (const s of shops) {
       if (!s.lat || !s.lng) continue
       const cuisineMatch = cuisineFilter === 'all' || s.cuisine === cuisineFilter
@@ -116,7 +120,7 @@ function ShopClusterLayer({
       if (!cuisineMatch || !tagMatch) continue
       const m = L.marker([s.lat, s.lng], { icon: makeShopIcon(s, selectedShop?.id === s.id) })
       m.bindPopup(
-        `<b>${s.emoji} ${s.name}</b><br/>${s.type} · ${s.dist}m walk · ${s.mult}× pts<br/><small>${s.street ?? ''}</small>`,
+        `<b>${esc(s.emoji)} ${esc(s.name)}</b><br/>${esc(s.type)} · ${s.dist}m walk · ${s.mult}× pts<br/><small>${esc(s.street ?? '')}</small>`,
       )
       m.on('click', () => onSelect(s))
       cluster.addLayer(m)

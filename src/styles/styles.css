@@ -3089,7 +3089,7 @@ button { font-family: inherit; cursor: pointer; }
   flex-direction: column;
   background: var(--paper);
   position: relative;
-  padding-bottom: 72px;
+  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
 }
 
 /* App bar */
@@ -3426,14 +3426,8 @@ button { font-family: inherit; cursor: pointer; }
 /* Transport modes row */
 .cc-modes-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-}
-.cc-modes-row > *:nth-child(3):last-child {
-  grid-column: 3;
-}
-.cc-modes-row:has(> *:nth-child(3):last-child) {
   grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
 }
 .cc-mode-pill {
   display: flex;
@@ -3476,7 +3470,7 @@ button { font-family: inherit; cursor: pointer; }
   display: flex;
   background: var(--card);
   border-top: 1px solid var(--line);
-  padding: 8px 8px 18px;
+  padding: 8px 8px calc(18px + env(safe-area-inset-bottom, 0px));
   z-index: 4;
 }
 .cc-botnav-it {
@@ -4096,7 +4090,7 @@ button { font-family: inherit; cursor: pointer; }
   display: flex;
   flex-direction: column;
   background: var(--paper);
-  padding-bottom: 72px;
+  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
 }
 .cc-owner-bar {
   display: flex;
@@ -4722,7 +4716,7 @@ button { font-family: inherit; cursor: pointer; }
   display: flex;
   flex-direction: column;
   background: var(--g-pol-bg);
-  padding-bottom: 72px;
+  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
 }
 .cc-council-bar {
   display: flex;
@@ -5217,4 +5211,76 @@ button { font-family: inherit; cursor: pointer; }
 }
 .cc-geo-spin {
   animation: spin 1.2s linear infinite;
+}
+
+/* ---------- HONESTY BADGES (DEMO / LIVE) ---------- */
+.cc-mock-tag {
+  display: inline-block;
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  background: rgba(245, 200, 66, 0.16);
+  color: #8a6912;
+  padding: 3px 7px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+.cc-ai-tag-mock {
+  background: rgba(245, 200, 66, 0.16);
+  color: #8a6912;
+}
+.cc-cite {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+/* ---------- A11Y POLISH ---------- */
+/* Bump tap-target hit area on icon buttons without resizing the chrome */
+.cc-icon-btn::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+}
+/* Visible focus rings for keyboard users */
+button:focus-visible,
+a:focus-visible,
+[role="tab"]:focus-visible,
+[role="radio"]:focus-visible {
+  outline: 2px solid var(--coral);
+  outline-offset: 2px;
+}
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .cc-live-dot,
+  .cc-map-pulse-dot,
+  .cc-ins-live-dot,
+  .cc-arrive-cta.is-pulsing,
+  .cc-geo-spin,
+  .cc-scan-spinner,
+  .cc-catto-walk::after {
+    animation: none !important;
+  }
+}
+
+/* ParkOption selected state */
+.cc-po.is-selected:not(.cc-po-best) {
+  border-color: var(--coral);
+  background: linear-gradient(100deg, rgba(255, 107, 157, 0.06), #fff);
+}
+.cc-po.is-selected .cc-po-em {
+  background: rgba(255, 107, 157, 0.18);
+}
+
+/* Owner CTA — make CTAs that look like buttons but are <a> still look right */
+a.cc-park-cta,
+a.cc-camp-cta,
+a.cc-owner-cta {
+  text-decoration: none;
 }

@@ -4,7 +4,7 @@ import { Footprints, Store, BarChart3 } from 'lucide-react'
 const ITEMS = [
   { to: '/walk', label: 'Walk', Icon: Footprints },
   { to: '/owner', label: 'Owners', Icon: Store },
-  { to: '/council', label: 'Pilot', Icon: BarChart3 },
+  { to: '/council', label: 'Council', Icon: BarChart3 },
 ] as const
 
 export function BottomNav() {

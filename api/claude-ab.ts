@@ -29,25 +29,36 @@ interface AbResult {
   source: 'live' | 'mock'
 }
 
-const FALLBACK_BY_BIZ: Record<ReqBody['bizType'], AbResult> = {
-  Cafe: {
-    optionA: { copy: '15% off till 7pm', predRevenue: 185, confidence: 78 },
-    optionB: { copy: 'Free croissant w/ coffee', predRevenue: 285, confidence: 84 },
-    winner: 'b',
-    source: 'mock',
-  },
-  Restaurant: {
-    optionA: { copy: 'Lunch combo $14.90', predRevenue: 220, confidence: 76 },
-    optionB: { copy: 'Free dessert w/ main', predRevenue: 310, confidence: 81 },
-    winner: 'b',
-    source: 'mock',
-  },
-  Bakery: {
-    optionA: { copy: '2-for-1 pastries 3-5pm', predRevenue: 165, confidence: 80 },
-    optionB: { copy: 'Coffee + croissant $8.50', predRevenue: 240, confidence: 86 },
-    winner: 'b',
-    source: 'mock',
-  },
+function fallbackResult(b: ReqBody): AbResult {
+  // Jitter by hour-of-day + weather to avoid identical fallback every call.
+  const jitter = (b.hour * 7 + (b.weather?.isRain ? 13 : 0)) % 11 - 5 // -5..+5
+  const rainBump = b.weather?.isRain ? 20 : 0
+
+  const base: Record<ReqBody['bizType'], AbResult> = {
+    Cafe: {
+      optionA: { copy: '15% off till 7pm', predRevenue: 185 + jitter, confidence: 78 },
+      optionB: {
+        copy: b.weather?.isRain ? 'Free croissant w/ pour-over' : 'Buy 1 latte get 1 half',
+        predRevenue: 285 + jitter + rainBump,
+        confidence: 84,
+      },
+      winner: 'b',
+      source: 'mock',
+    },
+    Restaurant: {
+      optionA: { copy: 'Lunch combo $14.90', predRevenue: 220 + jitter, confidence: 76 },
+      optionB: { copy: 'Free dessert w/ main', predRevenue: 310 + jitter + rainBump, confidence: 81 },
+      winner: 'b',
+      source: 'mock',
+    },
+    Bakery: {
+      optionA: { copy: '2-for-1 pastries 3-5pm', predRevenue: 165 + jitter, confidence: 80 },
+      optionB: { copy: 'Coffee + croissant $8.50', predRevenue: 240 + jitter + rainBump, confidence: 86 },
+      winner: 'b',
+      source: 'mock',
+    },
+  }
+  return base[b.bizType] ?? base.Cafe
 }
 
 function buildPrompt(b: ReqBody): string {
@@ -120,5 +131,5 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   } catch (err) {
     console.warn('claude-ab azure failed:', err)
   }
-  return res.status(200).json(FALLBACK_BY_BIZ[body.bizType] ?? FALLBACK_BY_BIZ.Cafe)
+  return res.status(200).json(fallbackResult(body))
 }

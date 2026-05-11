@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { X, MoreHorizontal, Check, CloudRain, Cloud } from 'lucide-react'
-import type { Shop } from '../types/shop'
+import { X, Check, CloudRain, Cloud } from 'lucide-react'
+import type { Shop, TransportId } from '../types/shop'
 
 import { ProgressRing } from '../components/ProgressRing'
 import { InsightStrip } from '../components/InsightStrip'
@@ -23,32 +23,53 @@ export function WalkingLiveScreen() {
   const { weather } = useWeather()
   const auth = useSupabaseAuth()
 
-  // Restore selected shop from sessionStorage (set by Walker Home Start CTA)
+  // Restore selected shop + transport from sessionStorage (set by Walker Home Start CTA)
   const [shop, setShop] = useState<Shop | null>(null)
+  const transport = useMemo<TransportId>(() => {
+    const t = sessionStorage.getItem('cc:transport') as TransportId | null
+    return t === 'bike' || t === 'scoot' || t === 'bus' ? t : 'walk'
+  }, [])
+
   useEffect(() => {
     const id = sessionStorage.getItem('cc:selectedShopId')
-    if (!id || !shops.length) return
-    setShop(shops.find((s) => s.id === id) ?? shops[0])
-  }, [shops])
+    if (!shops.length) return
+    if (!id) {
+      navigate('/walk', { replace: true })
+      return
+    }
+    const found = shops.find((s) => s.id === id)
+    if (!found) {
+      navigate('/walk', { replace: true })
+      return
+    }
+    setShop(found)
+  }, [shops, navigate])
 
   // Real GPS during walk; if denied/unavailable, useWalkSession falls back to demo RAF.
   const geo = useGeolocation(true)
   const session = useWalkSession({
     shop,
-    transport: 'walk',
+    transport,
     position: geo.position,
     userId: auth.user?.id ?? null,
-    demoMode: !geo.position, // auto demo if no real GPS
+    demoMode: !geo.position,
   })
 
-  // Auto-start on mount once shop loaded
+  // Auto-start exactly once when shop loaded (idempotent under StrictMode double-mount)
+  const startedRef = useRef(false)
   useEffect(() => {
-    if (shop && session.phase === 'idle') session.start()
-  }, [shop, session])
+    if (shop && session.phase === 'idle' && !startedRef.current) {
+      startedRef.current = true
+      session.start()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shop, session.phase])
 
-  // Fire confirmArrival once when phase flips to 'arrived'
+  // Fire confirmArrival once when phase flips to 'arrived' (idempotent)
+  const confirmedRef = useRef(false)
   useEffect(() => {
-    if (session.phase === 'arrived' && shop) {
+    if (session.phase === 'arrived' && shop && !confirmedRef.current) {
+      confirmedRef.current = true
       session.confirmArrival()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -67,16 +88,17 @@ export function WalkingLiveScreen() {
           co2Kg: session.rewardSummary.co2Kg,
           discount: session.rewardSummary.discount,
           isVerifiedGps: session.isVerifiedGps,
+          transport,
         }),
       )
       const t = setTimeout(() => navigate('/walk/reward'), 400)
       return () => clearTimeout(t)
     }
-  }, [session.phase, session.rewardSummary, session.isVerifiedGps, shop, navigate])
+  }, [session.phase, session.rewardSummary, session.isVerifiedGps, shop, navigate, transport])
 
   const totalMeters = shop?.dist ?? 480
-  const metersLeft = Math.round(totalMeters * (1 - session.progress))
-  const minsLeft = Math.max(1, Math.round((metersLeft / 80)))
+  const metersLeft = Math.max(0, Math.round(totalMeters * (1 - session.progress)))
+  const minsLeft = Math.max(1, Math.round(metersLeft / 75))
 
   const insights = useMemo(() => {
     if (!shop) return []
@@ -108,9 +130,8 @@ export function WalkingLiveScreen() {
         <span className="cc-live">
           <span className="cc-live-dot" aria-hidden="true" /> LIVE GPS
         </span>
-        <button type="button" className="cc-icon-btn" aria-label="More">
-          <MoreHorizontal size={16} strokeWidth={2.2} aria-hidden="true" />
-        </button>
+        {/* Removed dead More button (Walker P1#9) — no menu actions defined */}
+        <span style={{ width: 36 }} aria-hidden="true" />
       </header>
 
       <div className="cc-destination">

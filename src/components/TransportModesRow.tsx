@@ -1,5 +1,5 @@
 import type { TransportId } from '../types/shop'
-import { Footprints, Bike, TrainFront, ParkingSquare } from 'lucide-react'
+import { Footprints, Bike, TrainFront } from 'lucide-react'
 
 interface ModeDef {
   id: TransportId
@@ -8,22 +8,24 @@ interface ModeDef {
   Icon: typeof Footprints
 }
 
-const FULL_MODES: ModeDef[] = [
-  { id: 'walk',  label: 'Walk',   sub: '7 min', Icon: Footprints },
-  { id: 'bike',  label: 'Bike',   sub: '+1×',   Icon: Bike },
-  { id: 'bus',   label: 'Train',  sub: '+1×',   Icon: TrainFront },
-  { id: 'scoot', label: 'Park&W', sub: '+2×',   Icon: ParkingSquare },
+const BUILD_MODES = (walkSub: string): ModeDef[] => [
+  { id: 'walk',  label: 'Walk',  sub: walkSub, Icon: Footprints },
+  { id: 'bike',  label: 'Bike',  sub: '+1×',   Icon: Bike },
+  { id: 'bus',   label: 'Train', sub: '+1×',   Icon: TrainFront },
 ]
 
 interface Props {
   active: TransportId
   onChange: (id: TransportId) => void
-  /** Compact 3-mode variant for shop-selected sheet (Walk / Bike / Train+W) */
+  /** Compact variant for shop-selected sheet (same 3 modes). Kept for back-compat. */
   compact?: boolean
+  /** Optional walk-minutes sub-label, e.g. "7 min". Default "best" when unknown. */
+  walkMin?: number
 }
 
-export function TransportModesRow({ active, onChange, compact = false }: Props) {
-  const modes = compact ? FULL_MODES.slice(0, 3) : FULL_MODES
+export function TransportModesRow({ active, onChange, walkMin }: Props) {
+  const walkSub = walkMin && walkMin > 0 ? `${walkMin} min` : 'best'
+  const modes = BUILD_MODES(walkSub)
   return (
     <div className="cc-modes-row" role="radiogroup" aria-label="Transport mode">
       {modes.map(({ id, label, sub, Icon }) => {

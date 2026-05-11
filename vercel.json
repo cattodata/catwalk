@@ -9,6 +9,12 @@
     "api/claude.ts": {
       "maxDuration": 30
     },
+    "api/claude-ab.ts": {
+      "maxDuration": 20
+    },
+    "api/claude-policy.ts": {
+      "maxDuration": 20
+    },
     "api/nominatim.ts": {
       "maxDuration": 10
     }

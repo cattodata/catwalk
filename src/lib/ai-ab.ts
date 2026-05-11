@@ -19,11 +19,19 @@ interface AbInput {
   shopName?: string
 }
 
-const STATIC_FALLBACK: AbResult = {
-  optionA: { copy: '15% off till 7pm', predRevenue: 185, confidence: 78 },
-  optionB: { copy: 'Free croissant w/ coffee', predRevenue: 285, confidence: 84 },
-  winner: 'b',
-  source: 'mock',
+function clientFallback(input: AbInput): AbResult {
+  const jitter = (input.hour * 7 + (input.weather?.isRain ? 13 : 0)) % 11 - 5
+  const rainBump = input.weather?.isRain ? 20 : 0
+  return {
+    optionA: { copy: '15% off till 7pm', predRevenue: 185 + jitter, confidence: 78 },
+    optionB: {
+      copy: input.weather?.isRain ? 'Free croissant w/ pour-over' : 'Buy 1 latte get 1 half',
+      predRevenue: 285 + jitter + rainBump,
+      confidence: 84,
+    },
+    winner: 'b',
+    source: 'mock',
+  }
 }
 
 export async function fetchAbForecast(input: AbInput): Promise<AbResult> {
@@ -33,9 +41,9 @@ export async function fetchAbForecast(input: AbInput): Promise<AbResult> {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(input),
     })
-    if (!res.ok) return STATIC_FALLBACK
+    if (!res.ok) return clientFallback(input)
     return (await res.json()) as AbResult
   } catch {
-    return STATIC_FALLBACK
+    return clientFallback(input)
   }
 }

@@ -9,7 +9,11 @@ export function AiSuggestCard({ body, source }: { body: string; source?: 'live' 
       <div className="cc-ai-body">
         <b>Catto suggests</b>
         <p>{body}</p>
-        {source === 'live' && <span className="cc-ai-tag">LIVE · gpt-4.1-nano</span>}
+        {source === 'live' ? (
+          <span className="cc-ai-tag">LIVE · gpt-4.1-nano</span>
+        ) : source === 'mock' ? (
+          <span className="cc-ai-tag cc-ai-tag-mock">DEMO · sample suggestion</span>
+        ) : null}
       </div>
     </div>
   )
