@@ -11,6 +11,7 @@ import { SmartPickCta } from '../components/SmartPickCta'
 import { ShopMiniRail } from '../components/ShopMini'
 import { ShopDetailSheet } from '../components/ShopDetailSheet'
 import { CuisineRow } from '../components/CuisineRow'
+import { LiveDealsRail } from '../components/LiveDealsRail'
 import { RealMap } from '../components/RealMap'
 
 import { useRealShops } from '../hooks/useRealShops'
@@ -46,6 +47,16 @@ export function WalkerHomeScreen() {
     [shops, cuisine],
   )
   const railShops = useMemo(() => filteredShops.slice(0, 4), [filteredShops])
+
+  // Live deals — shops with discount >= 15%. Sorted by discount desc, then dist
+  const dealShops = useMemo(
+    () =>
+      filteredShops
+        .filter((s) => s.off >= 15)
+        .sort((a, b) => b.off - a.off || a.dist - b.dist)
+        .slice(0, 6),
+    [filteredShops],
+  )
 
   const hour = now.getHours()
   const smart = useMemo(() => smartPick(shops, weather, hour), [shops, weather, hour])
@@ -132,6 +143,7 @@ export function WalkerHomeScreen() {
             <h4 className="cc-sheet-h4">Where to today?</h4>
             {conditionRow && <div className="cc-sheet-cond">{conditionRow}</div>}
             <SmartPickCta subtext={smartSubtext} onClick={onSmartPick} />
+            <LiveDealsRail shops={dealShops} onSelect={(s) => setSelectedShop(s)} />
             <CuisineRow active={cuisine} onChange={setCuisine} />
             {railShops.length > 0 ? (
               <ShopMiniRail
