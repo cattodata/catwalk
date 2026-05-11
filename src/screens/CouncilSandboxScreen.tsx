@@ -88,7 +88,7 @@ export function CouncilSandboxScreen() {
             <header>
               <span className="cc-or-dot" aria-hidden="true" />
               <span className="cc-or-h">WHY THIS WORKS</span>
-              <span className="cc-or-src">5 proofs · wk 3</span>
+              <span className="cc-or-src">6 proofs · wk 3</span>
             </header>
             <ul>
               <li>
@@ -105,6 +105,14 @@ export function CouncilSandboxScreen() {
                   <span><mark>$0.18</mark> reward · <mark>$0.45</mark> fully-loaded</span>
                   <span className="cc-or-arr">→</span>
                   <span className="cc-or-conc">vs typical mode-shift programs ~$3/walk</span>
+                </p>
+              </li>
+              <li>
+                <span className="cc-or-ico" aria-hidden="true">🗓</span>
+                <p>
+                  <span>Event-aware: <mark>+28%</mark> Lunar New Year walks</span>
+                  <span className="cc-or-arr">→</span>
+                  <span className="cc-or-conc">AI auto-boosts cuisines that match civic calendar</span>
                 </p>
               </li>
               <li>

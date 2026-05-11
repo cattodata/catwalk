@@ -15,6 +15,7 @@ import { LiveDealsRail } from '../components/LiveDealsRail'
 import { PlanBasketPill } from '../components/PlanBasketPill'
 import { PlanBasketToast } from '../components/PlanBasketToast'
 import { ShopSearchBar, type SortBy } from '../components/ShopSearchBar'
+import { EventRadarCard } from '../components/EventRadarCard'
 import { RealMap } from '../components/RealMap'
 
 import { usePlanBasket } from '../hooks/usePlanBasket'
@@ -29,6 +30,7 @@ import { useNow } from '../hooks/useNow'
 import { smartPick } from '../lib/smartPick'
 import { tierFromCo2 } from '../data/tiers'
 import { getTodayEvent } from '../data/events'
+import { getActiveCulturalEvent, getUpcomingCulturalEvent } from '../data/culturalEvents'
 
 export function WalkerHomeScreen() {
   const navigate = useNavigate()
@@ -43,6 +45,9 @@ export function WalkerHomeScreen() {
   const tierLevel = tier.id === 'sprout' ? 1 : tier.id === 'bronze' ? 2 : tier.id === 'silver' ? 3 : 4
   const tierPct = tier.next != null ? Math.round(((total_co2 - tier.min) / (tier.next - tier.min)) * 100) : 100
   const todayEvent = getTodayEvent(now)
+  const activeCultural = getActiveCulturalEvent(now)
+  const upcomingCultural = activeCultural ? null : getUpcomingCulturalEvent(now, 28)
+  const radarEvent = activeCultural ?? upcomingCultural
 
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null)
   const [transport, setTransport] = useState<TransportId>('walk')
@@ -190,6 +195,13 @@ export function WalkerHomeScreen() {
           <>
             <h4 className="cc-sheet-h4">Where to today?</h4>
             {conditionRow && <div className="cc-sheet-cond">{conditionRow}</div>}
+            {radarEvent && (
+              <EventRadarCard
+                event={radarEvent}
+                upcoming={!activeCultural}
+                onSelectCuisine={(c) => setCuisine(c)}
+              />
+            )}
             <SmartPickCta subtext={smartSubtext} reasons={smart?.reasons} onClick={onSmartPick} />
             <button
               type="button"

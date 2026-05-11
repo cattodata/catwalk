@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Camera, Repeat, Footprints, CloudRain, Zap } from 'lucide-react'
+import { Camera, Repeat, Footprints, CloudRain, Zap, CalendarHeart } from 'lucide-react'
 
 import { SwitchRoleGear } from '../components/SwitchRoleSheet'
 import { CattoPill } from '../components/CattoPill'
@@ -9,6 +9,12 @@ import { useWeather } from '../hooks/useWeather'
 import { useCompetitorCounts } from '../hooks/useCompetitorCounts'
 import { useDemographics } from '../hooks/useDemographics'
 import { useNow } from '../hooks/useNow'
+import { getActiveCulturalEvent, getUpcomingCulturalEvent } from '../data/culturalEvents'
+
+function daysUntil(now: Date, isoDate: string): number {
+  const target = new Date(isoDate + 'T00:00:00')
+  return Math.max(0, Math.round((target.getTime() - now.getTime()) / 86_400_000))
+}
 
 /**
  * v5.2 — Owner home now shows AI signals inline (OwnerReading)
@@ -29,8 +35,27 @@ export function OwnerForecastScreen() {
   // Mix of real signals (rain, demographics, competitors) with deterministic
   // shop-specific intel (photo engagement, repeat-buyer ratio, competitor pricing)
   // so AI looks like it analysed THIS shop on THIS day.
+  const cultural = useMemo(() => getActiveCulturalEvent(now) ?? getUpcomingCulturalEvent(now, 28), [now])
+
   const readingRows = useMemo(() => {
     const rows = []
+
+    // 0) cultural event awareness — drops in only when an event is active or
+    // imminent. AI looks "world-aware", not just shop-data.
+    if (cultural) {
+      const isUpcoming = cultural.start > now.toISOString().slice(0, 10)
+      rows.push({
+        icon: <CalendarHeart size={16} strokeWidth={2.2} aria-hidden="true" />,
+        signal: (
+          <>
+            {isUpcoming ? `${cultural.name} in ${daysUntil(now, cultural.start)}d` : `${cultural.name} now`}
+            {' · '}
+            <mark>+{cultural.predictedLift}%</mark> {cultural.cuisineHint.toLowerCase()} lift
+          </>
+        ),
+        conclusion: <>{cultural.ownerAction}</>,
+      })
+    }
 
     // 1) photo-engagement insight — image saves vs other products
     rows.push({
@@ -95,7 +120,7 @@ export function OwnerForecastScreen() {
     })
 
     return rows.slice(0, 5)
-  }, [weather, demographics, competitors])
+  }, [weather, demographics, competitors, cultural, now])
 
   // Concrete play recommendation in the dark CTA card (not a vague question)
   const play = useMemo(() => {

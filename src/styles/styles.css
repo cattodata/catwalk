@@ -7808,6 +7808,78 @@ a.cc-owner-cta {
   flex: 0 0 auto;
 }
 
+/* Event Radar (Today's Vibe) — Walker home */
+.cc-radar-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin: 8px 0 10px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, rgba(180, 158, 251, 0.14) 0%, rgba(255, 107, 157, 0.10) 100%);
+  border: 1px solid rgba(180, 158, 251, 0.4);
+  border-radius: 14px;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  text-align: left;
+  color: var(--ink);
+}
+.cc-radar-eb {
+  position: absolute;
+  top: -7px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: var(--ink);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 99px;
+}
+.cc-radar-eb svg { color: var(--amber); }
+.cc-radar-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.cc-radar-em {
+  font-size: 22px;
+  width: 32px;
+  text-align: center;
+  flex: 0 0 32px;
+}
+.cc-radar-body span:nth-of-type(2) {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.cc-radar-body b {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13.5px;
+  letter-spacing: -0.2px;
+  color: var(--ink);
+}
+.cc-radar-body small {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--ink-soft);
+  letter-spacing: -0.1px;
+}
+.cc-radar-body mark {
+  background: transparent;
+  color: #b62963;
+  font-weight: 800;
+}
+
 .cc-council-dl {
   width: 36px;
   height: 36px;
