@@ -13,11 +13,29 @@ const distDir = join(__dirname, '..', 'dist')
 const app = express()
 app.use(express.json({ limit: '15mb' }))
 
+// HTTP Basic Auth gate (team-only access until public launch).
+// Set BASIC_AUTH_PASSWORD env var to enable. Empty = no auth.
+const BASIC_AUTH_PASSWORD = process.env.BASIC_AUTH_PASSWORD || ''
+if (BASIC_AUTH_PASSWORD) {
+  app.use((req, res, next) => {
+    // Allow /api/health unauthenticated for monitoring
+    if (req.path === '/api/health') return next()
+    const auth = req.headers.authorization || ''
+    if (auth.startsWith('Basic ')) {
+      const decoded = Buffer.from(auth.slice(6), 'base64').toString()
+      const password = decoded.split(':')[1] ?? ''
+      if (password === BASIC_AUTH_PASSWORD) return next()
+    }
+    res.setHeader('WWW-Authenticate', 'Basic realm="Catto Compass — team preview"')
+    res.status(401).send('Authentication required')
+  })
+}
+
 // CORS — same-origin in production but defensive
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
   if (req.method === 'OPTIONS') return res.sendStatus(204)
   next()
 })
