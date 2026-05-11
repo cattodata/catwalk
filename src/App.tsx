@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import type { Shop, BizType, CuisineId, ShopTag, TransportId } from './types/shop'
 import type { Campaign } from './types/campaign'
@@ -9,22 +9,13 @@ import { getTodayEvent } from './data/events'
 import { Header } from './components/Header'
 import { PulseTicker } from './components/PulseTicker'
 import { ModeToggle } from './components/ModeToggle'
-import { MapFilters } from './components/MapFilters'
-import { WalkPanel } from './components/WalkPanel'
-import { ShopPanel } from './components/ShopPanel'
-import { CouncilPanel } from './components/CouncilPanel'
 import { Footer } from './components/Footer'
 import { MobileNav } from './components/MobileNav'
 import { RewardOverlay } from './components/RewardOverlay'
 
-// Heavy chunks lazy-loaded for faster first paint
-const RealMap = lazy(() => import('./components/RealMap').then((m) => ({ default: m.RealMap })))
-const ResultSection = lazy(() =>
-  import('./components/ResultSection').then((m) => ({ default: m.ResultSection })),
-)
-const CouncilDashboard = lazy(() =>
-  import('./components/CouncilDashboard').then((m) => ({ default: m.CouncilDashboard })),
-)
+import { WalkScreen } from './screens/WalkScreen'
+import { OwnerScreen } from './screens/OwnerScreen'
+import { CouncilScreen } from './screens/CouncilScreen'
 
 import { useTheme } from './hooks/useTheme'
 import { useWeather } from './hooks/useWeather'
@@ -355,181 +346,91 @@ export function App() {
 
       <ModeToggle mode={mode} setMode={setMode} />
 
-      {/* Walker / owner — focused app: map + side panel only, NO hero/vitals decoration */}
-      {(mode === 'walk' || mode === 'shop') ? (
-        <main id="main-content" className="cc-grid" tabIndex={-1}>
-        <div className="cc-map-card">
-          <div className="cc-map-head">
-            <div className="cc-eyebrow">
-              {shops.length} shops near Chatswood Station
-              {shopsAreReal ? '' : ' · pilot personas'}
-            </div>
-            <div
-              className="cc-map-legend"
-              title="Walk farther = earn more points. 3× = triple the points of a 1× shop."
-            >
-              <span className="cc-chip"><span className="cc-chip-dot" style={{ background: '#5B9BD5' }} /> 1× near</span>
-              <span className="cc-chip"><span className="cc-chip-dot" style={{ background: '#F5C842' }} /> 2× mid</span>
-              <span className="cc-chip"><span className="cc-chip-dot" style={{ background: '#FF6B9D' }} /> 3× far</span>
-            </div>
-          </div>
-
-          {!selectedShop && (
-            <div className="cc-map-hint">
-              👆 ① Tap any shop pin to {mode === 'walk' ? 'see distance + points' : 'plan a campaign'}
-            </div>
-          )}
-
-          <MapFilters
-            cuisine={cuisine}
-            setCuisine={setCuisine}
-            tags={tagFilter}
-            setTags={setTagFilter}
-            showHeatmap={showHeatmap}
-            setShowHeatmap={setShowHeatmap}
-          />
-
-          <Suspense
-            fallback={
-              <div
-                style={{
-                  height: 280,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  borderRadius: 16,
-                  background: 'rgba(91,155,213,.08)',
-                  fontFamily: 'JetBrains Mono, monospace',
-                  fontSize: 11,
-                  color: 'var(--ink-soft)',
-                  letterSpacing: 1.4,
-                }}
-              >
-                LOADING MAP …
-              </div>
-            }
-          >
-            <RealMap
-              shops={shops}
-              selectedShop={selectedShop}
-              walkProgress={walkSession.phase === 'idle' ? null : walkSession.progress}
-              walking={walkSession.phase === 'walking'}
-              completed={walkSession.phase === 'completed' || walkSession.phase === 'arrived'}
-              onSelect={onMapSelect}
-              cuisineFilter={cuisine}
-              tagFilter={tagFilter}
-              showHeatmap={showHeatmap}
-              transport={transport}
-              userPosition={geo.position}
-            />
-          </Suspense>
-        </div>
-
-        <div className="cc-side">
-          {mode === 'walk' && (
-            <WalkPanel
-              shop={selectedShop}
-              walking={walkSession.phase === 'walking'}
-              arrived={walkSession.phase === 'arrived'}
-              completed={walkSession.phase === 'completed'}
-              onStart={startWalk}
-              onConfirm={confirmArrival}
-              onReset={resetWalk}
-              onSmartPick={onSmartPickClick}
-              smartPickReasons={smartPickReasons ?? undefined}
-              transport={transport}
-              setTransport={setTransport}
-              totalCo2={totalCo2}
-              distanceToShop={walkSession.distanceToShop}
-              isVerifiedGps={walkSession.isVerifiedGps}
-              geolocationSupported={geo.isSupported}
-              geolocationPermission={geolocationPermission}
-              demoMode={demoMode}
-              setDemoMode={setDemoMode}
-            />
-          )}
-          {mode === 'shop' && (
-            <ShopPanel
-              shop={selectedShop}
-              bizType={bizType}
-              setBizType={setBizType}
-              photoUrl={photoUrl}
-              onPhotoChange={setPhotoFile}
-              liveAi={liveAi}
-              setLiveAi={setLiveAi}
-              generating={generating}
-              scanStep={scanStep}
-              onGenerate={generate}
-              insights={insights}
-              allShops={shops}
-              weather={weather}
-              hour={now.getHours()}
-              dayOfWeek={now.getDay()}
-              devMode={devMode}
-            />
-          )}
-        </div>
-
-      <div id="cc-result-anchor">
-        {mode === 'shop' && campaign && (
-          <Suspense fallback={<div style={{ height: 200 }} />}>
-            <ResultSection campaign={campaign} photoUrl={photoUrl} source={campaignSource} />
-          </Suspense>
-        )}
-      </div>
-      </main>
-      ) : (
-        /* Council mode — full-width dashboard (no phone frame) */
-        <main id="main-content" className="cc-grid" tabIndex={-1}>
-          <div className="cc-map-card">
-            <div className="cc-map-head">
-              <div className="cc-eyebrow">Chatswood CBD · live foot traffic + boosted streets</div>
-              <div className="cc-map-legend">
-                <span className="cc-chip"><span className="cc-chip-dot" style={{ background: '#5B9BD5' }} /> 1×</span>
-                <span className="cc-chip"><span className="cc-chip-dot" style={{ background: '#F5C842' }} /> 2×</span>
-                <span className="cc-chip"><span className="cc-chip-dot" style={{ background: '#FF6B9D' }} /> 3×</span>
-              </div>
-            </div>
-            <Suspense fallback={<div style={{ height: 360 }} />}>
-              <RealMap
-                shops={shops}
-                selectedShop={selectedShop}
-                walkProgress={null}
-                walking={false}
-                completed={false}
-                onSelect={onMapSelect}
-                cuisineFilter={cuisine}
-                tagFilter={tagFilter}
-                showHeatmap
-                transport={transport}
-                userPosition={geo.position}
-              />
-            </Suspense>
-          </div>
-          <div className="cc-side">
-            <CouncilPanel
-              boostedExtra={boostedExtra}
-              onSimulateBoost={simulateBoost}
-              onResetBoost={resetBoost}
-              langReach={langReach}
-              chinesePct={demographics?.chinese_ancestry_pct}
-              koreanPct={demographics?.korean_ancestry_pct}
-            />
-          </div>
-          <Suspense fallback={<div style={{ height: 280 }} />}>
-            <CouncilDashboard
-              stats={council.stats}
-              topStreets={council.topStreets}
-              dailyWalks={council.dailyWalks}
-              boostedExtra={boostedExtra}
-              fallbackProjections={
-                isDemo || !council.stats.loaded
-                  ? { walks: 1247, co2Kg: 84.6, extraRev: 14200, walkingNow: 0 }
-                  : undefined
-              }
-            />
-          </Suspense>
-        </main>
+      {/* Screen router: walker / owner / council */}
+      {mode === 'walk' && (
+        <WalkScreen
+          shops={shops}
+          shopsAreReal={shopsAreReal}
+          selectedShop={selectedShop}
+          walkPhase={walkSession.phase}
+          walkProgress={walkSession.progress}
+          distanceToShop={walkSession.distanceToShop}
+          isVerifiedGps={walkSession.isVerifiedGps}
+          onMapSelect={onMapSelect}
+          onStart={startWalk}
+          onConfirm={confirmArrival}
+          onReset={resetWalk}
+          onSmartPick={onSmartPickClick}
+          smartPickReasons={smartPickReasons}
+          cuisine={cuisine}
+          setCuisine={setCuisine}
+          tagFilter={tagFilter}
+          setTagFilter={setTagFilter}
+          showHeatmap={showHeatmap}
+          setShowHeatmap={setShowHeatmap}
+          transport={transport}
+          setTransport={setTransport}
+          totalCo2={totalCo2}
+          geo={{ position: geo.position, isSupported: geo.isSupported }}
+          geolocationPermission={geolocationPermission}
+          demoMode={demoMode}
+          setDemoMode={setDemoMode}
+        />
+      )}
+      {mode === 'shop' && (
+        <OwnerScreen
+          shops={shops}
+          shopsAreReal={shopsAreReal}
+          selectedShop={selectedShop}
+          onMapSelect={onMapSelect}
+          cuisine={cuisine}
+          setCuisine={setCuisine}
+          tagFilter={tagFilter}
+          setTagFilter={setTagFilter}
+          showHeatmap={showHeatmap}
+          setShowHeatmap={setShowHeatmap}
+          transport={transport}
+          bizType={bizType}
+          setBizType={setBizType}
+          photoUrl={photoUrl}
+          onPhotoChange={setPhotoFile}
+          liveAi={liveAi}
+          setLiveAi={setLiveAi}
+          generating={generating}
+          scanStep={scanStep}
+          onGenerate={generate}
+          insights={insights}
+          weather={weather}
+          hour={now.getHours()}
+          dayOfWeek={now.getDay()}
+          devMode={devMode}
+          campaign={campaign}
+          campaignSource={campaignSource}
+          geo={{ position: geo.position }}
+        />
+      )}
+      {mode === 'council' && (
+        <CouncilScreen
+          shops={shops}
+          selectedShop={selectedShop}
+          onMapSelect={onMapSelect}
+          cuisine={cuisine}
+          tagFilter={tagFilter}
+          transport={transport}
+          council={{
+            stats: council.stats,
+            topStreets: council.topStreets,
+            dailyWalks: council.dailyWalks,
+          }}
+          boostedExtra={boostedExtra}
+          simulateBoost={simulateBoost}
+          resetBoost={resetBoost}
+          isDemo={isDemo}
+          langReach={langReach}
+          chinesePct={demographics?.chinese_ancestry_pct}
+          koreanPct={demographics?.korean_ancestry_pct}
+          geo={{ position: geo.position }}
+        />
       )}
 
       <Footer mode={mode} />
