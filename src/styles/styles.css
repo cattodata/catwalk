@@ -4376,3 +4376,337 @@ button { font-family: inherit; cursor: pointer; }
   cursor: pointer;
   box-shadow: var(--shadow-cta);
 }
+
+/* ---------- S6b OWNER CAMPAIGN WIZARD ---------- */
+.cc-camp-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  padding-bottom: 18px;
+}
+.cc-camp-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px 8px;
+}
+.cc-camp-bar-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: -0.1px;
+}
+
+.cc-stepper {
+  display: flex;
+  gap: 6px;
+  padding: 4px 16px 14px;
+}
+.cc-stepper-bar {
+  flex: 1;
+  height: 3px;
+  background: var(--line);
+  border-radius: 2px;
+  transition: background 0.2s;
+}
+.cc-stepper-bar.is-on {
+  background: var(--g-brand);
+}
+
+.cc-camp-body {
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+}
+.cc-camp-eb {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+}
+.cc-camp-h {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.3px;
+  margin: 6px 0 4px;
+}
+.cc-camp-sub {
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+/* Photo drop */
+.cc-photo-drop {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: 180px;
+  border: 2px dashed var(--line);
+  border-radius: 20px;
+  background:
+    repeating-linear-gradient(45deg, transparent 0 12px, rgba(245, 200, 66, 0.06) 12px 14px),
+    var(--card);
+  cursor: pointer;
+  overflow: hidden;
+}
+.cc-photo-drop-img {
+  display: block;
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+.cc-photo-drop-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 16px;
+  gap: 6px;
+  color: var(--ink-soft);
+}
+.cc-photo-drop-empty b {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--ink);
+  margin-top: 6px;
+}
+.cc-photo-drop-empty small {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-soft);
+}
+
+/* Biz pills */
+.cc-biz-pills {
+  display: flex;
+  gap: 6px;
+}
+.cc-biz-pill {
+  flex: 1;
+  padding: 10px 8px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12.5px;
+  cursor: pointer;
+  color: var(--ink);
+}
+.cc-biz-pill.is-on {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+/* Insights live card */
+.cc-ins-now {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 12px 14px;
+}
+.cc-ins-now-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--sage);
+  margin-bottom: 8px;
+}
+.cc-ins-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--sage);
+  animation: pls 1.4s infinite;
+}
+.cc-ins-now-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cc-ins-now-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+.cc-ins-now-em {
+  flex: 0 0 16px;
+  color: var(--blue);
+  margin-top: 2px;
+}
+
+/* Campaign CTA */
+.cc-camp-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: auto;
+  padding: 14px;
+  border: none;
+  border-radius: 18px;
+  background: var(--g-brand);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14.5px;
+  cursor: pointer;
+  box-shadow: var(--shadow-cta);
+}
+.cc-camp-cta-ghost {
+  background: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  box-shadow: none;
+}
+
+/* Scan step */
+.cc-camp-scan {
+  align-items: center;
+  justify-content: center;
+}
+.cc-camp-scan-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  max-width: 300px;
+}
+.cc-camp-scan-card b {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+}
+.cc-camp-scan-card small {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-soft);
+  letter-spacing: 0.04em;
+}
+.cc-scan-spinner {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 3px solid var(--line);
+  border-top-color: var(--coral);
+  animation: spin 1s linear infinite;
+}
+
+/* Asset tabs */
+.cc-asset-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.cc-asset-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 4px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 10.5px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.cc-asset-tab.is-on {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+.cc-asset-tab span {
+  font-size: 16px;
+}
+
+/* Lang row */
+.cc-lang-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 2px;
+}
+.cc-lang-pill {
+  flex: 1;
+  padding: 8px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 11.5px;
+  cursor: pointer;
+  color: var(--ink);
+}
+.cc-lang-pill.is-on {
+  background: var(--coral);
+  color: #fff;
+  border-color: var(--coral);
+}
+
+/* Asset card */
+.cc-asset-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px;
+}
+.cc-asset-card h4 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+  margin: 0 0 6px;
+}
+.cc-asset-card p {
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  line-height: 1.5;
+  margin: 0 0 12px;
+  color: var(--ink);
+}
+.cc-copy-row {
+  display: flex;
+  gap: 8px;
+}
+.cc-copy-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--ink);
+  cursor: pointer;
+}
