@@ -115,7 +115,8 @@ export function generateInsights(ctx: InsightContext): Insight[] {
 /**
  * Compose the Vitals strip from real-time inputs. Falls back to "—" loading state.
  */
-export function buildVitals(args: {
+/** Owner-facing vitals — competition, opal taps */
+export function buildOwnerVitals(args: {
   weather: WeatherSummary | null
   competitors: CompetitorCounts | null
   bizType: BizType
@@ -149,8 +150,8 @@ export function buildVitals(args: {
       id: 'station',
       emoji: '🚇',
       num: `${(stationDailyAvg / 1000).toFixed(1)}K`,
-      label: 'Avg daily Opal taps',
-      sub: 'TfNSW · 2024 monthly avg',
+      label: 'Daily Opal taps',
+      sub: 'TfNSW · monthly avg',
       accent: '#7BC97F',
       bg: 'rgba(123,201,127,.14)',
       isLive: false,
@@ -172,10 +173,70 @@ export function buildVitals(args: {
       emoji: '📅',
       num: dayName,
       label: 'Today',
-      sub: date.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }),
+      sub: date.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }),
       accent: '#F5C842',
       bg: 'rgba(245,200,66,.18)',
       isLive: true,
     },
   ]
 }
+
+/** Walker-facing vitals — weather + nearest shop + tier progress + today */
+export function buildWalkerVitals(args: {
+  weather: WeatherSummary | null
+  nearestShop: { name: string; dist: number; mult: number } | null
+  tier: { label: string; emoji: string; co2: number; nextAt: number | null }
+  date: Date
+}): VitalCard[] {
+  const { weather, nearestShop, tier, date } = args
+  const dayName = date.toLocaleDateString('en-AU', { weekday: 'short' })
+  const remaining = tier.nextAt != null ? Math.max(0, tier.nextAt - tier.co2) : 0
+
+  return [
+    {
+      id: 'weather',
+      emoji: weather?.emoji ?? '🌤️',
+      num: weather ? `${weather.temp}°` : '—',
+      label: 'Weather now',
+      sub: weather ? `${weather.label}` : 'Loading…',
+      accent: '#5B9BD5',
+      bg: 'rgba(91,155,213,.14)',
+      isLive: true,
+      source: 'open-meteo.com',
+    },
+    {
+      id: 'nearest',
+      emoji: '📍',
+      num: nearestShop ? `${nearestShop.dist}m` : '—',
+      label: 'Nearest shop',
+      sub: nearestShop ? `${nearestShop.name} · ${nearestShop.mult}×` : 'Loading shops…',
+      accent: '#FF6B9D',
+      bg: 'rgba(255,107,157,.14)',
+      isLive: true,
+    },
+    {
+      id: 'tier',
+      emoji: tier.emoji,
+      num: tier.label,
+      label: 'Your tier',
+      sub: tier.nextAt
+        ? `${remaining.toFixed(2)} kg to next`
+        : 'Top tier · keep walking!',
+      accent: '#7BC97F',
+      bg: 'rgba(123,201,127,.14)',
+    },
+    {
+      id: 'events',
+      emoji: '📅',
+      num: dayName,
+      label: 'Today',
+      sub: date.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }),
+      accent: '#F5C842',
+      bg: 'rgba(245,200,66,.18)',
+      isLive: true,
+    },
+  ]
+}
+
+/** Back-compat alias */
+export const buildVitals = buildOwnerVitals

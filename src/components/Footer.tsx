@@ -1,13 +1,42 @@
+import type { AppMode } from './ModeToggle'
 import { COUNCIL_OUTCOMES, DATA_SOURCES } from '../data/council'
 
-export function Footer() {
+interface FooterProps {
+  mode: AppMode
+}
+
+export function Footer({ mode }: FooterProps) {
+  if (mode !== 'council') {
+    // Walker / owner: minimal footer — no hackathon framing
+    return (
+      <footer className="cc-foot cc-foot-minimal">
+        <div className="cc-foot-min-row">
+          <span className="cc-foot-min-brand">
+            <img
+              src="/assets/cattodata-brand.png"
+              alt="Cattodata"
+              width={24}
+              height={24}
+              loading="lazy"
+            />
+            Catto Compass · Chatswood pilot
+          </span>
+          <span className="cc-foot-min-links">
+            <a href="?mode=council">About this pilot →</a>
+          </span>
+        </div>
+      </footer>
+    )
+  }
+
+  // Council view: full pitch footer
   return (
     <footer className="cc-foot">
       <div>
         <h5>Council strategic alignment</h5>
         {COUNCIL_OUTCOMES.map((o, i) => (
           <div key={i} className="outcome">
-            <div className="em">{o.em}</div>
+            <div className="em" aria-hidden="true">{o.em}</div>
             <div>
               <b>{o.b}</b>
               <p>{o.t}</p>
@@ -43,6 +72,7 @@ export function Footer() {
             src="/assets/willoughby-council.png"
             alt="Willoughby City Council"
             style={{ width: 54, height: 54, objectFit: 'contain' }}
+            loading="lazy"
           />
           <div style={{ lineHeight: 1.2 }}>
             <b style={{ color: '#006B5C', fontWeight: 700, fontSize: 13 }}>Willoughby City Council</b>

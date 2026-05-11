@@ -40,9 +40,11 @@ import { useCouncilStats } from './hooks/useCouncilStats'
 import { useWalkSession } from './hooks/useWalkSession'
 import { useNow } from './hooks/useNow'
 
-import { generateInsights, buildVitals } from './lib/insights'
+import { generateInsights, buildOwnerVitals, buildWalkerVitals } from './lib/insights'
 import { generateCampaign } from './lib/claude'
 import { smartPick } from './lib/smartPick'
+import { tierFromCo2 } from './data/tiers'
+import { PhoneFrame } from './components/PhoneFrame'
 
 const STATION_DAILY_AVG = 47832 // TfNSW Aug 2024 monthly aggregate
 
@@ -176,16 +178,30 @@ export function App() {
     })
   }, [bizType, selectedShop, weather, competitors, now, todayEvent])
 
-  // ---------- Vitals ----------
+  // ---------- Vitals (mode-aware) ----------
+  const nearestShop = useMemo(() => {
+    if (!shops.length) return null
+    const s = [...shops].sort((a, b) => a.dist - b.dist)[0]
+    return { name: s.name, dist: s.dist, mult: s.mult }
+  }, [shops])
+
+  const walkerTier = useMemo(() => {
+    const t = tierFromCo2(totalCo2)
+    return { label: t.label, emoji: t.emoji, co2: totalCo2, nextAt: t.next }
+  }, [totalCo2])
+
   const vitals = useMemo(() => {
-    return buildVitals({
+    if (mode === 'walk') {
+      return buildWalkerVitals({ weather, nearestShop, tier: walkerTier, date: now })
+    }
+    return buildOwnerVitals({
       weather,
       competitors,
       bizType,
       stationDailyAvg: STATION_DAILY_AVG,
       date: now,
     })
-  }, [weather, competitors, bizType, now])
+  }, [mode, weather, competitors, bizType, nearestShop, walkerTier, now])
 
   // ---------- Today label for header ----------
   const todayLabel = `${now.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })} · ${now.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}`
@@ -345,61 +361,81 @@ export function App() {
       </a>
       <Header totalCo2={totalCo2} theme={theme} onToggleTheme={toggle} todayLabel={todayLabel} />
 
-      <PulseTicker
-        liveSinceLaunch={{
-          walks: council.stats.total_walks,
-          co2Kg: council.stats.total_co2,
-          walkingNow: council.stats.walking_now,
-        }}
-        pilotProjection={{
-          walks: 1247,
-          co2Kg: 84.6,
-          extraRev: 14200,
-          km: 312.4,
-        }}
-      />
-
-      <Hero />
-
-      <Vitals cards={vitals} />
+      {/* PulseTicker — Council-only (live + projection numbers are pitch material) */}
+      {mode === 'council' && (
+        <PulseTicker
+          liveSinceLaunch={{
+            walks: council.stats.total_walks,
+            co2Kg: council.stats.total_co2,
+            walkingNow: council.stats.walking_now,
+          }}
+          pilotProjection={{
+            walks: 1247,
+            co2Kg: 84.6,
+            extraRev: 14200,
+            km: 312.4,
+          }}
+        />
+      )}
 
       <ModeToggle mode={mode} setMode={setMode} />
 
-      <main id="main-content" className="cc-grid" tabIndex={-1} aria-labelledby="main-content">
+      {/* Phone-framed walker/owner content (desktop only — mobile bypasses frame) */}
+      {(mode === 'walk' || mode === 'shop') ? (
+        <PhoneFrame
+          annotations={
+            mode === 'walk'
+              ? [
+                  { emoji: '📍', title: 'Real shops, real GPS', body: 'Pins from live OSM Overpass. Walk verified via geolocation + 100m geofence.' },
+                  { emoji: '🌱', title: 'CO₂ vs driving', body: 'Each walk logs kg saved vs a car trip. Persists on-device + Supabase.' },
+                  { emoji: '🎯', title: 'Tap "Smart Pick"', body: 'Picks the best shop right now by ROI (points × multiplier ÷ time) and weather/time bonuses.' },
+                ]
+              : [
+                  { emoji: '📸', title: 'Drop a product photo', body: 'Vision-LLM reads the photo + live weather + foot-traffic to write a campaign.' },
+                  { emoji: '🌏', title: 'EN · 中文 · 한국어', body: 'Three hand-translated tracks targeting the 40% Chinese + 8% Korean Chatswood demographic.' },
+                  { emoji: '⚡', title: 'Real signals', body: 'Open-Meteo weather, OSM competitor count, ABS Census demographics, today\'s Willoughby event.' },
+                ]
+          }
+        >
+          <Hero mode={mode} onSmartPick={onSmartPickClick} smartPickReady={shops.length > 0} hasSelectedShop={!!selectedShop} />
+          <Vitals cards={vitals} />
+          <main id="main-content" className="cc-grid" tabIndex={-1}>
         <div className="cc-map-card">
           <div className="cc-map-head">
             <div className="cc-eyebrow">
-              {mode === 'council'
-                ? 'Chatswood CBD · live foot traffic + boosted streets'
-                : `Chatswood CBD · ${shops.length} shops${shopsAreReal ? ' (live OSM)' : ' (pilot personas)'}${competitors ? ` · ${competitors.cafes + competitors.restaurants} eateries within 700m` : ''}`}
+              {shops.length} shops near Chatswood Station
+              {shopsAreReal ? '' : ' · pilot personas'}
             </div>
-            <div className="cc-map-legend">
+            <div
+              className="cc-map-legend"
+              title="Walk farther = earn more points. 3× = triple the points of a 1× shop."
+            >
               <span className="cc-chip"><span className="cc-chip-dot" style={{ background: '#5B9BD5' }} /> 1× near</span>
               <span className="cc-chip"><span className="cc-chip-dot" style={{ background: '#F5C842' }} /> 2× mid</span>
               <span className="cc-chip"><span className="cc-chip-dot" style={{ background: '#FF6B9D' }} /> 3× far</span>
             </div>
           </div>
 
-          {mode !== 'council' && !selectedShop && (
-            <div className="cc-map-hint">👆 Tap any shop pin to {mode === 'walk' ? 'start a walk' : 'plan a campaign'}</div>
+          {!selectedShop && (
+            <div className="cc-map-hint">
+              👆 ① Tap any shop pin to {mode === 'walk' ? 'see distance + points' : 'plan a campaign'}
+            </div>
           )}
 
-          {mode !== 'council' && (
-            <MapFilters
-              cuisine={cuisine}
-              setCuisine={setCuisine}
-              tags={tagFilter}
-              setTags={setTagFilter}
-              showHeatmap={showHeatmap}
-              setShowHeatmap={setShowHeatmap}
-            />
-          )}
+          <MapFilters
+            cuisine={cuisine}
+            setCuisine={setCuisine}
+            tags={tagFilter}
+            setTags={setTagFilter}
+            showHeatmap={showHeatmap}
+            setShowHeatmap={setShowHeatmap}
+          />
 
           <Suspense
             fallback={
               <div
                 style={{
-                  height: 360,
+                  height: 280,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -424,7 +460,7 @@ export function App() {
               onSelect={onMapSelect}
               cuisineFilter={cuisine}
               tagFilter={tagFilter}
-              showHeatmap={showHeatmap || mode === 'council'}
+              showHeatmap={showHeatmap}
               transport={transport}
               userPosition={geo.position}
             />
@@ -473,33 +509,7 @@ export function App() {
               dayOfWeek={now.getDay()}
             />
           )}
-          {mode === 'council' && (
-            <CouncilPanel
-              boostedExtra={boostedExtra}
-              onSimulateBoost={simulateBoost}
-              onResetBoost={resetBoost}
-              langReach={langReach}
-              chinesePct={demographics?.chinese_ancestry_pct}
-              koreanPct={demographics?.korean_ancestry_pct}
-            />
-          )}
         </div>
-
-      {mode === 'council' && (
-        <Suspense fallback={<div style={{ height: 280 }} />}>
-          <CouncilDashboard
-            stats={council.stats}
-            topStreets={council.topStreets}
-            dailyWalks={council.dailyWalks}
-            boostedExtra={boostedExtra}
-            fallbackProjections={
-              isDemo || !council.stats.loaded
-                ? { walks: 1247, co2Kg: 84.6, extraRev: 14200, walkingNow: 0 }
-                : undefined
-            }
-          />
-        </Suspense>
-      )}
 
       <div id="cc-result-anchor">
         {mode === 'shop' && campaign && (
@@ -509,8 +519,62 @@ export function App() {
         )}
       </div>
       </main>
+        </PhoneFrame>
+      ) : (
+        /* Council mode — full-width dashboard (no phone frame) */
+        <main id="main-content" className="cc-grid" tabIndex={-1}>
+          <div className="cc-map-card">
+            <div className="cc-map-head">
+              <div className="cc-eyebrow">Chatswood CBD · live foot traffic + boosted streets</div>
+              <div className="cc-map-legend">
+                <span className="cc-chip"><span className="cc-chip-dot" style={{ background: '#5B9BD5' }} /> 1×</span>
+                <span className="cc-chip"><span className="cc-chip-dot" style={{ background: '#F5C842' }} /> 2×</span>
+                <span className="cc-chip"><span className="cc-chip-dot" style={{ background: '#FF6B9D' }} /> 3×</span>
+              </div>
+            </div>
+            <Suspense fallback={<div style={{ height: 360 }} />}>
+              <RealMap
+                shops={shops}
+                selectedShop={selectedShop}
+                walkProgress={null}
+                walking={false}
+                completed={false}
+                onSelect={onMapSelect}
+                cuisineFilter={cuisine}
+                tagFilter={tagFilter}
+                showHeatmap
+                transport={transport}
+                userPosition={geo.position}
+              />
+            </Suspense>
+          </div>
+          <div className="cc-side">
+            <CouncilPanel
+              boostedExtra={boostedExtra}
+              onSimulateBoost={simulateBoost}
+              onResetBoost={resetBoost}
+              langReach={langReach}
+              chinesePct={demographics?.chinese_ancestry_pct}
+              koreanPct={demographics?.korean_ancestry_pct}
+            />
+          </div>
+          <Suspense fallback={<div style={{ height: 280 }} />}>
+            <CouncilDashboard
+              stats={council.stats}
+              topStreets={council.topStreets}
+              dailyWalks={council.dailyWalks}
+              boostedExtra={boostedExtra}
+              fallbackProjections={
+                isDemo || !council.stats.loaded
+                  ? { walks: 1247, co2Kg: 84.6, extraRev: 14200, walkingNow: 0 }
+                  : undefined
+              }
+            />
+          </Suspense>
+        </main>
+      )}
 
-      <Footer />
+      <Footer mode={mode} />
 
       <MobileNav mode={mode} setMode={setMode} />
 

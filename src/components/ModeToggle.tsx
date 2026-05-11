@@ -5,12 +5,6 @@ interface ModeToggleProps {
   setMode: (m: AppMode) => void
 }
 
-const HINTS: Record<AppMode, string> = {
-  walk: 'Locals · earn pts by walking, biking, scooting',
-  shop: "Shop owners · plan today's campaign",
-  council: 'Council · live policy levers + outcomes',
-}
-
 export function ModeToggle({ mode, setMode }: ModeToggleProps) {
   return (
     <div className="cc-mode">
@@ -20,30 +14,29 @@ export function ModeToggle({ mode, setMode }: ModeToggleProps) {
           onClick={() => setMode('walk')}
           role="tab"
           aria-selected={mode === 'walk'}
-          aria-controls="mode-panel"
+          aria-controls="main-content"
         >
-          🚶 Walk to Earn
+          🚶 Walk
         </button>
         <button
           className={mode === 'shop' ? 'is-active' : ''}
           onClick={() => setMode('shop')}
           role="tab"
           aria-selected={mode === 'shop'}
-          aria-controls="mode-panel"
+          aria-controls="main-content"
         >
-          🛍️ Shop Booster
+          🛍️ For Owners
         </button>
         <button
           className={mode === 'council' ? 'is-active' : ''}
           onClick={() => setMode('council')}
           role="tab"
           aria-selected={mode === 'council'}
-          aria-controls="mode-panel"
+          aria-controls="main-content"
         >
-          📊 Council View
+          📊 Pilot Stats
         </button>
       </div>
-      <div className="cc-mode-hint">{HINTS[mode]}</div>
     </div>
   )
 }
