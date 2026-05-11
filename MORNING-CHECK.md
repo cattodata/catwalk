@@ -1,5 +1,17 @@
 # Morning checklist — Catto Compass
 
+## 🚀 LIVE NOW — verified working
+
+**URL:** https://cattocompass.azurewebsites.net  
+**Login:** any username · password `***REDACTED***`  
+**API health:** https://cattocompass.azurewebsites.net/api/health
+
+Verified end-to-end at 08:19 UTC:
+- ✅ HTTP 200 with team password
+- ✅ HTTP 401 without password (auth gate working)
+- ✅ Live AI generated REAL campaign (Vision + 3 languages)
+  Test: Posted Cattodata logo → Azure gpt-4.1-nano returned "Northern Lights Warm Drinks Special" with full EN/中文/한국어 assets in 16s
+
 ## ✅ What's done overnight
 
 ### Repo
