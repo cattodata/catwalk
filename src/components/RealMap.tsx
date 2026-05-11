@@ -2,6 +2,9 @@ import { useEffect, useMemo } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import 'leaflet.markercluster'
+import 'leaflet.markercluster/dist/MarkerCluster.css'
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import type { Shop, CuisineId, ShopTag, TransportId } from '../types/shop'
 import { CHATSWOOD } from '../config/chatswood'
 import { Catto } from './Catto'
@@ -66,6 +69,65 @@ const userIcon = L.divIcon({
   iconSize: [22, 22],
   iconAnchor: [11, 11],
 })
+
+/**
+ * Cluster shop markers — solves "60 pins overlapping" problem.
+ * When zoomed out, nearby pins merge into a single bubble showing count.
+ * Click cluster to zoom in and split.
+ */
+function ShopClusterLayer({
+  shops,
+  selectedShop,
+  cuisineFilter,
+  tagFilter,
+  onSelect,
+}: {
+  shops: Shop[]
+  selectedShop: Shop | null
+  cuisineFilter: CuisineId
+  tagFilter: ShopTag[]
+  onSelect: (s: Shop) => void
+}) {
+  const map = useMap()
+
+  useEffect(() => {
+    const cluster = L.markerClusterGroup({
+      showCoverageOnHover: false,
+      spiderfyOnMaxZoom: true,
+      removeOutsideVisibleBounds: false,
+      maxClusterRadius: 40,
+      iconCreateFunction: (c: L.MarkerCluster) => {
+        const count = c.getChildCount()
+        const size = count < 10 ? 36 : count < 30 ? 44 : 52
+        return L.divIcon({
+          html: `<div class="cc-cluster"><span>${count}</span></div>`,
+          className: 'cc-cluster-wrap',
+          iconSize: [size, size],
+        })
+      },
+    })
+
+    for (const s of shops) {
+      if (!s.lat || !s.lng) continue
+      const cuisineMatch = cuisineFilter === 'all' || s.cuisine === cuisineFilter
+      const tagMatch = !tagFilter.length || tagFilter.every((t) => s.tags.includes(t))
+      if (!cuisineMatch || !tagMatch) continue
+      const m = L.marker([s.lat, s.lng], { icon: makeShopIcon(s, selectedShop?.id === s.id) })
+      m.bindPopup(
+        `<b>${s.emoji} ${s.name}</b><br/>${s.type} · ${s.dist}m walk · ${s.mult}× pts<br/><small>${s.street ?? ''}</small>`,
+      )
+      m.on('click', () => onSelect(s))
+      cluster.addLayer(m)
+    }
+
+    map.addLayer(cluster)
+    return () => {
+      map.removeLayer(cluster)
+    }
+  }, [shops, selectedShop, cuisineFilter, tagFilter, onSelect, map])
+
+  return null
+}
 
 /** Pan map to selected shop when it changes */
 function FlyToShop({ shop }: { shop: Shop | null }) {
@@ -196,31 +258,14 @@ export function RealMap({
           </>
         )}
 
-        {/* Shop pins */}
-        {shops.map((s) => {
-          if (!s.lat || !s.lng) return null
-          const cuisineMatch = cuisineFilter === 'all' || s.cuisine === cuisineFilter
-          const tagMatch = !tagFilter.length || tagFilter.every((t) => s.tags.includes(t))
-          if (!(cuisineMatch && tagMatch)) return null
-          return (
-            <Marker
-              key={s.id}
-              position={[s.lat, s.lng]}
-              icon={makeShopIcon(s, selectedShop?.id === s.id)}
-              eventHandlers={{ click: () => onSelect(s) }}
-            >
-              <Popup>
-                <b>
-                  {s.emoji} {s.name}
-                </b>
-                <br />
-                {s.type} · {s.dist}m walk · {s.mult}× pts
-                <br />
-                <small>{s.street}</small>
-              </Popup>
-            </Marker>
-          )
-        })}
+        {/* Shop pins — clustered to fix 60-pin overlap problem */}
+        <ShopClusterLayer
+          shops={shops}
+          selectedShop={selectedShop}
+          cuisineFilter={cuisineFilter}
+          tagFilter={tagFilter}
+          onSelect={onSelect}
+        />
 
         {/* Walk route polyline */}
         {selectedShop?.lat && selectedShop?.lng && (

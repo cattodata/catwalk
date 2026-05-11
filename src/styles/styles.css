@@ -2700,3 +2700,41 @@ button { font-family: inherit; cursor: pointer; }
     margin: 0 auto 14px;
   }
 }
+
+/* ============================================================
+   Marker cluster bubbles (Catto Compass coral+amber theme)
+   ============================================================ */
+.cc-cluster-wrap {
+  background: transparent !important;
+  border: 0 !important;
+}
+.cc-cluster {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #FF6B9D, #F5C842);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 14px rgba(255, 107, 157, 0.45);
+  transition: transform 0.15s;
+}
+.cc-cluster:hover { transform: scale(1.08); }
+.cc-cluster span { line-height: 1; }
+
+/* Hide default markercluster styles in favor of ours */
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large {
+  background-color: transparent !important;
+}
+.marker-cluster-small div,
+.marker-cluster-medium div,
+.marker-cluster-large div {
+  background-color: transparent !important;
+}
