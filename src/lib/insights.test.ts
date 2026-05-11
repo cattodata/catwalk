@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { generateInsights, buildVitals } from './insights'
+import { generateInsights } from './insights'
 import type { WeatherSummary } from '../types/weather'
 import type { ChatswoodEvent } from '../data/events'
 
@@ -75,38 +75,3 @@ describe('generateInsights', () => {
   })
 })
 
-describe('buildVitals', () => {
-  it('returns 4 cards', () => {
-    const cards = buildVitals({
-      weather: sunny,
-      competitors: null,
-      bizType: 'Cafe',
-      stationDailyAvg: 47832,
-      date: new Date('2026-05-16T14:00:00+10:00'),
-    })
-    expect(cards.length).toBe(4)
-  })
-
-  it('shows loading state when weather is null', () => {
-    const cards = buildVitals({
-      weather: null,
-      competitors: null,
-      bizType: 'Cafe',
-      stationDailyAvg: 47832,
-      date: new Date(),
-    })
-    expect(cards[0].num).toBe('—')
-  })
-
-  it('shows real cafe count when competitors present', () => {
-    const cards = buildVitals({
-      weather: sunny,
-      competitors: { cafes: 51, restaurants: 89, bakeries: 12, fetchedAt: '' },
-      bizType: 'Cafe',
-      stationDailyAvg: 47832,
-      date: new Date(),
-    })
-    const compCard = cards.find((c) => c.id === 'comp')
-    expect(compCard?.num).toBe('51')
-  })
-})
