@@ -18,8 +18,20 @@ app.use(express.json({ limit: '15mb' }))
 const BASIC_AUTH_PASSWORD = process.env.BASIC_AUTH_PASSWORD || ''
 if (BASIC_AUTH_PASSWORD) {
   app.use((req, res, next) => {
-    // Allow /api/health unauthenticated for monitoring
-    if (req.path === '/api/health') return next()
+    // Allow unauthenticated:
+    //  - /api/health (monitoring)
+    //  - manifest.webmanifest + service worker (browsers fetch no-credentials)
+    //  - asset images (logo, council badge — referenced in PWA manifest)
+    if (
+      req.path === '/api/health' ||
+      req.path === '/manifest.webmanifest' ||
+      req.path === '/sw.js' ||
+      req.path === '/registerSW.js' ||
+      req.path.startsWith('/workbox-') ||
+      req.path.startsWith('/assets/')
+    ) {
+      return next()
+    }
     const auth = req.headers.authorization || ''
     if (auth.startsWith('Basic ')) {
       const decoded = Buffer.from(auth.slice(6), 'base64').toString()
