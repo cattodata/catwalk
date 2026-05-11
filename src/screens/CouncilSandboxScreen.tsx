@@ -150,12 +150,13 @@ export function CouncilSandboxScreen() {
       {tab === 'stats' ? (
         <div className="cc-council-body">
           <CouncilHero
-            eyebrow="LIVE · SINCE LAUNCH"
+            eyebrow={council.stats.loaded ? 'LIVE · SINCE LAUNCH' : 'DEMO · CHATSWOOD PILOT'}
             title="Walking right now"
+            isLive={council.stats.loaded}
             stats={[
-              { value: council.stats.walking_now ?? 12, label: 'WALKING NOW' },
-              { value: (council.stats.total_walks ?? 1247).toLocaleString(), label: 'TOTAL WALKS' },
-              { value: `${(council.stats.total_co2 ?? 84.6).toFixed(1)} kg`, label: 'CO₂ SAVED' },
+              { value: council.stats.walking_now || 12, label: 'WALKING NOW' },
+              { value: council.stats.total_walks || 1247, label: 'TOTAL WALKS' },
+              { value: council.stats.total_co2 || 84.6, suffix: ' kg', decimals: 1, label: 'CO₂ SAVED' },
             ]}
           />
           <BoostedStreetsList

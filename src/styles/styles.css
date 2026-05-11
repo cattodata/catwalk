@@ -5518,3 +5518,173 @@ a.cc-owner-cta {
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
+
+/* ---------- LIVE SIGNALS STRIP (Owner v2) ---------- */
+.cc-live-signals {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 12px 14px;
+}
+.cc-live-signals-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  color: var(--sage);
+}
+.cc-live-signals-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.cc-ls-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px 5px 8px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.cc-ls-em {
+  display: inline-flex;
+  margin-right: 1px;
+}
+.cc-ls-rain { background: rgba(91, 155, 213, 0.14); color: #2e5c84; }
+.cc-ls-sun { background: rgba(245, 200, 66, 0.18); color: #8a6912; }
+.cc-ls-coral { background: rgba(255, 107, 157, 0.12); color: #b62963; }
+.cc-ls-lavender { background: rgba(180, 158, 251, 0.18); color: #5b3aa6; }
+.cc-ls-amber { background: rgba(245, 200, 66, 0.18); color: #8a6912; }
+.cc-ls-sage { background: rgba(123, 201, 127, 0.16); color: #2c6b2e; }
+
+/* ---------- CLAUDE REASONING (Owner v2) ---------- */
+.cc-reasoning {
+  background: var(--g-ai-suggest);
+  border: 1px solid rgba(180, 158, 251, 0.3);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.cc-reasoning-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12px;
+  color: #5b3aa6;
+  text-align: left;
+}
+.cc-reasoning-head > span:first-of-type {
+  flex: 1;
+}
+.cc-reasoning-tag {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+  background: rgba(245, 200, 66, 0.18);
+  color: #8a6912;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.cc-reasoning-tag.is-live {
+  background: rgba(123, 201, 127, 0.18);
+  color: #2c6b2e;
+}
+.cc-reasoning-body {
+  padding: 0 14px 12px;
+}
+.cc-reasoning-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cc-reasoning-list li {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  grid-template-rows: auto auto;
+  gap: 0 6px;
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  align-items: baseline;
+}
+.cc-reasoning-signal {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--ink);
+}
+.cc-reasoning-arrow {
+  color: var(--ink-soft);
+}
+.cc-reasoning-inference {
+  color: var(--ink);
+}
+.cc-reasoning-source {
+  grid-column: 1 / -1;
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  padding-left: 0;
+  margin-bottom: 2px;
+}
+.cc-reasoning-out {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: var(--card);
+  border-radius: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  line-height: 1.4;
+}
+.cc-reasoning-out b {
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: #5b3aa6;
+}
+.cc-reasoning-out-em {
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* ---------- COUNCIL LIVE COUNTER DOT ---------- */
+.cc-chero-live-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fff;
+  margin-right: 6px;
+  animation: pls 1.4s infinite;
+}
+
+/* ---------- OWNER SECTION HEADER ---------- */
+.cc-owner-section-h {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: -0.1px;
+  color: var(--ink-soft);
+  margin: 14px 0 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
