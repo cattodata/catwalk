@@ -8,8 +8,6 @@ import { getTodayEvent } from './data/events'
 
 import { Header } from './components/Header'
 import { PulseTicker } from './components/PulseTicker'
-import { Hero } from './components/Hero'
-import { Vitals } from './components/Vitals'
 import { ModeToggle } from './components/ModeToggle'
 import { MapFilters } from './components/MapFilters'
 import { WalkPanel } from './components/WalkPanel'
@@ -40,12 +38,9 @@ import { useCouncilStats } from './hooks/useCouncilStats'
 import { useWalkSession } from './hooks/useWalkSession'
 import { useNow } from './hooks/useNow'
 
-import { generateInsights, buildOwnerVitals, buildWalkerVitals } from './lib/insights'
+import { generateInsights } from './lib/insights'
 import { generateCampaign } from './lib/claude'
 import { smartPick } from './lib/smartPick'
-import { tierFromCo2 } from './data/tiers'
-
-const STATION_DAILY_AVG = 47832 // TfNSW Aug 2024 monthly aggregate
 
 export function App() {
   // ---------- Theme ----------
@@ -57,6 +52,7 @@ export function App() {
   const urlParams = useMemo(() => new URLSearchParams(location.search), [location.search])
   const modeFromUrl = (urlParams.get('mode') as AppMode | null) ?? 'walk'
   const mode: AppMode = ['walk', 'shop', 'council'].includes(modeFromUrl) ? modeFromUrl : 'walk'
+  const devMode = urlParams.get('dev') === '1'
   const setMode = useCallback(
     (m: AppMode) => {
       const next = new URLSearchParams(location.search)
@@ -178,29 +174,9 @@ export function App() {
   }, [bizType, selectedShop, weather, competitors, now, todayEvent])
 
   // ---------- Vitals (mode-aware) ----------
-  const nearestShop = useMemo(() => {
-    if (!shops.length) return null
-    const s = [...shops].sort((a, b) => a.dist - b.dist)[0]
-    return { name: s.name, dist: s.dist, mult: s.mult }
-  }, [shops])
-
-  const walkerTier = useMemo(() => {
-    const t = tierFromCo2(totalCo2)
-    return { label: t.label, emoji: t.emoji, co2: totalCo2, nextAt: t.next }
-  }, [totalCo2])
-
-  const vitals = useMemo(() => {
-    if (mode === 'walk') {
-      return buildWalkerVitals({ weather, nearestShop, tier: walkerTier, date: now })
-    }
-    return buildOwnerVitals({
-      weather,
-      competitors,
-      bizType,
-      stationDailyAvg: STATION_DAILY_AVG,
-      date: now,
-    })
-  }, [mode, weather, competitors, bizType, nearestShop, walkerTier, now])
+  // Vitals removed from walk/shop modes — kept here only as future hook
+  // (was: hero strip with weather/nearest/tier/today). Now folded into
+  // header pill (CO₂) + map header (shop count) + WalkPanel tier strip.
 
   // ---------- Today label for header ----------
   const todayLabel = `${now.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })} · ${now.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })}`
@@ -379,12 +355,9 @@ export function App() {
 
       <ModeToggle mode={mode} setMode={setMode} />
 
-      {/* Walker / owner — real web 2-column on desktop, single column on mobile */}
+      {/* Walker / owner — focused app: map + side panel only, NO hero/vitals decoration */}
       {(mode === 'walk' || mode === 'shop') ? (
-        <>
-          <Hero mode={mode} onSmartPick={onSmartPickClick} smartPickReady={shops.length > 0} hasSelectedShop={!!selectedShop} />
-          <Vitals cards={vitals} />
-          <main id="main-content" className="cc-grid" tabIndex={-1}>
+        <main id="main-content" className="cc-grid" tabIndex={-1}>
         <div className="cc-map-card">
           <div className="cc-map-head">
             <div className="cc-eyebrow">
@@ -492,6 +465,7 @@ export function App() {
               weather={weather}
               hour={now.getHours()}
               dayOfWeek={now.getDay()}
+              devMode={devMode}
             />
           )}
         </div>
@@ -504,7 +478,6 @@ export function App() {
         )}
       </div>
       </main>
-        </>
       ) : (
         /* Council mode — full-width dashboard (no phone frame) */
         <main id="main-content" className="cc-grid" tabIndex={-1}>

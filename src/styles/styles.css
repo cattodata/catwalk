@@ -2620,3 +2620,46 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 /* When NOT in phone frame (council mode), default desktop styling stays */
+
+/* ============================================================
+   Mobile: hide top ModeToggle (use bottom nav), tighten map chrome
+   ============================================================ */
+@media (max-width: 880px) {
+  .cc-mode {
+    display: none; /* mobile uses bottom nav instead */
+  }
+  /* Map header — single tight bar */
+  .cc-map-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .cc-map-legend {
+    display: flex;
+    gap: 4px;
+  }
+  .cc-map-legend .cc-chip {
+    font-size: 10.5px;
+    padding: 4px 8px;
+  }
+}
+
+/* Collapsible "Show details" pill button */
+.cc-details-toggle {
+  align-self: flex-start;
+  background: transparent;
+  border: 1px solid var(--border, rgba(154, 128, 90, 0.2));
+  color: var(--ink-soft);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.cc-details-toggle:hover {
+  background: var(--card, #fff);
+  color: var(--ink);
+}

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { Shop, TransportId } from '../types/shop'
 import { TRANSPORT } from '../data/shops'
 import { tierFromCo2 } from '../data/tiers'
@@ -43,6 +44,7 @@ export function WalkPanel({
   demoMode,
   setDemoMode,
 }: WalkPanelProps) {
+  const [showDetails, setShowDetails] = useState(false)
   const t = TRANSPORT.find((x) => x.id === transport) ?? TRANSPORT[0]
   const pts = shop ? Math.round(shop.pts * t.ptsMult) : 0
   const co2 = shop ? +(shop.co2 * t.co2Mult).toFixed(2) : 0
@@ -180,32 +182,29 @@ export function WalkPanel({
     return (
       <div className="cc-side-stack">
         <div className="cc-card cc-empty">
-          <div className="e-emoji">👆</div>
+          <div className="e-emoji" aria-hidden="true">👆</div>
           <h2>Pick a shop on the map</h2>
-          <p>Further shops + bigger multipliers = bigger rewards. Filter by cuisine or tap any pin to start.</p>
-          <div style={{ display: 'flex', gap: 6, marginTop: 6, flexWrap: 'wrap' }}>
-            <span className="cc-chip"><span className="cc-chip-dot" style={{ background: '#5B9BD5' }} /> 1× near</span>
-            <span className="cc-chip"><span className="cc-chip-dot" style={{ background: '#F5C842' }} /> 2× mid</span>
-            <span className="cc-chip"><span className="cc-chip-dot" style={{ background: '#FF6B9D' }} /> 3× far</span>
-          </div>
+          <p>Tap any pin to see distance + reward. Or let Catto choose for you:</p>
           {onSmartPick && (
             <button
               onClick={onSmartPick}
               style={{
-                marginTop: 14,
+                marginTop: 12,
                 width: '100%',
                 background: 'linear-gradient(135deg, #FF6B9D, #F5C842)',
                 color: '#fff',
                 border: 0,
                 borderRadius: 999,
-                padding: '12px 18px',
+                padding: '14px 18px',
                 fontFamily: 'Outfit, sans-serif',
-                fontWeight: 700,
-                fontSize: 14,
+                fontWeight: 800,
+                fontSize: 15,
                 cursor: 'pointer',
+                boxShadow: '0 8px 22px rgba(255,107,157,.3)',
               }}
+              type="button"
             >
-              ✨ Smart pick for now — best ROI
+              ✨ Smart pick — find me a shop
             </button>
           )}
           {smartPickReasons && smartPickReasons.length > 0 && (
@@ -219,8 +218,6 @@ export function WalkPanel({
             </div>
           )}
         </div>
-        {transportRow}
-        {geolocationCard}
         {tierStrip}
       </div>
     )
@@ -288,9 +285,22 @@ export function WalkPanel({
         </div>
       </div>
 
-      {transportRow}
-      {geolocationCard}
-      {tierStrip}
+      {/* Collapsible details — keeps focus on shop card + Start CTA above */}
+      <button
+        type="button"
+        onClick={() => setShowDetails((v) => !v)}
+        className="cc-details-toggle"
+        aria-expanded={showDetails}
+      >
+        {showDetails ? '▾ Hide options' : '▸ Transport, GPS, tier'}
+      </button>
+      {showDetails && (
+        <>
+          {transportRow}
+          {geolocationCard}
+          {tierStrip}
+        </>
+      )}
     </div>
   )
 }

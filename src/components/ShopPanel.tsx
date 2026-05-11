@@ -28,6 +28,8 @@ interface ShopPanelProps {
   weather?: WeatherSummary | null
   hour?: number
   dayOfWeek?: number
+  /** Dev-only: show LiveAI toggle (controlled by ?dev=1). Real users always get demo mode by default. */
+  devMode?: boolean
 }
 
 export function ShopPanel({
@@ -46,6 +48,7 @@ export function ShopPanel({
   weather,
   hour,
   dayOfWeek,
+  devMode = false,
 }: ShopPanelProps) {
   const fileRef = useRef<HTMLInputElement>(null)
   const [drag, setDrag] = useState(false)
@@ -198,24 +201,26 @@ export function ShopPanel({
         )}
       </div>
 
-      <div
-        className={`cc-ai-toggle ${liveAi ? 'on' : ''}`}
-        onClick={() => setLiveAi(!liveAi)}
-        role="switch"
-        aria-checked={liveAi}
-        style={{ cursor: 'pointer' }}
-        title={liveAi ? 'Currently calling Claude — click to switch to instant Demo' : 'Currently using sample data — click to enable Live Claude AI'}
-      >
-        <div className="ai-track" />
-        <div>
-          <div className="ai-label">
-            Mode: {liveAi ? <b style={{ color: 'var(--coral)' }}>● Live Claude AI</b> : <b style={{ color: 'var(--ink-soft)' }}>Demo (sample)</b>}
-          </div>
-          <div style={{ fontSize: 12, color: 'var(--ink-soft)' }}>
-            {liveAi ? 'Real AI · ~5s · uses your photo' : 'Instant · pre-baked sample · click to enable real AI'}
+      {devMode && (
+        <div
+          className={`cc-ai-toggle ${liveAi ? 'on' : ''}`}
+          onClick={() => setLiveAi(!liveAi)}
+          role="switch"
+          aria-checked={liveAi}
+          style={{ cursor: 'pointer' }}
+          title="Dev only — toggles real Azure OpenAI vs cached sample"
+        >
+          <div className="ai-track" />
+          <div>
+            <div className="ai-label">
+              [DEV] {liveAi ? <b style={{ color: 'var(--coral)' }}>● Live AI (uses tokens)</b> : <b style={{ color: 'var(--ink-soft)' }}>Sample data</b>}
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--ink-soft)' }}>
+              Add ?dev=1 to URL to see this toggle
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <button
         className={`cc-cta ${generating ? 'is-loading' : ''}`}
