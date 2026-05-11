@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Sparkles, Copy, Share, CloudRain, MapPin, TrainFront } from 'lucide-react'
 import type { BizType } from '../types/shop'
 
+import { CattoPill } from '../components/CattoPill'
 import { OwnerStepper } from '../components/OwnerStepper'
 import { PhotoDrop } from '../components/PhotoDrop'
 import { BizPills } from '../components/BizPills'
@@ -197,6 +198,9 @@ export function OwnerCampaignScreen() {
 
           {/* Asset card */}
           <div className="cc-asset-card">
+            <CattoPill tone="dark" className="cc-asset-pill">
+              CATTO WROTE THIS
+            </CattoPill>
             <h4>{asset.title}</h4>
             <p>{asset.body}</p>
             <div className="cc-copy-row">

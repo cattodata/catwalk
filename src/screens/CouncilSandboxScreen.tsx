@@ -1,15 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Calendar, RotateCcw } from 'lucide-react'
+import { RotateCcw } from 'lucide-react'
 
 import { BottomNav } from '../components/BottomNav'
 import { SwitchRoleGear } from '../components/SwitchRoleSheet'
 import { SegmentedTabs } from '../components/SegmentedTabs'
-import { CouncilHero } from '../components/CouncilHero'
+import { CattoPill } from '../components/CattoPill'
+import { AnimatedCounter } from '../components/AnimatedCounter'
 import { BoostedStreetsList } from '../components/BoostedStreets'
 import { LangDonut } from '../components/LangDonut'
 import { LeverSlider } from '../components/LeverSlider'
-import { SimOutputCard } from '../components/SimOutput'
-import { AiSuggestCard } from '../components/AiSuggestCard'
 
 import { useCouncilStats } from '../hooks/useCouncilStats'
 import { useDemographics } from '../hooks/useDemographics'
@@ -131,9 +130,6 @@ export function CouncilSandboxScreen() {
           </span>
         </div>
         <div className="cc-council-bar-actions">
-          <button type="button" className="cc-icon-btn" aria-label="Date range">
-            <Calendar size={18} aria-hidden="true" />
-          </button>
           {tab === 'sandbox' && (
             <button type="button" className="cc-icon-btn" aria-label="Reset" onClick={reset}>
               <RotateCcw size={16} aria-hidden="true" />
@@ -148,71 +144,122 @@ export function CouncilSandboxScreen() {
       </div>
 
       {tab === 'stats' ? (
-        <div className="cc-council-body">
-          <CouncilHero
-            eyebrow={council.stats.loaded ? 'LIVE · SINCE LAUNCH' : 'DEMO · CHATSWOOD PILOT'}
-            title="Walking right now"
-            isLive={council.stats.loaded}
-            stats={[
-              { value: council.stats.walking_now || 12, label: 'WALKING NOW' },
-              { value: council.stats.total_walks || 1247, label: 'TOTAL WALKS' },
-              { value: council.stats.total_co2 || 84.6, suffix: ' kg', decimals: 1, label: 'CO₂ SAVED' },
-            ]}
-          />
-          <BoostedStreetsList
-            rows={[
-              { name: 'Help St', mult: '3×', variant: 'x3', sub: 'UNTIL 6PM · UNDERSERVED' },
-              { name: 'Spring St', mult: '2×', variant: 'x2', sub: 'UNTIL 5PM · MARKETS' },
-            ]}
-            projection={{
-              label: 'Project: Help St → 5×',
-              onClick: () => {
-                // Pre-set bike multiplier slider to 5× (pct 100) and route into Sandbox
-                setLevers((s) => ({ ...s, bikeMult: 100 }))
-                setTab('sandbox')
-              },
-            }}
-          />
-          <div className="cc-council-lang-card">
-            <h5>Resident ancestry · ABS 2021</h5>
-            <LangDonut enPct={enHero} zhPct={cnHero} koPct={koHero} />
-            <div className="cc-council-lang-legend">
-              <span className="cc-lang-dot" style={{ background: '#5B9BD5' }} /> Other {Math.round(enHero)}%
-              <span className="cc-lang-dot" style={{ background: '#B49EFB' }} /> Chinese {Math.round(cnHero)}%
-              <span className="cc-lang-dot" style={{ background: '#FF6B9D' }} /> Korean {Math.round(koHero)}%
+        <div className="cc-council-v5">
+          {/* V5 MEGA PULSE — single AI moment */}
+          <div className="cc-pulse-block">
+            <CattoPill tone="gradient">WALKING RIGHT NOW</CattoPill>
+            <div className="cc-pulse-num">
+              <AnimatedCounter value={council.stats.walking_now || 12} />
             </div>
-            <span className="cc-cite">Source: ABS 2021 Census · Chatswood SA2</span>
+            <div className="cc-pulse-ttl">in Chatswood</div>
+            <div className="cc-pulse-sub">
+              {council.stats.loaded ? 'Realtime · refreshes every 8s' : 'Demo · pilot baseline'}
+            </div>
           </div>
+
+          {/* 3 small totals strip */}
+          <div className="cc-tots">
+            <div className="cc-tot">
+              <div className="cc-tot-v">
+                <AnimatedCounter value={council.stats.total_walks || 1247} />
+              </div>
+              <div className="cc-tot-l">WALKS</div>
+            </div>
+            <div className="cc-tot">
+              <div className="cc-tot-v">
+                <AnimatedCounter value={council.stats.total_co2 || 84.6} decimals={1} suffix="kg" />
+              </div>
+              <div className="cc-tot-l">CO₂ SAVED</div>
+            </div>
+            <div className="cc-tot">
+              <div className="cc-tot-v">
+                <AnimatedCounter
+                  value={Math.round((council.stats.total_walks || 1247) * 6.7)}
+                  prefix="$"
+                />
+              </div>
+              <div className="cc-tot-l">SHOP SPEND</div>
+            </div>
+          </div>
+
+          {/* Why-tab (existing pieces) — under "Why this works" reveal */}
+          <details className="cc-council-why">
+            <summary>Why this works · boosted streets + ancestry</summary>
+            <div className="cc-council-why-inner">
+              <BoostedStreetsList
+                rows={[
+                  { name: 'Help St', mult: '3×', variant: 'x3', sub: 'UNTIL 6PM · UNDERSERVED' },
+                  { name: 'Spring St', mult: '2×', variant: 'x2', sub: 'UNTIL 5PM · MARKETS' },
+                ]}
+                projection={{
+                  label: 'Project: Help St → 5×',
+                  onClick: () => {
+                    setLevers((s) => ({ ...s, bikeMult: 100 }))
+                    setTab('sandbox')
+                  },
+                }}
+              />
+              <div className="cc-council-lang-card">
+                <h5>Resident ancestry · ABS 2021</h5>
+                <LangDonut enPct={enHero} zhPct={cnHero} koPct={koHero} />
+                <div className="cc-council-lang-legend">
+                  <span className="cc-lang-dot" style={{ background: '#5B9BD5' }} /> Other {Math.round(enHero)}%
+                  <span className="cc-lang-dot" style={{ background: '#B49EFB' }} /> Chinese {Math.round(cnHero)}%
+                  <span className="cc-lang-dot" style={{ background: '#FF6B9D' }} /> Korean {Math.round(koHero)}%
+                </div>
+                <span className="cc-cite">Source: ABS 2021 Census · Chatswood SA2</span>
+              </div>
+            </div>
+          </details>
         </div>
       ) : (
         <div className="cc-council-body">
           <div className="cc-policy-hero">
-            <span className="cc-policy-eb">🎛 LEVERS · 12-MO SIM</span>
-            <h3>What if we...</h3>
+            <span className="cc-policy-eb">🎛 What if we tried this policy?</span>
+            <h3>Drag a lever — Catto forecasts 12 months out</h3>
             <LeverSlider
-              label="Parking on Victoria Ave"
+              label="Remove some Victoria Ave parking"
               value={parkingPctValue}
               pct={levers.parkingPct}
               onChange={(v) => setLevers((s) => ({ ...s, parkingPct: v }))}
             />
             <LeverSlider
-              label="Bike multiplier Help St"
+              label="Reward bikes on Help St (×)"
               value={bikeMultValue}
               pct={levers.bikeMult}
               onChange={(v) => setLevers((s) => ({ ...s, bikeMult: v }))}
             />
             <LeverSlider
-              label="Walker reward budget"
+              label="Council top-up to walker rewards / week"
               value={rewardBudgetValue}
               pct={levers.rewardBudget}
               onChange={(v) => setLevers((s) => ({ ...s, rewardBudget: v }))}
             />
           </div>
-          <SimOutputCard deltas={deltas} />
-          <AiSuggestCard
-            body={policy?.suggestion ?? 'Computing…'}
-            source={policy?.source}
-          />
+          {/* V5: dark Catto forecast card replaces SimOutput + AiSuggest */}
+          <div className="cc-forecast-card-v5">
+            <CattoPill tone="light">CATTO FORECAST · ~12 MONTHS</CattoPill>
+            <div className="cc-forecast-card-v5-row">
+              <div>
+                <div className="cc-forecast-card-v5-l">EXTRA WALKS / WK</div>
+                <div className="cc-forecast-card-v5-v">+{Math.round(312 + bikeMult * 40)}</div>
+              </div>
+              <div>
+                <div className="cc-forecast-card-v5-l">SHOP REVENUE</div>
+                <div className="cc-forecast-card-v5-v">{deltas[1].value}</div>
+              </div>
+              <div>
+                <div className="cc-forecast-card-v5-l">CO₂ AVOIDED</div>
+                <div className="cc-forecast-card-v5-v">{deltas[0].value}</div>
+              </div>
+            </div>
+            <p className="cc-forecast-card-v5-q">
+              <b>Catto suggests:</b> {policy?.suggestion ?? 'Computing scenario…'}
+            </p>
+            <span className="cc-forecast-card-v5-cite">
+              Illustrative · static elasticities · {policy?.source === 'live' ? 'live · gpt-4.1-nano' : 'demo data'}
+            </span>
+          </div>
         </div>
       )}
 

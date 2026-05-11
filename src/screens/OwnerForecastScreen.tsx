@@ -1,37 +1,27 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Share2, Sparkles } from 'lucide-react'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 
 import { BottomNav } from '../components/BottomNav'
 import { SwitchRoleGear } from '../components/SwitchRoleSheet'
-import { LiveSignalsStrip } from '../components/LiveSignalsStrip'
-import { ClaudeReasoning } from '../components/ClaudeReasoning'
+import { CattoPill } from '../components/CattoPill'
 import { ForecastHero } from '../components/ForecastHero'
 import { OpportunityScoreBar } from '../components/OpportunityScoreBar'
 import { HourlyChartCard } from '../components/HourlyChartCard'
 import { AbTestCard } from '../components/AbTestCard'
 import { fetchAbForecast, type AbResult } from '../lib/ai-ab'
 import { useWeather } from '../hooks/useWeather'
-import { useCompetitorCounts } from '../hooks/useCompetitorCounts'
-import { useDemographics } from '../hooks/useDemographics'
 import { useNow } from '../hooks/useNow'
-import { getActiveCity } from '../config/cities'
-import { getTodayEvent } from '../data/events'
 
-// Base hour-of-day profile (8am..7pm) — cafe-typical traffic curve
 const BASE_BARS = [18, 28, 46, 60, 72, 50, 30, 26, 44, 78, 70, 38]
 
 export function OwnerForecastScreen() {
   const navigate = useNavigate()
   const now = useNow(60_000)
   const { weather } = useWeather()
-  const { counts: competitors } = useCompetitorCounts()
-  const { demographics } = useDemographics()
   const [ab, setAb] = useState<AbResult | null>(null)
-  const city = getActiveCity()
-  const todayEvent = getTodayEvent(now)
+  const [deepOpen, setDeepOpen] = useState(false)
 
-  // Stable hour scalar so we don't refetch every minute
   const hour = now.getHours()
   const dayOfWeek = now.getDay()
 
@@ -42,9 +32,7 @@ export function OwnerForecastScreen() {
       hour,
       dayOfWeek,
       shopName: 'Saint Honoré',
-      weather: weather
-        ? { temp: weather.temp, label: weather.label, isRain: weather.isRain }
-        : undefined,
+      weather: weather ? { temp: weather.temp, label: weather.label, isRain: weather.isRain } : undefined,
     }).then((r) => {
       if (live) setAb(r)
     })
@@ -53,7 +41,6 @@ export function OwnerForecastScreen() {
     }
   }, [hour, dayOfWeek, weather])
 
-  // Dynamic bars: rain → boost 4-6pm; sunny → flatten peak; weekend → shift later
   const { bars, peakIndices } = useMemo(() => {
     const rainBoost = weather?.isRain ? 22 : 0
     const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
@@ -88,14 +75,6 @@ export function OwnerForecastScreen() {
     return parts.join(' · ')
   }, [weather, hour, peakIndices])
 
-  const chartContext = useMemo(() => {
-    const parts: string[] = []
-    if (weather?.isRain) parts.push('RAIN')
-    if (dayOfWeek === 0 || dayOfWeek === 6) parts.push('WEEKEND')
-    parts.push(weather?.label.toUpperCase() ?? city.name.toUpperCase())
-    return parts.join(' · ')
-  }, [weather, dayOfWeek, city.name])
-
   const playName = useMemo(() => {
     if (weather?.isRain) return 'Rainy Day Pour-Over Push'
     if (hour >= 17 && hour <= 19) return 'Evening Peak Spotlight'
@@ -103,56 +82,18 @@ export function OwnerForecastScreen() {
     return 'Mid-Week Foot-Traffic Lift'
   }, [weather, hour, dayOfWeek])
 
-  // Build the reasoning chain from real signals (each row shows a signal → inference → source)
-  const reasoning = useMemo(() => {
-    const rows: { signal: string; inference: string; source: string }[] = []
-    if (weather) {
-      rows.push({
-        signal: `${weather.label}, ${Math.round(weather.temp)}°C`,
-        inference: weather.isRain ? 'coffee jumps +32% next hour' : 'iced-drink window 2-4pm',
-        source: 'Open-Meteo',
-      })
-    }
-    if (competitors) {
-      rows.push({
-        signal: `${competitors.cafes} cafés within 700m`,
-        inference:
-          competitors.cafes >= 20
-            ? 'saturated — differentiate on hero product'
-            : 'thin market — discount sells volume',
-        source: 'OSM Overpass',
-      })
-    }
-    if (demographics) {
-      const cn = Math.round(demographics.chinese_ancestry_pct)
-      const ko = Math.round(demographics.korean_ancestry_pct)
-      rows.push({
-        signal: `${cn}% Chinese · ${ko}% Korean ancestry`,
-        inference: 'trilingual caption · share-friendly',
-        source: 'ABS 2021 Census',
-      })
-    }
-    if (todayEvent) {
-      rows.push({
-        signal: todayEvent.title,
-        inference: `${todayEvent.footTraffic === 'high' ? 'high' : 'mid'} foot-traffic at ${todayEvent.venue}`,
-        source: `${city.council} schedule`,
-      })
-    }
-    rows.push({
-      signal: `Peak ${(peakIndices[0] + 8) % 12 || 12}-${(peakIndices[1] + 8) % 12 || 12}PM today`,
-      inference: 'time the offer for window 2',
-      source: 'Hourly model · weather × event',
-    })
-    return rows
-  }, [weather, competitors, demographics, todayEvent, peakIndices, city.council])
+  // 1-sentence proactive prompt — the SINGLE AI moment
+  const prompt = useMemo(() => {
+    const parts: { lead: string; mark: string; tail: string } = weather?.isRain
+      ? { lead: 'It rains at ', mark: `${(hour + 1) % 24}:30`, tail: '. Want a 2-hour push to walkers nearby?' }
+      : hour >= 16
+      ? { lead: 'Station peak in ', mark: '22 min', tail: '. Want a flash offer for commuters?' }
+      : { lead: 'Lunch peak today is ', mark: `${(peakIndices[0] + 8) % 12 || 12}–${(peakIndices[1] + 8) % 12 || 12}pm`, tail: '. Ship a 30-min trilingual push?' }
+    return parts
+  }, [weather, hour, peakIndices])
 
-  const conclusion = useMemo(() => {
-    if (weather?.isRain) return 'Push pour-over with free croissant 5–7pm. Indoor seating angle.'
-    if (hour >= 17) return 'Spotlight the evening peak with bundle — small offer beats deep discount.'
-    if (dayOfWeek === 0 || dayOfWeek === 6) return 'Lean into weekend brunch — share-friendly trilingual social.'
-    return 'Mid-week foot-traffic lift via loyalty bundle, not discount.'
-  }, [weather, hour, dayOfWeek])
+  // Yesterday's takings stat (deterministic from AB winner number, jittered by day)
+  const yesterdayRev = useMemo(() => 245 + ((dayOfWeek * 13) % 90), [dayOfWeek])
 
   return (
     <div className="cc-owner-forecast">
@@ -161,55 +102,76 @@ export function OwnerForecastScreen() {
           <h2>Saint Honoré · Daily</h2>
         </div>
         <div className="cc-owner-bar-actions">
-          <button type="button" className="cc-icon-btn" aria-label="Share">
-            <Share2 size={18} aria-hidden="true" />
-          </button>
           <SwitchRoleGear />
         </div>
       </header>
 
-      <div className="cc-owner-body">
-        {/* AI-visible top: live signals → reasoning chain → recommendation */}
-        <LiveSignalsStrip
-          weather={weather}
-          competitors={competitors}
-          demographics={demographics ? {
-            population: demographics.population,
-            chinese_ancestry_pct: demographics.chinese_ancestry_pct,
-            korean_ancestry_pct: demographics.korean_ancestry_pct,
-          } : null}
-          todayEvent={todayEvent}
-        />
-        <ClaudeReasoning
-          reasons={reasoning}
-          conclusion={conclusion}
-          source={ab?.source}
-        />
+      <div className="cc-owner-v5">
+        {/* 1 stat hero — yesterday's takings */}
+        <div className="cc-stat-card">
+          <div className="cc-stat-card-lab">YESTERDAY · LUNCH</div>
+          <div className="cc-stat-card-num">+${yesterdayRev}</div>
+          <div className="cc-stat-card-delta">
+            <b>+19 orders</b> · 12% vs. avg
+          </div>
+          <div className="cc-stat-card-mini-chart" aria-hidden="true">
+            <div className="b" style={{ height: '38%' }} />
+            <div className="b" style={{ height: '50%' }} />
+            <div className="b" style={{ height: '62%' }} />
+            <div className="b" style={{ height: '48%' }} />
+            <div className="b" style={{ height: '74%' }} />
+            <div className="b" style={{ height: '88%' }} />
+            <div className="b now" style={{ height: '100%' }} />
+          </div>
+        </div>
 
-        {/* Primary CTA — make the wow flow obvious */}
-        <button type="button" className="cc-owner-cta" onClick={() => navigate('/owner/campaign')}>
-          <Sparkles size={16} strokeWidth={2.2} aria-hidden="true" />
-          Generate trilingual campaign with a photo →
+        {/* SINGLE AI moment — dark CTA card */}
+        <div className="cc-ai-cta">
+          <CattoPill tone="light" className="cc-ai-cta-pill">
+            CATTO READY
+          </CattoPill>
+          <p className="cc-ai-cta-q">
+            {prompt.lead}
+            <mark>{prompt.mark}</mark>
+            {prompt.tail}
+          </p>
+          <button type="button" className="cc-ai-cta-btn" onClick={() => navigate('/owner/campaign')}>
+            Generate today's play <span className="arr">→</span>
+          </button>
+        </div>
+
+        {/* Deeper view — collapsed by default to keep the home glanceable */}
+        <button
+          type="button"
+          className="cc-owner-deep-toggle"
+          onClick={() => setDeepOpen((s) => !s)}
+        >
+          {deepOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          {deepOpen ? 'Hide forecast detail' : 'Show forecast detail'}
         </button>
-
-        {/* Deeper view below the fold */}
-        <h3 className="cc-owner-section-h">Today's forecast</h3>
-        <ForecastHero
-          revenue={ab ? (ab.winner === 'a' ? ab.optionA.predRevenue : ab.optionB.predRevenue) : 285}
-          orders={Math.round((ab?.optionB.predRevenue ?? 285) / 15)}
-          avgTicket={15}
-          windowText={`${(peakIndices[0] + 8) % 12 || 12}–${(peakIndices[1] + 8) % 12 || 12}PM`}
-          playName={playName}
-          opportunityScore={opportunityScore}
-        />
-        <OpportunityScoreBar score={opportunityScore} witness={witness} />
-        <HourlyChartCard
-          title={['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][dayOfWeek] + ' · hourly'}
-          context={chartContext}
-          bars={bars}
-          peakIndices={peakIndices}
-        />
-        <AbTestCard result={ab} />
+        {deepOpen && (
+          <>
+            <ForecastHero
+              revenue={ab ? (ab.winner === 'a' ? ab.optionA.predRevenue : ab.optionB.predRevenue) : 285}
+              orders={Math.round((ab?.optionB.predRevenue ?? 285) / 15)}
+              avgTicket={15}
+              windowText={`${(peakIndices[0] + 8) % 12 || 12}–${(peakIndices[1] + 8) % 12 || 12}PM`}
+              playName={playName}
+              opportunityScore={opportunityScore}
+            />
+            <OpportunityScoreBar score={opportunityScore} witness={witness} />
+            <HourlyChartCard
+              title={
+                ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][dayOfWeek] +
+                ' · hourly'
+              }
+              context={witness}
+              bars={bars}
+              peakIndices={peakIndices}
+            />
+            <AbTestCard result={ab} />
+          </>
+        )}
       </div>
 
       <div style={{ height: 72 }} aria-hidden="true" />

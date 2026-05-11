@@ -99,7 +99,21 @@ export function WalkerHomeScreen() {
           userPosition={geo.position}
           recenterNonce={recenterNonce}
         />
-        <div className="cc-map-overlays">
+        {/* V5 AI moment — black "Catto picked one" ribbon at top of map */}
+        {smart && !selectedShop && (
+          <button
+            type="button"
+            className="cc-walker-ribbon"
+            onClick={() => setSelectedShop(smart.shop)}
+          >
+            <span className="cc-walker-ribbon-dot" aria-hidden="true" />
+            <span className="cc-walker-ribbon-txt">
+              <b>Catto picked one</b> · {smart.shop.name}, {Math.max(1, Math.round(smart.shop.dist / 75))} min
+            </span>
+            <span className="cc-walker-ribbon-arr" aria-hidden="true">›</span>
+          </button>
+        )}
+        <div className="cc-map-overlays" style={smart && !selectedShop ? { top: 64 } : undefined}>
           <MapPulseChip>
             {selectedShop ? `ROUTE READY · ${Math.max(1, Math.round(selectedShop.dist / 80))} MIN` : `${shopsCount || '…'} SHOPS OPEN`}
           </MapPulseChip>

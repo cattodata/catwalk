@@ -1,11 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { X, Check, CloudRain, Cloud } from 'lucide-react'
+import { X, Check } from 'lucide-react'
 import type { Shop, TransportId } from '../types/shop'
-
-import { ProgressRing } from '../components/ProgressRing'
-import { InsightStrip } from '../components/InsightStrip'
-import { Catto } from '../components/Catto'
 
 import { useRealShops } from '../hooks/useRealShops'
 import { useWeather } from '../hooks/useWeather'
@@ -114,48 +110,64 @@ export function WalkingLiveScreen() {
   }, [shop, weather, now])
 
   const insight = insights[0] ?? {
-    icon: '🌧️',
+    icon: '🌦',
     title: 'Almost there',
     sub: "You're on the best route to earn your multiplier.",
   }
 
-  const isRainy = weather?.isRain ?? false
+  // Conic-gradient ring: end of pink stops at progress fraction of 360°
+  const progressDeg = Math.max(0, Math.min(360, Math.round(session.progress * 360)))
+  const conicBg = `conic-gradient(from -90deg, #FF6B9D 0deg, #F5C842 ${progressDeg}deg, rgba(0,0,0,.06) ${progressDeg + 30}deg 360deg)`
 
   return (
-    <div className="cc-walking">
-      <header className="cc-walk-top">
-        <button type="button" className="cc-icon-btn" onClick={() => navigate('/walk')} aria-label="Close">
+    <div className="cc-walking-v5">
+      <div className="cc-walking-v5-top">
+        <button
+          type="button"
+          className="cc-icon-btn"
+          onClick={() => navigate('/walk')}
+          aria-label="Close"
+        >
           <X size={16} strokeWidth={2.2} aria-hidden="true" />
         </button>
-        <span className="cc-live">
-          <span className="cc-live-dot" aria-hidden="true" /> LIVE GPS
+        <span className="cc-walking-v5-gps">
+          <span className="cc-walking-v5-gps-dot" aria-hidden="true" /> LIVE GPS
         </span>
-        {/* Removed dead More button (Walker P1#9) — no menu actions defined */}
-        <span style={{ width: 36 }} aria-hidden="true" />
-      </header>
+        <span style={{ width: 34 }} aria-hidden="true" />
+      </div>
 
-      <div className="cc-destination">
-        <span className="cc-destination-eb">Walking to</span>
-        <h3>
+      <div style={{ textAlign: 'center' }}>
+        <span className="cc-walking-v5-head">Walking to</span>
+        <h2 className="cc-walking-v5-h2">
           {shop?.name ?? '…'} <span aria-hidden="true">{shop?.emoji ?? ''}</span>
-        </h3>
+        </h2>
       </div>
 
-      <ProgressRing progress={session.progress} metersLeft={metersLeft} minsLeft={minsLeft} />
-
-      <div className="cc-catto-walk" aria-hidden="true">
-        <Catto scale={1.4} state="walking" dir={1} />
+      <div className="cc-walking-v5-ring" style={{ background: conicBg }}>
+        <div className="cc-walking-v5-ring-in">
+          <div className="cc-walking-v5-km">
+            {metersLeft}
+            <span className="u">m</span>
+          </div>
+          <div className="cc-walking-v5-lab">~ {minsLeft} MIN LEFT</div>
+        </div>
       </div>
 
-      <InsightStrip
-        emoji={isRainy ? <CloudRain size={20} strokeWidth={2} /> : <Cloud size={20} strokeWidth={2} />}
-        title={insight.title}
-        body={insight.sub}
-      />
+      <div className="cc-walking-v5-mascot" aria-hidden="true">
+        🐱
+      </div>
+
+      <div className="cc-walking-v5-weather">
+        <span className="em" aria-hidden="true">{insight.icon}</span>
+        <div>
+          <b>{insight.title}</b>
+          <span>{insight.sub}</span>
+        </div>
+      </div>
 
       <button
         type="button"
-        className={`cc-arrive-cta${session.phase === 'arrived' ? ' is-pulsing' : ''}`}
+        className={`cc-walking-v5-arrive${session.phase === 'arrived' ? ' is-ready' : ''}`}
         disabled={session.phase !== 'arrived'}
         onClick={() => {
           if (session.phase === 'arrived') navigate('/walk/reward')
