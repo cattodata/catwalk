@@ -1,16 +1,23 @@
 # Morning checklist — Catto Compass
 
-## 🚀 LIVE NOW — verified working
+## 🚀 LIVE — verified rendering in real browser
 
-**URL:** https://cattocompass.azurewebsites.net  
-**Login:** any username · password `***REDACTED***`  
-**API health:** https://cattocompass.azurewebsites.net/api/health
+**URLs:**
+- https://cattocompass.azurewebsites.net (Azure default)
+- https://cattocompass.cattodata.com (custom — once SSL provisions)
 
-Verified end-to-end at 08:19 UTC:
-- ✅ HTTP 200 with team password
-- ✅ HTTP 401 without password (auth gate working)
-- ✅ Live AI generated REAL campaign (Vision + 3 languages)
-  Test: Posted Cattodata logo → Azure gpt-4.1-nano returned "Northern Lights Warm Drinks Special" with full EN/中文/한국어 assets in 16s
+**How to login:**
+1. Open URL → browser pops up auth dialog
+2. Username: anything (e.g. `team`)
+3. Password: `***REDACTED***`
+4. Sign In → app loads with Walk mode
+
+Verified at 09:13 UTC via Playwright:
+- ✅ HTML renders, vitals show real data (19° Open-Meteo, 47.8K TfNSW)
+- ✅ Bottom nav active "Walk", PWA manifest loads
+- ✅ Live AI tested: Cattodata logo → "Northern Lights Warm Drinks Special" (EN/中文/한국어, 16s)
+- ✅ Cloudflare DNS records added via API (`CLOUDFLARE_DNS_TOKEN` from cattolanglearn-web)
+- ✅ Custom domain bound on Azure
 
 ## ✅ What's done overnight
 
