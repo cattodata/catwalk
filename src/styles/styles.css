@@ -6435,3 +6435,436 @@ a.cc-owner-cta {
   color: var(--ink-soft);
   font-weight: 600;
 }
+
+/* ---------- V5.2 OWNER READING (inline signal → conclusion) ---------- */
+.cc-or {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 14px 18px 4px;
+  display: flex;
+  flex-direction: column;
+}
+.cc-or-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: 4px;
+}
+.cc-or-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--sage);
+  box-shadow: 0 0 0 4px rgba(123, 201, 127, 0.18);
+  animation: pls 1.4s infinite;
+}
+.cc-or-h {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sage);
+}
+.cc-or-src {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+.cc-or-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.cc-or-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+.cc-or-row:first-child {
+  border-top: none;
+  padding-top: 6px;
+}
+.cc-or-ico {
+  flex: 0 0 22px;
+  margin-top: 1px;
+  color: var(--ink-soft);
+  display: inline-flex;
+}
+.cc-or-row p {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.45;
+  letter-spacing: -0.1px;
+  color: var(--ink);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px;
+}
+.cc-or-arr {
+  color: #c9a3b4;
+  font-weight: 500;
+  padding: 0 2px;
+}
+.cc-or-conc {
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+.cc-or-conc mark {
+  background: transparent;
+  color: #b62963;
+  font-weight: 700;
+}
+
+/* v5.2 in-card Generate button — white pill instead of pink-orange gradient */
+.cc-ai-cta-btn-v52 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: #fff;
+  color: #1A1410;
+  border: none;
+  border-radius: 12px;
+  padding: 13px 16px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: -0.1px;
+  cursor: pointer;
+}
+.cc-ai-cta-btn-v52 .arr {
+  font-size: 16px;
+}
+.cc-ai-cta .cc-ai-cta-q mark {
+  color: var(--amber);
+  font-weight: 800;
+  background: transparent;
+}
+
+/* ---------- WALKER CUISINE FILTER CHIPS ---------- */
+.cc-cuisine-row {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 4px;
+  scrollbar-width: none;
+}
+.cc-cuisine-row::-webkit-scrollbar { display: none; }
+.cc-cuisine-chip {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--ink);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.cc-cuisine-chip.is-on {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+.cc-cuisine-chip-em {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.cc-empty-row {
+  padding: 14px;
+  text-align: center;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+  background: var(--cream);
+  border-radius: 14px;
+}
+
+/* ---------- COUNCIL · COST EFFECTIVENESS CARD ---------- */
+.cc-cost-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cc-cost-card h4 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: -0.2px;
+  margin: 0;
+}
+.cc-cost-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 2px;
+}
+.cc-cost-row > div {
+  background: var(--cream);
+  border-radius: 10px;
+  padding: 10px 8px;
+  text-align: center;
+}
+.cc-cost-v {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.3px;
+  color: var(--ink);
+}
+.cc-cost-l {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  margin-top: 4px;
+}
+.cc-cost-bench {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin: 2px 0 0;
+  line-height: 1.4;
+}
+
+/* ---------- COUNCIL · OUTCOME ALIGNMENT CARD ---------- */
+.cc-outcomes-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px 18px 4px;
+}
+.cc-outcomes-card h4 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: -0.2px;
+  margin: 8px 0 6px;
+}
+.cc-outcomes-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.cc-outcome-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+.cc-outcome-row:first-child {
+  border-top: none;
+  padding-top: 4px;
+}
+.cc-outcome-em {
+  font-size: 18px;
+  flex: 0 0 22px;
+  line-height: 1.2;
+}
+.cc-outcome-body b {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 12.5px;
+  color: var(--ink);
+}
+.cc-outcome-body p {
+  margin: 2px 0 0;
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+
+/* ---------- COUNCIL PULSE v5.2 (03.1 mockup-true layout) ---------- */
+.cc-pulse-v52 {
+  padding: 0 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.cc-pulse-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 14px 16px 22px;
+}
+.cc-pulse-mega {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 168px;
+  letter-spacing: -8px;
+  line-height: 0.95;
+  margin: 14px 0 0;
+  background: linear-gradient(135deg, #FF6B9D 0%, #FF3D7F 50%, #D63384 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.cc-pulse-place {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.4px;
+  margin-top: 8px;
+  color: var(--ink);
+}
+.cc-pulse-meta {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+}
+
+/* "WHAT THE PILOT SHOWS" — 4 insight rows, reuses OwnerReading classes but
+   green dot (council flavor) instead of pink mark. */
+.cc-pilot-shows {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 14px 18px 4px;
+}
+.cc-pilot-shows header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: 4px;
+}
+.cc-pilot-shows ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.cc-pilot-shows li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+.cc-pilot-shows li:first-child {
+  border-top: none;
+  padding-top: 6px;
+}
+.cc-pilot-shows .cc-or-ico {
+  flex: 0 0 22px;
+  font-size: 17px;
+  line-height: 1.2;
+}
+.cc-pilot-shows p {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.45;
+  letter-spacing: -0.1px;
+  color: var(--ink);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px;
+}
+.cc-pilot-shows mark {
+  background: transparent;
+  color: #2c6b2e;
+  font-weight: 700;
+}
+
+/* 3 small totals at bottom — JetBrains tabular, no card background */
+.cc-pulse-tots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 6px 8px;
+  text-align: center;
+  border-top: 1px solid var(--line);
+  margin-top: 2px;
+}
+.cc-pulse-tot-v {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.4px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.cc-pulse-tot-l {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--ink-soft);
+  margin-top: 4px;
+}
+
+/* For-the-boardroom deeper details fold */
+.cc-council-deeper {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0;
+  margin-top: 4px;
+}
+.cc-council-deeper summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 12px 14px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.cc-council-deeper summary::-webkit-details-marker { display: none; }
+.cc-council-deeper summary::before {
+  content: '›';
+  font-size: 14px;
+  color: var(--ink-soft);
+  transition: transform 200ms;
+}
+.cc-council-deeper[open] summary::before { transform: rotate(90deg); }
+.cc-council-deeper[open] {
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cc-council-deeper[open] summary {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+/* Override "cream" → white in cost card to fix brown look */
+.cc-cost-row > div {
+  background: #fff;
+  border: 1px solid var(--line);
+}

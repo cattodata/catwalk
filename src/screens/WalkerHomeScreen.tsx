@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import type { Shop, TransportId } from '../types/shop'
+import type { Shop, TransportId, CuisineId } from '../types/shop'
 
 import { AppBarLockup } from '../components/AppBarLockup'
 import { TierRibbon } from '../components/TierRibbon'
@@ -10,6 +10,7 @@ import { MapFab } from '../components/MapFab'
 import { SmartPickCta } from '../components/SmartPickCta'
 import { ShopMiniRail } from '../components/ShopMini'
 import { ShopDetailSheet } from '../components/ShopDetailSheet'
+import { CuisineRow } from '../components/CuisineRow'
 import { RealMap } from '../components/RealMap'
 
 import { useRealShops } from '../hooks/useRealShops'
@@ -38,8 +39,13 @@ export function WalkerHomeScreen() {
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null)
   const [transport, setTransport] = useState<TransportId>('walk')
   const [recenterNonce, setRecenterNonce] = useState(0)
+  const [cuisine, setCuisine] = useState<CuisineId>('all')
 
-  const railShops = useMemo(() => shops.slice(0, 4), [shops])
+  const filteredShops = useMemo(
+    () => (cuisine === 'all' ? shops : shops.filter((s) => s.cuisine === cuisine)),
+    [shops, cuisine],
+  )
+  const railShops = useMemo(() => filteredShops.slice(0, 4), [filteredShops])
 
   const hour = now.getHours()
   const smart = useMemo(() => smartPick(shops, weather, hour), [shops, weather, hour])
@@ -126,11 +132,14 @@ export function WalkerHomeScreen() {
             <h4 className="cc-sheet-h4">Where to today?</h4>
             {conditionRow && <div className="cc-sheet-cond">{conditionRow}</div>}
             <SmartPickCta subtext={smartSubtext} onClick={onSmartPick} />
-            {railShops.length > 0 && (
+            <CuisineRow active={cuisine} onChange={setCuisine} />
+            {railShops.length > 0 ? (
               <ShopMiniRail
-                shops={railShops.slice(0, 2)}
+                shops={railShops.slice(0, 4)}
                 onSelect={(s) => setSelectedShop(s)}
               />
+            ) : (
+              <div className="cc-empty-row">No {cuisine === 'all' ? 'shops' : cuisine.toLowerCase()} nearby. Try a different filter.</div>
             )}
           </>
         )}
