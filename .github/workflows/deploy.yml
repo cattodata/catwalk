@@ -37,7 +37,11 @@ jobs:
       - name: Unit tests
         run: npm test
 
-      - name: Build SPA
+      - name: Build SPA (embeds VITE_* build-time env)
+        env:
+          VITE_AZURE_MAPS_KEY: ${{ secrets.VITE_AZURE_MAPS_KEY }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
         run: npm run build
 
       - name: Prune dev dependencies for runtime
