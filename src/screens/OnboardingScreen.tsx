@@ -1,32 +1,65 @@
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { Footprints, Store, BarChart3, ArrowRight } from 'lucide-react'
 import { useUserRole, roleHomePath, type UserRole } from '../context/UserRoleContext'
 
-const ROLES: { id: UserRole; label: string }[] = [
-  { id: 'walker', label: 'Walker' },
-  { id: 'owner', label: 'Owner' },
-  { id: 'council', label: 'Council' },
+interface RoleDef {
+  id: UserRole
+  variant: 'primary' | 'r2' | 'r3'
+  label: string
+  sub: string
+  Icon: typeof Footprints
+}
+
+const ROLES: RoleDef[] = [
+  { id: 'walker', variant: 'primary', label: "I'm a walker", sub: 'Earn points + discounts', Icon: Footprints },
+  { id: 'owner', variant: 'r2', label: 'I own a shop', sub: "Plan today's marketing", Icon: Store },
+  { id: 'council', variant: 'r3', label: "I'm with Council", sub: 'Pilot stats + policy', Icon: BarChart3 },
 ]
 
 export function OnboardingScreen() {
   const { setRole } = useUserRole()
+  const navigate = useNavigate()
+
+  const pickRole = (r: UserRole) => {
+    setRole(r)
+    navigate(roleHomePath(r))
+  }
+
   return (
-    <div className="cc-placeholder">
-      <main className="cc-placeholder-body">
-        <h1>Onboarding</h1>
-        <code>/onboarding</code>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 16 }}>
-          {ROLES.map((r) => (
-            <Link
-              key={r.id}
-              to={roleHomePath(r.id)}
-              onClick={() => setRole(r.id)}
-              className="cc-placeholder-link"
-            >
-              I'm a {r.label}
-            </Link>
-          ))}
+    <div className="cc-onb">
+      <div className="cc-onb-top">
+        <div className="cc-onb-mascot" aria-hidden="true">
+          <span>🐱</span>
         </div>
-      </main>
+        <h1 className="cc-onb-h1">
+          Walk Chatswood.
+          <br />
+          <em>Earn rewards.</em>
+        </h1>
+        <p className="cc-onb-tag">
+          Pick a shop. Walk there. Earn points + a discount + log CO₂ saved.
+        </p>
+      </div>
+
+      <div className="cc-onb-stack">
+        {ROLES.map(({ id, variant, label, sub, Icon }) => (
+          <button
+            key={id}
+            type="button"
+            className={`cc-role cc-role-${variant}`}
+            onClick={() => pickRole(id)}
+          >
+            <span className="cc-role-em" aria-hidden="true">
+              <Icon size={20} strokeWidth={2} />
+            </span>
+            <span className="cc-role-t">
+              <b>{label}</b>
+              <small>{sub}</small>
+            </span>
+            <ArrowRight size={16} aria-hidden="true" className="cc-role-arr" />
+          </button>
+        ))}
+      </div>
     </div>
   )
 }
