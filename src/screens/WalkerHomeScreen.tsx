@@ -7,10 +7,8 @@ import { TierRibbon } from '../components/TierRibbon'
 import { BottomNav } from '../components/BottomNav'
 import { MapPulseChip } from '../components/MapPulseChip'
 import { MapFab } from '../components/MapFab'
-import { GeoStatus } from '../components/GeoStatus'
 import { SmartPickCta } from '../components/SmartPickCta'
 import { ShopMiniRail } from '../components/ShopMini'
-import { TransportModesRow } from '../components/TransportModesRow'
 import { ShopDetailSheet } from '../components/ShopDetailSheet'
 import { RealMap } from '../components/RealMap'
 
@@ -40,11 +38,6 @@ export function WalkerHomeScreen() {
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null)
   const [transport, setTransport] = useState<TransportId>('walk')
   const [recenterNonce, setRecenterNonce] = useState(0)
-  const geoPermission: 'granted' | 'prompt' | 'denied' | 'unknown' = geo.error
-    ? 'denied'
-    : geo.position
-      ? 'granted'
-      : geo.isSupported ? 'prompt' : 'unknown'
 
   const railShops = useMemo(() => shops.slice(0, 4), [shops])
 
@@ -84,9 +77,6 @@ export function WalkerHomeScreen() {
     <div className="cc-walker">
       <AppBarLockup />
       <TierRibbon tierLevel={tierLevel} tierName="Walker" progressPct={tierPct} kgSaved={total_co2} />
-      <div className="cc-geo-row">
-        <GeoStatus permission={geoPermission} accuracy={geo.position?.accuracy ?? null} />
-      </div>
 
       <div className="cc-walker-map" aria-label="Chatswood map">
         <RealMap
@@ -136,14 +126,12 @@ export function WalkerHomeScreen() {
             <h4 className="cc-sheet-h4">Where to today?</h4>
             {conditionRow && <div className="cc-sheet-cond">{conditionRow}</div>}
             <SmartPickCta subtext={smartSubtext} onClick={onSmartPick} />
-            {railShops.length > 0 && <ShopMiniRail shops={railShops} onSelect={(s) => setSelectedShop(s)} />}
-            <TransportModesRow
-              active={transport}
-              onChange={setTransport}
-              walkMin={smart ? Math.max(1, Math.round(smart.shop.dist / 75)) : 4}
-              basePts={smart?.shop.pts ?? 180}
-              baseCo2={smart?.shop.co2 ?? 0.05}
-            />
+            {railShops.length > 0 && (
+              <ShopMiniRail
+                shops={railShops.slice(0, 2)}
+                onSelect={(s) => setSelectedShop(s)}
+              />
+            )}
           </>
         )}
       </section>

@@ -6389,3 +6389,38 @@ a.cc-owner-cta {
   color: var(--ink);
   cursor: pointer;
 }
+
+/* ---------- COUNCIL STATS · 3-CARD STACK ---------- */
+.cc-policy-lever-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cc-policy-lever-card h4,
+.cc-council-lang-card h4 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.2px;
+  margin: 0;
+}
+.cc-council-lang-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  text-align: center;
+}
+.cc-council-lang-card > .cc-ai-pill,
+.cc-council-lang-card > h4 {
+  align-self: flex-start;
+  text-align: left;
+}

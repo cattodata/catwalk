@@ -145,72 +145,70 @@ export function CouncilSandboxScreen() {
 
       {tab === 'stats' ? (
         <div className="cc-council-v5">
-          {/* V5 MEGA PULSE — single AI moment */}
-          <div className="cc-pulse-block">
-            <CattoPill tone="gradient">WALKING RIGHT NOW</CattoPill>
-            <div className="cc-pulse-num">
-              <AnimatedCounter value={council.stats.walking_now || 12} />
-            </div>
-            <div className="cc-pulse-ttl">in Chatswood</div>
-            <div className="cc-pulse-sub">
-              {council.stats.loaded ? 'Realtime · refreshes every 8s' : 'Demo · pilot baseline'}
+          {/* Card 1 — Live pulse hero (sky→sage gradient + 3 glassy stats) */}
+          <div className="cc-chero">
+            <span className="cc-chero-eb">
+              <span className="cc-chero-live-dot" aria-hidden="true" />
+              {council.stats.loaded ? 'LIVE · SINCE LAUNCH' : 'DEMO · CHATSWOOD PILOT'}
+            </span>
+            <h3>Walking right now</h3>
+            <div className="cc-chero-stats">
+              <div className="cc-cs">
+                <span className="cc-cs-v">
+                  <AnimatedCounter value={council.stats.walking_now || 12} />
+                </span>
+                <span className="cc-cs-l">WALKING NOW</span>
+              </div>
+              <div className="cc-cs">
+                <span className="cc-cs-v">
+                  <AnimatedCounter value={council.stats.total_walks || 1247} />
+                </span>
+                <span className="cc-cs-l">TOTAL WALKS</span>
+              </div>
+              <div className="cc-cs">
+                <span className="cc-cs-v">
+                  <AnimatedCounter
+                    value={council.stats.total_co2 || 84.6}
+                    decimals={1}
+                    suffix=" kg"
+                  />
+                </span>
+                <span className="cc-cs-l">CO₂ SAVED</span>
+              </div>
             </div>
           </div>
 
-          {/* 3 small totals strip */}
-          <div className="cc-tots">
-            <div className="cc-tot">
-              <div className="cc-tot-v">
-                <AnimatedCounter value={council.stats.total_walks || 1247} />
-              </div>
-              <div className="cc-tot-l">WALKS</div>
-            </div>
-            <div className="cc-tot">
-              <div className="cc-tot-v">
-                <AnimatedCounter value={council.stats.total_co2 || 84.6} decimals={1} suffix="kg" />
-              </div>
-              <div className="cc-tot-l">CO₂ SAVED</div>
-            </div>
-            <div className="cc-tot">
-              <div className="cc-tot-v">
-                <AnimatedCounter
-                  value={Math.round((council.stats.total_walks || 1247) * 6.7)}
-                  prefix="$"
-                />
-              </div>
-              <div className="cc-tot-l">SHOP SPEND</div>
-            </div>
+          {/* Card 2 — POLICY LEVER · Boosted streets */}
+          <div className="cc-policy-lever-card">
+            <CattoPill tone="light">POLICY LEVER</CattoPill>
+            <h4>Boosted streets right now</h4>
+            <BoostedStreetsList
+              rows={[
+                { name: 'Help St', mult: '3×', variant: 'x3', sub: 'UNTIL 6PM · UNDERSERVED' },
+                { name: 'Spring St', mult: '2×', variant: 'x2', sub: 'UNTIL 5PM · MARKETS' },
+              ]}
+              projection={{
+                label: 'Project: Help St → 5×',
+                onClick: () => {
+                  setLevers((s) => ({ ...s, bikeMult: 100 }))
+                  setTab('sandbox')
+                },
+              }}
+            />
           </div>
 
-          {/* Why-tab (existing pieces) — under "Why this works" reveal */}
-          <details className="cc-council-why">
-            <summary>Why this works · boosted streets + ancestry</summary>
-            <div className="cc-council-why-inner">
-              <BoostedStreetsList
-                rows={[
-                  { name: 'Help St', mult: '3×', variant: 'x3', sub: 'UNTIL 6PM · UNDERSERVED' },
-                  { name: 'Spring St', mult: '2×', variant: 'x2', sub: 'UNTIL 5PM · MARKETS' },
-                ]}
-                projection={{
-                  label: 'Project: Help St → 5×',
-                  onClick: () => {
-                    setLevers((s) => ({ ...s, bikeMult: 100 }))
-                    setTab('sandbox')
-                  },
-                }}
-              />
-              <div className="cc-council-lang-card">
-                <h5>Resident ancestry · ABS 2021</h5>
-                <LangDonut enPct={enHero} zhPct={cnHero} koPct={koHero} />
-                <div className="cc-council-lang-legend">
-                  <span className="cc-lang-dot" style={{ background: '#5B9BD5' }} /> Other {Math.round(enHero)}%
-                  <span className="cc-lang-dot" style={{ background: '#B49EFB' }} /> Chinese {Math.round(cnHero)}%
-                  <span className="cc-lang-dot" style={{ background: '#FF6B9D' }} /> Korean {Math.round(koHero)}%
-                </div>
-                <span className="cc-cite">Source: ABS 2021 Census · Chatswood SA2</span>
-              </div>
+          {/* Card 3 — LANGUAGE REACH · Multicultural fit */}
+          <div className="cc-council-lang-card">
+            <CattoPill tone="light">LANGUAGE REACH · WEEK</CattoPill>
+            <h4>Multicultural fit</h4>
+            <LangDonut enPct={enHero} zhPct={cnHero} koPct={koHero} />
+            <div className="cc-council-lang-legend">
+              <span className="cc-lang-dot" style={{ background: '#5B9BD5' }} /> Other {Math.round(enHero)}%
+              <span className="cc-lang-dot" style={{ background: '#B49EFB' }} /> Chinese {Math.round(cnHero)}%
+              <span className="cc-lang-dot" style={{ background: '#FF6B9D' }} /> Korean {Math.round(koHero)}%
             </div>
-          </details>
+            <span className="cc-cite">Source: ABS 2021 Census · Chatswood SA2</span>
+          </div>
         </div>
       ) : (
         <div className="cc-council-body">
