@@ -1,41 +1,84 @@
 /* ---------- TOKENS ---------- */
+/* Spacing scale: 4 / 6 / 8 / 10 / 12 / 14 / 16 / 18 / 22 / 28 px (stick to these) */
 :root {
   --bg: #FAF7F0;
   --bg-elevated: #FFFFFF;
-  --cream: #FFF8E8;
+  --paper: #FBF7EF;       /* mobile-mockup app bg */
+  --card: #FFFFFF;
+  --line: #EBE2D3;        /* 1px borders */
+  --cream: #FFF7E5;       /* mobile-mockup cream (was #FFF8E8) */
   --sky: #E8F0F9;
   --sky-lite: #F4F8FC;
   --border: rgba(154,128,90,0.12);
   --border-strong: rgba(154,128,90,0.22);
   --ink: #2D2418;
-  --ink-soft: #7A6A52;
+  --ink-soft: #7A6B58;    /* mockup value (was #7A6A52) */
   --ink-muted: #B8A88C;
 
   --coral: #FF6B9D;
   --amber: #F5C842;
   --sage: #7BC97F;
   --purple: #B49EFB;
+  --lav: #B49EFB;         /* alias for handoff naming */
   --blue: #5B9BD5;
 
+  /* Legacy gradients (preserved for non-rebuilt screens) */
   --pop: linear-gradient(135deg, #FF6B9D 0%, #F5C842 100%);
   --cool: linear-gradient(135deg, #B49EFB 0%, #5B9BD5 100%);
   --sky-grad: linear-gradient(180deg, #E8F0F9 0%, #F4F8FC 100%);
 
+  /* Mobile mockup gradients (named per design handoff) */
+  --g-brand:        linear-gradient(135deg, #FF6B9D, #F5C842);
+  --g-warm:         linear-gradient(100deg, #FFE6CB, #FFD8E6);
+  --g-eco:          linear-gradient(135deg, #7BC97F, #F5C842);
+  --g-night:        radial-gradient(circle, rgba(123,201,127,.3), transparent 60%);
+  --g-sky-sage:     linear-gradient(135deg, #5B9BD5, #7BC97F);
+  --g-tier:         linear-gradient(90deg, #F5C842, #FF6B9D);
+  --g-tier-ribbon:  linear-gradient(100deg, #fff, #FFF7E5);
+  --g-bars-default: linear-gradient(180deg, #5B9BD5, #B49EFB);
+  --g-bars-peak:    linear-gradient(180deg, #7BC97F, #5B9BD5);
+  --g-reward-bg:    radial-gradient(circle at 50% 30%, #FFE6CB 0%, #FFD8E6 40%, #E2CEFF 100%);
+  --g-onb-bg:       radial-gradient(circle at 30% 20%, #FFE6CB 0%, #FFD8E6 40%, #FBF7EF 80%);
+  --g-walking-bg:   linear-gradient(180deg, #FFF7E5 0%, #FBF7EF 70%);
+  --g-pol-bg:       linear-gradient(180deg, #FFF7E5 0%, #FBF7EF 30%);
+  --g-ab-test:      linear-gradient(100deg, rgba(180,158,251,.1), rgba(255,107,157,.06));
+  --g-ai-suggest:   linear-gradient(100deg, rgba(180,158,251,.12), rgba(255,107,157,.06));
+
+  /* Legacy shadows (preserved for non-rebuilt screens) */
   --shadow-sm: 0 2px 8px rgba(45,36,24,.05);
   --shadow-md: 0 8px 24px rgba(45,36,24,.07);
   --shadow-lg: 0 18px 48px rgba(45,36,24,.10);
+
+  /* Mobile mockup shadows (semantic naming per design handoff) */
+  --shadow-card:  0 4px 10px rgba(0,0,0,.06);
+  --shadow-cta:   0 10px 24px -6px rgba(255,107,157,.4);
+  --shadow-eco:   0 10px 24px -8px rgba(123,201,127,.4);
+  --shadow-hero:  0 16px 40px -10px rgba(255,107,157,.45);
+  --shadow-sheet: 0 -10px 30px -10px rgba(45,36,24,.18);
+  --shadow-pin:   0 4px 8px rgba(0,0,0,.18);
 
   --r-pixel: 4px;
   --r-sm: 10px;
   --r: 16px;
   --r-lg: 22px;
   --r-xl: 28px;
+  --r-sheet: 28px;
+  --r-frame: 38px;
 
   --font-display: "Outfit", system-ui, sans-serif;
   --font-ui: "Plus Jakarta Sans", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --font-sc: "Noto Sans SC", "Plus Jakarta Sans", sans-serif;
   --font-kr: "Noto Sans KR", "Plus Jakarta Sans", sans-serif;
+}
+
+/* ---------- KEYFRAMES (used across mobile screens) ---------- */
+@keyframes pls {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 [data-theme="dark"] {
