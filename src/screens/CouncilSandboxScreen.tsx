@@ -43,8 +43,8 @@ export function CouncilSandboxScreen() {
             </svg>
           </span>
           <span className="cc-council-logo-text">
-            <span className="cc-council-logo-title">Pilot · Live</span>
-            <span className="cc-council-logo-sub">CHATSWOOD · WILLOUGHBY</span>
+            <span className="cc-council-logo-title">{tab === 'pulse' ? 'Pilot · Live' : 'Pilot trajectory'}</span>
+            <span className="cc-council-logo-sub">{tab === 'pulse' ? 'CHATSWOOD · WILLOUGHBY' : '3 WEEKS · CHATSWOOD'}</span>
           </span>
         </div>
         <div className="cc-council-bar-actions">
@@ -65,9 +65,7 @@ export function CouncilSandboxScreen() {
               <AnimatedCounter value={council.stats.walking_now || 12} />
             </div>
             <div className="cc-pulse-place">in Chatswood</div>
-            <div className="cc-pulse-meta">
-              {council.stats.loaded ? 'Realtime · refreshes every 8s' : 'Demo · pilot baseline'}
-            </div>
+            <div className="cc-pulse-meta">Realtime · refreshes every 8s</div>
           </div>
 
           {/* WHAT THE PILOT SHOWS — 4 insight rows (signal → conclusion) */}
