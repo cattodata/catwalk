@@ -55,9 +55,9 @@ export default defineConfig({
             options: { cacheName: 'abs-arcgis', expiration: { maxAgeSeconds: 7 * 24 * 60 * 60 } },
           },
           {
-            urlPattern: /^https:\/\/[a-d]\.basemaps\.cartocdn\.com\//,
+            urlPattern: /^https:\/\/(tile\.openstreetmap\.org|atlas\.microsoft\.com)\//,
             handler: 'CacheFirst',
-            options: { cacheName: 'map-tiles', expiration: { maxEntries: 200, maxAgeSeconds: 7 * 24 * 60 * 60 } },
+            options: { cacheName: 'map-tiles', expiration: { maxEntries: 300, maxAgeSeconds: 7 * 24 * 60 * 60 } },
           },
           {
             urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\//,

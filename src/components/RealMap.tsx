@@ -134,13 +134,20 @@ export function RealMap({
         style={{ width: '100%', height: 'clamp(360px, 60vh, 520px)', borderRadius: 16 }}
         attributionControl={true}
       >
-        {/* CartoDB Positron — clean light tiles, no API key required */}
-        <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-          subdomains="abcd"
-          maxZoom={20}
-        />
+        {/* Azure Maps — microsoft.base.road style (Google-Maps-like). Falls back to OSM if no key. */}
+        {import.meta.env.VITE_AZURE_MAPS_KEY ? (
+          <TileLayer
+            url={`https://atlas.microsoft.com/map/tile?subscription-key=${import.meta.env.VITE_AZURE_MAPS_KEY}&api-version=2.1&tilesetId=microsoft.base.road&zoom={z}&x={x}&y={y}&tileSize=256&language=en-AU&view=Auto`}
+            attribution='&copy; <a href="https://learn.microsoft.com/en-us/azure/azure-maps/legal-terms">Microsoft</a> &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; TomTom'
+            maxZoom={20}
+          />
+        ) : (
+          <TileLayer
+            url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            maxZoom={19}
+          />
+        )}
 
         <FlyToShop shop={selectedShop} />
         <FitToUser userPosition={userPosition ?? null} hasShop={!!selectedShop} />

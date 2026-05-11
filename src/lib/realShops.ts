@@ -38,7 +38,7 @@ out tags center;`
     .filter((n) => n.tags?.name)
     .map((n) => normalize(n, lat, lng, x, y))
     .sort((a, b) => a.dist - b.dist)
-    .slice(0, 24) // cap at 24 closest
+    .slice(0, 60) // top 60 closest — covers most of Chatswood CBD
 }
 
 function normalize(node: OverpassNode, stLat: number, stLng: number, stX: number, stY: number): Shop {

@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { createHmac, timingSafeEqual } from 'node:crypto'
 import claudeHandler from './api-claude.mjs'
+import eventsHandler from './api-events.mjs'
 import { renderLoginPage } from './login-page.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -49,6 +50,7 @@ function parseCookie(req, name) {
 // Public endpoints — no auth needed
 const ALWAYS_PUBLIC = new Set([
   '/api/health',
+  '/api/events',
   '/manifest.webmanifest',
   '/sw.js',
   '/registerSW.js',
@@ -137,6 +139,7 @@ app.use((req, res, next) => {
 
 // API
 app.post('/api/claude', claudeHandler)
+app.get('/api/events', eventsHandler)
 app.get('/api/health', (_req, res) => res.json({ ok: true, ts: Date.now() }))
 
 // Static SPA + fallback
