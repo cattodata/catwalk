@@ -5,6 +5,7 @@ import { MobileShell } from './components/MobileShell'
 import { OnboardingScreen } from './screens/OnboardingScreen'
 import { WalkerHomeScreen } from './screens/WalkerHomeScreen'
 import { ParkAndWalkScreen } from './screens/ParkAndWalkScreen'
+import { PlanDayScreen } from './screens/PlanDayScreen'
 import { WalkingLiveScreen } from './screens/WalkingLiveScreen'
 import { RewardScreen } from './screens/RewardScreen'
 import { OwnerForecastScreen } from './screens/OwnerForecastScreen'
@@ -28,6 +29,7 @@ function AppRoutes() {
       <Route path="/onboarding" element={<OnboardingScreen />} />
       <Route path="/walk" element={<WalkerHomeScreen />} />
       <Route path="/walk/park" element={<ParkAndWalkScreen />} />
+      <Route path="/walk/plan" element={<PlanDayScreen />} />
       <Route path="/walk/live" element={<WalkingLiveScreen />} />
       <Route path="/walk/reward" element={<RewardScreen />} />
       <Route path="/owner" element={<OwnerForecastScreen />} />

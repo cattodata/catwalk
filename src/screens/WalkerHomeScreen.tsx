@@ -143,6 +143,18 @@ export function WalkerHomeScreen() {
             <h4 className="cc-sheet-h4">Where to today?</h4>
             {conditionRow && <div className="cc-sheet-cond">{conditionRow}</div>}
             <SmartPickCta subtext={smartSubtext} onClick={onSmartPick} />
+            <button
+              type="button"
+              className="cc-plan-entry"
+              onClick={() => navigate('/walk/plan')}
+            >
+              <span className="cc-plan-entry-em" aria-hidden="true">🐾</span>
+              <span className="cc-plan-entry-body">
+                <span className="cc-plan-entry-lab">Plan a day</span>
+                <small>Chain 3+ stops · earn bonus + skip the car</small>
+              </span>
+              <span className="cc-plan-entry-arr" aria-hidden="true">›</span>
+            </button>
             <LiveDealsRail shops={dealShops} onSelect={(s) => setSelectedShop(s)} />
             <CuisineRow active={cuisine} onChange={setCuisine} />
             {railShops.length > 0 ? (
