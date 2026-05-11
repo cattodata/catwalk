@@ -6,6 +6,8 @@ import { AppBarLockup } from '../components/AppBarLockup'
 import { TierRibbon } from '../components/TierRibbon'
 import { BottomNav } from '../components/BottomNav'
 import { MapPulseChip } from '../components/MapPulseChip'
+import { MapFab } from '../components/MapFab'
+import { GeoStatus } from '../components/GeoStatus'
 import { SmartPickCta } from '../components/SmartPickCta'
 import { ShopMiniRail } from '../components/ShopMini'
 import { TransportModesRow } from '../components/TransportModesRow'
@@ -27,7 +29,7 @@ export function WalkerHomeScreen() {
   const now = useNow(60_000)
   const { shops } = useRealShops()
   const { weather } = useWeather()
-  const geo = useGeolocation(false) // demo-mode default
+  const geo = useGeolocation(true) // try real GPS; falls back to demo coords if denied
   const auth = useSupabaseAuth()
   const { total_co2 } = useUserStats(auth.user?.id ?? null)
   const tier = tierFromCo2(total_co2)
@@ -37,6 +39,12 @@ export function WalkerHomeScreen() {
 
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null)
   const [transport, setTransport] = useState<TransportId>('walk')
+  const [recenterNonce, setRecenterNonce] = useState(0)
+  const geoPermission: 'granted' | 'prompt' | 'denied' | 'unknown' = geo.error
+    ? 'denied'
+    : geo.position
+      ? 'granted'
+      : geo.isSupported ? 'prompt' : 'unknown'
 
   const top3 = useMemo(() => shops.slice(0, 3), [shops])
   const railShops = useMemo(() => top3.slice(0, 2), [top3])
@@ -75,6 +83,9 @@ export function WalkerHomeScreen() {
     <div className="cc-walker">
       <AppBarLockup hasUnread />
       <TierRibbon tierLevel={tierLevel} tierName="Walker" progressPct={tierPct} kgSaved={total_co2} />
+      <div className="cc-geo-row">
+        <GeoStatus permission={geoPermission} accuracy={geo.position?.accuracy ?? null} />
+      </div>
 
       <div className="cc-walker-map" aria-label="Chatswood map">
         <RealMap
@@ -85,12 +96,14 @@ export function WalkerHomeScreen() {
           completed={false}
           onSelect={(s) => setSelectedShop(s)}
           userPosition={geo.position}
+          recenterNonce={recenterNonce}
         />
         <div className="cc-map-overlays">
           <MapPulseChip>
-            {selectedShop ? `ROUTE READY · ${Math.max(1, Math.round(selectedShop.dist / 80))} MIN` : `${shopsCount} SHOPS OPEN`}
+            {selectedShop ? `ROUTE READY · ${Math.max(1, Math.round(selectedShop.dist / 80))} MIN` : `${shopsCount || '…'} SHOPS OPEN`}
           </MapPulseChip>
         </div>
+        <MapFab onRecenter={() => setRecenterNonce((n) => n + 1)} />
       </div>
 
       <section className="cc-sheet" aria-label="Where to today">

@@ -5157,3 +5157,64 @@ button { font-family: inherit; cursor: pointer; }
   background: rgba(123, 201, 127, 0.16);
   border-radius: 4px;
 }
+
+/* ---------- MAP FAB ---------- */
+.cc-map-fab {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 500;
+  pointer-events: auto;
+}
+.cc-fab {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: var(--shadow-card);
+}
+.cc-fab.is-on {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+
+/* ---------- GEO STATUS ---------- */
+.cc-geo-row {
+  margin: 0 16px 8px;
+}
+.cc-geo-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+.cc-geo-ok {
+  background: rgba(123, 201, 127, 0.14);
+  color: #2c6b2e;
+}
+.cc-geo-denied {
+  background: rgba(255, 107, 157, 0.12);
+  color: #b62963;
+}
+.cc-geo-loading {
+  background: rgba(91, 155, 213, 0.14);
+  color: #2e5c84;
+}
+.cc-geo-spin {
+  animation: spin 1.2s linear infinite;
+}

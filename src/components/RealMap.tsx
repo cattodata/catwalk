@@ -23,6 +23,8 @@ interface RealMapProps {
   showHeatmap?: boolean
   transport?: TransportId
   userPosition?: GeoPosition | null
+  /** Increment this number to re-aim the map at the user (or station fallback). */
+  recenterNonce?: number
 }
 
 /** Build a Leaflet DivIcon from any inline HTML string (no missing-icon issue) */
@@ -140,6 +142,21 @@ function FlyToShop({ shop }: { shop: Shop | null }) {
   return null
 }
 
+/** Recenter to user (or station fallback) when the nonce changes */
+function RecenterOnNonce({ nonce, user }: { nonce: number | undefined; user: GeoPosition | null }) {
+  const map = useMap()
+  useEffect(() => {
+    if (nonce === undefined) return
+    if (user) {
+      map.flyTo([user.lat, user.lng], 17, { duration: 0.6 })
+    } else {
+      map.flyTo([CHATSWOOD.station.lat, CHATSWOOD.station.lng], 16, { duration: 0.6 })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nonce])
+  return null
+}
+
 /**
  * Auto-fit map to include both Chatswood and user position (if user is far away).
  * Useful for users at e.g. Macquarie Park (~5km away) so they can see the whole journey.
@@ -171,6 +188,7 @@ export function RealMap({
   tagFilter = [],
   showHeatmap = false,
   userPosition,
+  recenterNonce,
 }: RealMapProps) {
   const center: [number, number] = [CHATSWOOD.station.lat, CHATSWOOD.station.lng]
 
@@ -213,6 +231,7 @@ export function RealMap({
 
         <FlyToShop shop={selectedShop} />
         <FitToUser userPosition={userPosition ?? null} hasShop={!!selectedShop} />
+        <RecenterOnNonce nonce={recenterNonce} user={userPosition ?? null} />
 
         {/* Station */}
         <Marker position={center} icon={stationIcon}>

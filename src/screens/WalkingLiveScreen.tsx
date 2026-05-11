@@ -11,6 +11,7 @@ import { useRealShops } from '../hooks/useRealShops'
 import { useWeather } from '../hooks/useWeather'
 import { useNow } from '../hooks/useNow'
 import { useWalkSession } from '../hooks/useWalkSession'
+import { useGeolocation } from '../hooks/useGeolocation'
 import { useSupabaseAuth } from '../hooks/useSupabaseAuth'
 import { generateInsights } from '../lib/insights'
 import { getTodayEvent } from '../data/events'
@@ -30,12 +31,14 @@ export function WalkingLiveScreen() {
     setShop(shops.find((s) => s.id === id) ?? shops[0])
   }, [shops])
 
+  // Real GPS during walk; if denied/unavailable, useWalkSession falls back to demo RAF.
+  const geo = useGeolocation(true)
   const session = useWalkSession({
     shop,
     transport: 'walk',
-    position: null,
+    position: geo.position,
     userId: auth.user?.id ?? null,
-    demoMode: true,
+    demoMode: !geo.position, // auto demo if no real GPS
   })
 
   // Auto-start on mount once shop loaded
@@ -43,29 +46,33 @@ export function WalkingLiveScreen() {
     if (shop && session.phase === 'idle') session.start()
   }, [shop, session])
 
-  // On arrival (auto in demo mode), confirm + persist + navigate to reward
+  // Fire confirmArrival once when phase flips to 'arrived'
   useEffect(() => {
     if (session.phase === 'arrived' && shop) {
-      session.confirmArrival().then(() => {
-        if (session.rewardSummary) {
-          sessionStorage.setItem(
-            'cc:reward',
-            JSON.stringify({
-              shopName: shop.name,
-              shopEmoji: shop.emoji,
-              dist: shop.dist,
-              points: session.rewardSummary.points,
-              co2Kg: session.rewardSummary.co2Kg,
-              discount: session.rewardSummary.discount,
-              isVerifiedGps: session.isVerifiedGps,
-            }),
-          )
-        }
-        // small delay so user sees the arrive button briefly
-        setTimeout(() => navigate('/walk/reward'), 400)
-      })
+      session.confirmArrival()
     }
-  }, [session.phase, session, navigate, shop])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session.phase])
+
+  // Persist reward + navigate once rewardSummary is populated by confirmArrival
+  useEffect(() => {
+    if (session.phase === 'completed' && session.rewardSummary && shop) {
+      sessionStorage.setItem(
+        'cc:reward',
+        JSON.stringify({
+          shopName: shop.name,
+          shopEmoji: shop.emoji,
+          dist: shop.dist,
+          points: session.rewardSummary.points,
+          co2Kg: session.rewardSummary.co2Kg,
+          discount: session.rewardSummary.discount,
+          isVerifiedGps: session.isVerifiedGps,
+        }),
+      )
+      const t = setTimeout(() => navigate('/walk/reward'), 400)
+      return () => clearTimeout(t)
+    }
+  }, [session.phase, session.rewardSummary, session.isVerifiedGps, shop, navigate])
 
   const totalMeters = shop?.dist ?? 480
   const metersLeft = Math.round(totalMeters * (1 - session.progress))
