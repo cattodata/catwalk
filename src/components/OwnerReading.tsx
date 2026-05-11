@@ -35,6 +35,9 @@ export function OwnerReading({ rows }: Props) {
           </li>
         ))}
       </ul>
+      <footer className="cc-or-sources">
+        Sources · your POS 14d · Open-Meteo · ABS 2021 ancestry · competitor menu watch
+      </footer>
     </section>
   )
 }

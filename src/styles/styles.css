@@ -6568,6 +6568,17 @@ a.cc-owner-cta {
   color: #b62963;
   font-weight: 700;
 }
+.cc-or-sources {
+  display: block;
+  padding: 8px 0 4px;
+  margin-top: 4px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  color: #a89683;
+  line-height: 1.4;
+}
 
 /* v5.2 in-card Generate button — white pill instead of pink-orange gradient */
 .cc-ai-cta-btn-v52 {
@@ -7739,4 +7750,28 @@ a.cc-owner-cta {
   font-size: 12px;
   letter-spacing: -0.1px;
   flex: 0 0 auto;
+}
+
+.cc-basket-toast {
+  position: fixed;
+  bottom: calc(140px + env(safe-area-inset-bottom, 0px));
+  left: 12px;
+  right: 12px;
+  max-width: 369px;
+  margin: 0 auto;
+  padding: 11px 16px;
+  background: rgba(45, 26, 34, 0.94);
+  color: #fff;
+  border-radius: 14px;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 12.5px;
+  letter-spacing: -0.1px;
+  text-align: center;
+  z-index: 6;
+  animation: cc-toast-in 0.22s cubic-bezier(0.16, 1, 0.5, 1.12);
+}
+@keyframes cc-toast-in {
+  from { transform: translateY(10px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
 }

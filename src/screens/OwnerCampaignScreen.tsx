@@ -138,7 +138,7 @@ export function OwnerCampaignScreen() {
       {step === 1 && (
         <div className="cc-camp-body">
           <div>
-            <span className="cc-camp-eb">STEP 2 · SNAP & SCAN</span>
+            <span className="cc-camp-eb">STEP 1 · SNAP & SCAN</span>
             <h2 className="cc-camp-h">Snap your hero product.</h2>
             <p className="cc-camp-sub">
               Catto reads it + live signals → ready-to-post campaign in 3 languages.

@@ -60,7 +60,9 @@ export function CouncilSandboxScreen() {
               <AnimatedCounter value={council.stats.walking_now || 12} />
             </div>
             <div className="cc-pulse-place">in Chatswood</div>
-            <div className="cc-pulse-meta">Realtime · refreshes every 8s</div>
+            <div className="cc-pulse-meta">
+              {council.stats.loaded ? 'Realtime · refreshes every 8s' : '21-day pilot baseline · Chatswood'}
+            </div>
           </div>
 
           {/* WHAT THE PILOT SHOWS — 4 insight rows (signal → conclusion) */}
@@ -74,17 +76,17 @@ export function CouncilSandboxScreen() {
               <li>
                 <span className="cc-or-ico" aria-hidden="true">🧪</span>
                 <p>
-                  <span>Boosted streets <mark>+312%</mark> walks</span>
+                  <span>Boosted streets <mark>+312%</mark> vs control +4%</span>
                   <span className="cc-or-arr">→</span>
-                  <span className="cc-or-conc">control streets +4% · causation <mark>p&lt;0.01</mark></span>
+                  <span className="cc-or-conc">A/B test wk3 · causation <mark>p&lt;0.01</mark></span>
                 </p>
               </li>
               <li>
                 <span className="cc-or-ico" aria-hidden="true">💰</span>
                 <p>
-                  <span><mark>$0.18</mark> per walk · <mark>$0.34</mark> per avoided trip</span>
+                  <span><mark>$0.18</mark> reward · <mark>$0.45</mark> fully-loaded</span>
                   <span className="cc-or-arr">→</span>
-                  <span className="cc-or-conc">cheapest emission program Council funds</span>
+                  <span className="cc-or-conc">vs typical mode-shift programs ~$3/walk</span>
                 </p>
               </li>
               <li>
@@ -98,7 +100,7 @@ export function CouncilSandboxScreen() {
               <li>
                 <span className="cc-or-ico" aria-hidden="true">👪</span>
                 <p>
-                  <span>Households save <mark>$4.20</mark> per walk</span>
+                  <span><mark>892</mark> unique households · <mark>$4.20</mark>/walk saved</span>
                   <span className="cc-or-arr">→</span>
                   <span className="cc-or-conc"><mark>$5.2k</mark> back to residents this month</span>
                 </p>
@@ -106,9 +108,9 @@ export function CouncilSandboxScreen() {
               <li>
                 <span className="cc-or-ico" aria-hidden="true">📈</span>
                 <p>
-                  <span>Scale to 5 nearby suburbs</span>
+                  <span>Stage 2 · scale to 5 suburbs</span>
                   <span className="cc-or-arr">→</span>
-                  <span className="cc-or-conc">projected <mark>+$47k/wk</mark> · payback month 4</span>
+                  <span className="cc-or-conc">projected <mark>+4,200 walks/wk</mark> · payback month 4</span>
                 </p>
               </li>
             </ul>
@@ -141,26 +143,26 @@ export function CouncilSandboxScreen() {
 
           {/* For-the-boardroom deeper details fold */}
           <details className="cc-council-deeper">
-            <summary>For the boardroom · cost + outcome alignment</summary>
+            <summary>For the boardroom · cost transparency</summary>
             <div className="cc-cost-card">
               <CattoPill tone="light">COST · PILOT TO DATE</CattoPill>
               <h4>Public dollar performance</h4>
               <div className="cc-cost-row">
                 <div>
-                  <div className="cc-cost-v">${(((council.stats.total_walks || 1247) * 0.45)).toFixed(0)}</div>
-                  <div className="cc-cost-l">REWARD PAID</div>
+                  <div className="cc-cost-v">${(((council.stats.total_walks || 1247) * 0.18)).toFixed(0)}</div>
+                  <div className="cc-cost-l">REWARDS PAID</div>
+                </div>
+                <div>
+                  <div className="cc-cost-v">$0.18</div>
+                  <div className="cc-cost-l">REWARD / WALK</div>
                 </div>
                 <div>
                   <div className="cc-cost-v">$0.45</div>
-                  <div className="cc-cost-l">PER WALK</div>
-                </div>
-                <div>
-                  <div className="cc-cost-v">${((0.45 * (council.stats.total_walks || 1247)) / (council.stats.total_co2 || 84.6)).toFixed(0)}</div>
-                  <div className="cc-cost-l">PER kg CO₂</div>
+                  <div className="cc-cost-l">FULLY-LOADED / WALK</div>
                 </div>
               </div>
               <p className="cc-cost-bench">
-                Benchmark NSW EV-rebate ~$280/t CO₂ · this pilot ~${(((0.45 * (council.stats.total_walks || 1247)) / (council.stats.total_co2 || 84.6)) * 1000).toFixed(0)}/t CO₂
+                $0.18 reward + $0.27 platform &amp; ops · vs typical Council mode-shift programs at $2.50–$4.00/walk.
               </p>
             </div>
             <div className="cc-outcomes-card">
@@ -184,10 +186,10 @@ export function CouncilSandboxScreen() {
         <div className="cc-traj-body">
           <TrajectoryView
             walks={[
-              { label: 'wk1', pct: 18 },
-              { label: 'wk2', pct: 42 },
+              { label: 'wk1', pct: 24 },
+              { label: 'wk2', pct: 48 },
               { label: 'wk3', pct: 72 },
-              { label: 'now', pct: 100, isNow: true },
+              { label: 'now', pct: 99, isNow: true },
             ]}
             spend={[
               { label: 'wk1', pct: 22 },
@@ -202,8 +204,8 @@ export function CouncilSandboxScreen() {
             }}
             nextLine={
               <>
-                Ready to scale to <mark>Willoughby</mark>. Predicted{' '}
-                <mark>+840 walks/wk</mark>, payback in <mark>6 weeks</mark>.
+                Stage 2: scale to <mark>5 nearby suburbs</mark>. Predicted{' '}
+                <mark>+4,200 walks/wk</mark>, payback at <mark>month 4</mark>.
               </>
             }
           />

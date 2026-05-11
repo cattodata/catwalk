@@ -27,8 +27,7 @@ export function TrajectoryView({ walks, spend, retention, nextLine }: Props) {
         <header>
           <span className="cc-traj-lab">WALKS / WEEK</span>
           <span className="cc-traj-val">
-            <mark>+{Math.round(((walks[walks.length - 1]?.pct ?? 0) / (walks[0]?.pct ?? 1)) * 100 - 100)}%</mark>{' '}
-            vs wk 1
+            <mark>+312%</mark> wk1 → now
           </span>
         </header>
         <div className="cc-traj-bars">

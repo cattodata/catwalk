@@ -137,7 +137,8 @@ export function OwnerForecastScreen() {
     }
   }, [weather, hour, dayOfWeek])
 
-  const yesterdayRev = useMemo(() => 245 + ((dayOfWeek * 13) % 90), [dayOfWeek])
+  const yesterdayDelta = useMemo(() => 245 + ((dayOfWeek * 13) % 90), [dayOfWeek])
+  const yesterdayTotal = useMemo(() => 1602 + yesterdayDelta, [yesterdayDelta])
 
   return (
     <div className="cc-owner-forecast">
@@ -152,12 +153,12 @@ export function OwnerForecastScreen() {
       </header>
 
       <div className="cc-owner-v5">
-        {/* 1) Stat hero — yesterday's takings */}
+        {/* 1) Stat hero — actual takings + delta vs 14-day average */}
         <div className="cc-stat-card">
-          <div className="cc-stat-card-lab">YESTERDAY · LUNCH</div>
-          <div className="cc-stat-card-num">+${yesterdayRev}</div>
+          <div className="cc-stat-card-lab">YESTERDAY · ALL DAY</div>
+          <div className="cc-stat-card-num">${yesterdayTotal.toLocaleString()}</div>
           <div className="cc-stat-card-delta">
-            <b>+19 orders</b> · 12% vs. avg
+            <b>+${yesterdayDelta}</b> · +19 orders vs 14d avg
           </div>
           <div className="cc-stat-card-mini-chart" aria-hidden="true">
             <div className="b" style={{ height: '38%' }} />
