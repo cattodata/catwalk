@@ -53,13 +53,14 @@ export function RewardScreen() {
     navigate('/walk', { replace: true })
   }, [navigate, isDemo])
 
-  if (!data) return null
-
-  const tierBefore = useMemo(() => tierFromCo2(Math.max(0, total_co2 - data.co2Kg)), [total_co2, data.co2Kg])
+  const co2Delta = data?.co2Kg ?? 0
+  const tierBefore = useMemo(() => tierFromCo2(Math.max(0, total_co2 - co2Delta)), [total_co2, co2Delta])
   const tierAfter = useMemo(() => tierFromCo2(total_co2), [total_co2])
   const tierLevelOf = (id: string) =>
     id === 'sprout' ? 1 : id === 'bronze' ? 2 : id === 'silver' ? 3 : 4
   const isTierUp = tierBefore.id !== tierAfter.id
+
+  if (!data) return null
 
   return (
     <div className="cc-reward">
