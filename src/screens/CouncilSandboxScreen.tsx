@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Download } from 'lucide-react'
 import { downloadCouncilBriefing } from '../lib/councilBriefing'
 
-import { BottomNav } from '../components/BottomNav'
 import { SwitchRoleGear } from '../components/SwitchRoleSheet'
 import { SegmentedTabs } from '../components/SegmentedTabs'
 import { CattoPill } from '../components/CattoPill'
@@ -238,7 +237,6 @@ export function CouncilSandboxScreen() {
         </div>
       )}
 
-      <BottomNav />
     </div>
   )
 }

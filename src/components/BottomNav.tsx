@@ -1,19 +1,21 @@
 import { NavLink } from 'react-router-dom'
-import { Footprints, Store, BarChart3 } from 'lucide-react'
+import { Map, Footprints, Award, User } from 'lucide-react'
 
 const ITEMS = [
-  { to: '/walk', label: 'Walk', Icon: Footprints },
-  { to: '/owner', label: 'Owners', Icon: Store },
-  { to: '/council', label: 'Council', Icon: BarChart3 },
+  { to: '/walk', label: 'Discover', Icon: Map, end: true },
+  { to: '/walk/plan', label: 'Plan', Icon: Footprints, end: false },
+  { to: '/walk/rewards', label: 'Rewards', Icon: Award, end: false },
+  { to: '/walk/profile', label: 'Profile', Icon: User, end: false },
 ] as const
 
 export function BottomNav() {
   return (
-    <nav className="cc-botnav" aria-label="Personas">
-      {ITEMS.map(({ to, label, Icon }) => (
+    <nav className="cc-botnav" aria-label="Walker modes">
+      {ITEMS.map(({ to, label, Icon, end }) => (
         <NavLink
           key={to}
           to={to}
+          end={end}
           className={({ isActive }) => `cc-botnav-it${isActive ? ' is-act' : ''}`}
         >
           <Icon size={18} strokeWidth={2} aria-hidden="true" />

@@ -6,8 +6,11 @@ import { OnboardingScreen } from './screens/OnboardingScreen'
 import { WalkerHomeScreen } from './screens/WalkerHomeScreen'
 import { ParkAndWalkScreen } from './screens/ParkAndWalkScreen'
 import { PlanDayScreen } from './screens/PlanDayScreen'
+import { SmartPickScreen } from './screens/SmartPickScreen'
 import { WalkingLiveScreen } from './screens/WalkingLiveScreen'
 import { RewardScreen } from './screens/RewardScreen'
+import { RewardsHomeScreen } from './screens/RewardsHomeScreen'
+import { ProfileScreen } from './screens/ProfileScreen'
 import { OwnerForecastScreen } from './screens/OwnerForecastScreen'
 import { OwnerCampaignScreen } from './screens/OwnerCampaignScreen'
 import { CouncilSandboxScreen } from './screens/CouncilSandboxScreen'
@@ -30,8 +33,11 @@ function AppRoutes() {
       <Route path="/walk" element={<WalkerHomeScreen />} />
       <Route path="/walk/park" element={<ParkAndWalkScreen />} />
       <Route path="/walk/plan" element={<PlanDayScreen />} />
+      <Route path="/walk/pick" element={<SmartPickScreen />} />
       <Route path="/walk/live" element={<WalkingLiveScreen />} />
       <Route path="/walk/reward" element={<RewardScreen />} />
+      <Route path="/walk/rewards" element={<RewardsHomeScreen />} />
+      <Route path="/walk/profile" element={<ProfileScreen />} />
       <Route path="/owner" element={<OwnerForecastScreen />} />
       <Route path="/owner/campaign" element={<OwnerCampaignScreen />} />
       <Route path="/council" element={<CouncilSandboxScreen />} />

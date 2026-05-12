@@ -4871,7 +4871,7 @@ button { font-family: inherit; cursor: pointer; }
   display: flex;
   flex-direction: column;
   background: var(--g-pol-bg);
-  padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
 }
 .cc-council-bar {
   display: flex;
