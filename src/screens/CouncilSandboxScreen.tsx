@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { Download } from 'lucide-react'
 import { downloadCouncilBriefing } from '../lib/councilBriefing'
+import { GoalRadarChart } from '../components/GoalRadarChart'
+import { KpiDialGrid } from '../components/KpiDialGrid'
+import { StreetHeatmap } from '../components/StreetHeatmap'
 
 import { SwitchRoleGear } from '../components/SwitchRoleSheet'
 import { SegmentedTabs } from '../components/SegmentedTabs'
@@ -11,12 +14,19 @@ import { TrajectoryView } from '../components/TrajectoryView'
 import { useCouncilStats } from '../hooks/useCouncilStats'
 import { COUNCIL_OUTCOMES } from '../data/council'
 
-type TabId = 'pulse' | 'trajectory'
+type TabId = 'pulse' | 'trajectory' | 'impact'
 
 const TABS = [
   { id: 'pulse' as const, label: 'Pulse' },
   { id: 'trajectory' as const, label: 'Trajectory' },
+  { id: 'impact' as const, label: 'Impact' },
 ]
+
+const TAB_TITLE: Record<TabId, { title: string; sub: string }> = {
+  pulse: { title: 'Pilot · Live', sub: 'CHATSWOOD · WILLOUGHBY' },
+  trajectory: { title: 'Pilot trajectory', sub: '3 WEEKS · CHATSWOOD' },
+  impact: { title: '2036 Impact', sub: 'OUR FUTURE WILLOUGHBY · ALIGNMENT' },
+}
 
 export function CouncilSandboxScreen() {
   const council = useCouncilStats('chatswood')
@@ -39,8 +49,8 @@ export function CouncilSandboxScreen() {
             </svg>
           </span>
           <span className="cc-council-logo-text">
-            <span className="cc-council-logo-title">{tab === 'pulse' ? 'Pilot · Live' : 'Pilot trajectory'}</span>
-            <span className="cc-council-logo-sub">{tab === 'pulse' ? 'CHATSWOOD · WILLOUGHBY' : '3 WEEKS · CHATSWOOD'}</span>
+            <span className="cc-council-logo-title">{TAB_TITLE[tab].title}</span>
+            <span className="cc-council-logo-sub">{TAB_TITLE[tab].sub}</span>
           </span>
         </div>
         <div className="cc-council-bar-actions">
@@ -68,7 +78,7 @@ export function CouncilSandboxScreen() {
         <SegmentedTabs tabs={TABS} active={tab} onChange={setTab} />
       </div>
 
-      {tab === 'pulse' ? (
+      {tab === 'pulse' && (
         <div className="cc-pulse-v52">
           {/* MEGA PULSE — pink gradient "12" in Chatswood */}
           <div className="cc-pulse-hero">
@@ -207,7 +217,8 @@ export function CouncilSandboxScreen() {
             </div>
           </details>
         </div>
-      ) : (
+      )}
+      {tab === 'trajectory' && (
         <div className="cc-traj-body">
           <TrajectoryView
             walks={[
@@ -234,6 +245,75 @@ export function CouncilSandboxScreen() {
               </>
             }
           />
+        </div>
+      )}
+      {tab === 'impact' && (
+        <div className="cc-impact-body">
+          <section className="cc-impact-card">
+            <header>
+              <span className="cc-impact-h">GOAL ALIGNMENT · 2036</span>
+              <span className="cc-impact-h-r">5 KPIs</span>
+            </header>
+            <GoalRadarChart
+              axes={[
+                { key: 'co2', label: 'CO₂', current: 0.23 },
+                { key: 'active', label: 'Active', current: 0.31 },
+                { key: 'spend', label: 'Local $', current: 0.18 },
+                { key: 'community', label: 'Community', current: 0.27 },
+                { key: 'equity', label: 'Equity', current: 0.12 },
+              ]}
+            />
+          </section>
+
+          <section className="cc-impact-card">
+            <header>
+              <span className="cc-impact-h">STREET HEATMAP · 21d</span>
+              <span className="cc-impact-h-r">vs Pacific Hwy control</span>
+            </header>
+            <StreetHeatmap />
+            <p className="cc-impact-cap">
+              Real-time walk density · boosted streets show <mark>+312% vs control</mark>.
+            </p>
+          </section>
+
+          <section className="cc-impact-card">
+            <header>
+              <span className="cc-impact-h">% OF 2036 TARGET</span>
+              <span className="cc-impact-h-r">at week 3</span>
+            </header>
+            <KpiDialGrid
+              dials={[
+                {
+                  id: 'co2',
+                  emoji: '🌿',
+                  label: 'CO₂ avoided',
+                  pct: 0.23,
+                  caption: '1.5t / 6.5t/wk target',
+                },
+                {
+                  id: 'active',
+                  emoji: '🚶',
+                  label: 'Active mode',
+                  pct: 0.11,
+                  caption: '47% / 65% mode-share',
+                },
+                {
+                  id: 'spend',
+                  emoji: '💰',
+                  label: 'Local spend',
+                  pct: 0.08,
+                  caption: '$8.4k / $100k 21d',
+                },
+                {
+                  id: 'residents',
+                  emoji: '👪',
+                  label: 'Residents',
+                  pct: 0.05,
+                  caption: '892 / 17.8k ratepayers',
+                },
+              ]}
+            />
+          </section>
         </div>
       )}
 

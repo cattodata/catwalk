@@ -24,6 +24,7 @@
     "express": "^5.2.1",
     "framer-motion": "^12.38.0",
     "leaflet": "^1.9.4",
+    "leaflet.heat": "^0.2.0",
     "leaflet.markercluster": "^1.5.3",
     "lucide-react": "^1.14.0",
     "react": "^19.2.5",
