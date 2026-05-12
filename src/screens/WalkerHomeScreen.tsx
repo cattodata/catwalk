@@ -156,13 +156,16 @@ export function WalkerHomeScreen() {
             <span className="cc-walker-ribbon-arr" aria-hidden="true">›</span>
           </button>
         )}
-        <div className="cc-map-overlays" style={smart && !selectedShop ? { top: 64 } : undefined}>
-          <MapPulseChip tone="sage">
-            {selectedShop
-              ? `ROUTE READY · ${Math.max(1, Math.round(selectedShop.dist / 80))} MIN`
-              : `${shopsCount || '…'} SHOPS OPEN`}
-          </MapPulseChip>
-        </div>
+        {/* Show pulse chip only when the Catto ribbon isn't already up (mobile audit M1) */}
+        {(!smart || selectedShop) && (
+          <div className="cc-map-overlays">
+            <MapPulseChip tone="sage">
+              {selectedShop
+                ? `ROUTE READY · ${Math.max(1, Math.round(selectedShop.dist / 80))} MIN`
+                : `${shopsCount || '…'} SHOPS OPEN`}
+            </MapPulseChip>
+          </div>
+        )}
         <MapFab onRecenter={() => setRecenterNonce((n) => n + 1)} />
       </div>
 

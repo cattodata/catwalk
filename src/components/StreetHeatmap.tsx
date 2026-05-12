@@ -42,9 +42,9 @@ const HEAT_POINTS: Array<[number, number, number]> = [
 ]
 
 const LABELS = [
-  { lat: -33.7962, lng: 151.1838, text: 'Victoria Ave · +312%', tone: 'hot' as const },
-  { lat: -33.7956, lng: 151.1848, text: 'Spring St · +247%', tone: 'hot' as const },
-  { lat: -33.7937, lng: 151.1817, text: 'Pacific Hwy · control +4%', tone: 'control' as const },
+  { lat: -33.7968, lng: 151.1828, text: 'Victoria Ave · +312%', tone: 'hot' as const },
+  { lat: -33.7951, lng: 151.1852, text: 'Spring St · +247%', tone: 'hot' as const },
+  { lat: -33.7938, lng: 151.1818, text: 'Pacific Hwy · control', tone: 'control' as const },
 ]
 
 interface LayerWithHeat {

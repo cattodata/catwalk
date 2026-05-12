@@ -6,11 +6,10 @@ import { MapPin, ArrowRight, Check } from 'lucide-react'
 import { AppBarLockup } from '../components/AppBarLockup'
 import { BottomNav } from '../components/BottomNav'
 import { TierRibbon } from '../components/TierRibbon'
-import { useUserStats } from '../hooks/useUserStats'
-import { useSupabaseAuth } from '../hooks/useSupabaseAuth'
 import { useUserRole } from '../context/UserRoleContext'
 import { tierFromCo2 } from '../data/tiers'
 import { CITY_LIST, getActiveCityId, setActiveCityId } from '../config/cities'
+import { SEED_WALK_HISTORY, seedTotals, fmtDaysAgo } from '../data/walkHistory'
 
 const TIERS = [
   { id: 'sprout', label: 'Sprout', emoji: '🌱', threshold: 0 },
@@ -19,21 +18,14 @@ const TIERS = [
   { id: 'gold', label: 'Gold', emoji: '🏆', threshold: 5 },
 ]
 
-const SEED_HISTORY = [
-  { id: 'w1', shop: 'Saint Honoré', emoji: '🥐', pts: 96, daysAgo: 0 },
-  { id: 'w2', shop: 'Gong Cha', emoji: '🧋', pts: 248, daysAgo: 1 },
-  { id: 'w3', shop: 'Mamak', emoji: '🍜', pts: 28, daysAgo: 2 },
-]
-
 export function ProfileScreen() {
   const navigate = useNavigate()
-  const auth = useSupabaseAuth()
-  const { total_co2 } = useUserStats(auth.user?.id ?? null)
+  const totals = seedTotals()
   const { switchRole } = useUserRole()
 
-  const tier = useMemo(() => tierFromCo2(total_co2), [total_co2])
+  const tier = useMemo(() => tierFromCo2(totals.co2), [totals.co2])
   const tierLevel = tier.id === 'sprout' ? 1 : tier.id === 'bronze' ? 2 : tier.id === 'silver' ? 3 : 4
-  const tierPct = tier.next != null ? Math.round(((total_co2 - tier.min) / (tier.next - tier.min)) * 100) : 100
+  const tierPct = tier.next != null ? Math.round(((totals.co2 - tier.min) / (tier.next - tier.min)) * 100) : 100
 
   const activeCity = getActiveCityId()
   const activeCityName = CITY_LIST.find((c) => c.slug === activeCity)?.name ?? 'Chatswood'
@@ -54,7 +46,7 @@ export function ProfileScreen() {
           </div>
           <div className="cc-profile-name">
             <h2>Walker</h2>
-            <small>Tier {tierLevel} · {tier.label} · {total_co2.toFixed(2)} kg saved</small>
+            <small>Tier {tierLevel} · {tier.label} · {totals.co2.toFixed(2)} kg saved</small>
           </div>
         </div>
 
@@ -62,7 +54,7 @@ export function ProfileScreen() {
           tierLevel={tierLevel}
           tierName={tier.label}
           progressPct={tierPct}
-          kgSaved={total_co2}
+          kgSaved={totals.co2}
         />
 
         <section className="cc-profile-section">
@@ -84,12 +76,12 @@ export function ProfileScreen() {
         <section className="cc-profile-section">
           <h3>RECENT WALKS</h3>
           <ul className="cc-profile-walks">
-            {SEED_HISTORY.map((w) => (
+            {SEED_WALK_HISTORY.slice(0, 3).map((w) => (
               <li key={w.id}>
                 <span className="cc-rewards-hist-em" aria-hidden="true">{w.emoji}</span>
                 <span className="cc-rewards-hist-body">
                   <span>{w.shop}</span>
-                  <small>{w.daysAgo === 0 ? 'today' : w.daysAgo === 1 ? 'yesterday' : `${w.daysAgo}d ago`}</small>
+                  <small>{fmtDaysAgo(w.daysAgo)}</small>
                 </span>
                 <span className="cc-rewards-hist-pts">+{w.pts}</span>
               </li>

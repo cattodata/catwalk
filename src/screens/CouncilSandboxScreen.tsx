@@ -288,28 +288,28 @@ export function CouncilSandboxScreen() {
                   emoji: '🌿',
                   label: 'CO₂ avoided',
                   pct: 0.23,
-                  caption: '1.5t / 6.5t/wk target',
+                  caption: '1.5t of 6.5t target',
                 },
                 {
                   id: 'active',
                   emoji: '🚶',
                   label: 'Active mode',
                   pct: 0.11,
-                  caption: '47% / 65% mode-share',
+                  caption: '47% of 65% target',
                 },
                 {
                   id: 'spend',
                   emoji: '💰',
                   label: 'Local spend',
                   pct: 0.08,
-                  caption: '$8.4k / $100k 21d',
+                  caption: '$8.4k of $100k',
                 },
                 {
                   id: 'residents',
                   emoji: '👪',
                   label: 'Residents',
                   pct: 0.05,
-                  caption: '892 / 17.8k ratepayers',
+                  caption: '892 of 17.8k',
                 },
               ]}
             />

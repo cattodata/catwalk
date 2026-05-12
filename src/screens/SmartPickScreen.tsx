@@ -53,67 +53,42 @@ export function SmartPickScreen() {
     )
   }
 
-  const { shop, reasons } = pick
+  const { shop } = pick
   const walkMin = Math.max(1, Math.round(shop.dist / 80))
   const treatDollars = +(shop.off * 0.35).toFixed(2)
 
-  // Build a single prose insight from the highest-impact reason
+  // Build a single prose insight — gated by shop category so the copy never
+  // contradicts the picked shop (e.g. "warm pastry" when the pick is bubble tea).
   const quote = useMemo(() => {
-    const rainBonus = reasons.find((r) => r.includes('rainy'))
-    if (rainBonus && weather?.isRain) {
-      return (
-        <>
-          It's <mark>raining soon</mark> — grab a warm pastry on the way to work.
-        </>
-      )
+    const isBakery = shop.type === 'Bakery' || shop.cuisine === 'Sweets'
+    const isCafe = shop.type === 'Cafe'
+    const isRestaurant = shop.type === 'Restaurant'
+    const isDrinks = shop.cuisine === 'Drinks'
+
+    if (weather?.isRain) {
+      if (isBakery) return <>It's <mark>raining soon</mark> — grab a warm pastry on the way.</>
+      if (isCafe) return <>It's <mark>raining soon</mark> — duck inside for a warm cup.</>
+      if (isDrinks) return <>It's <mark>raining soon</mark> — chase the chill with a hot bubble tea.</>
+      if (isRestaurant) return <>It's <mark>raining soon</mark> — beat the rush, eat inside.</>
     }
-    const hot = reasons.find((r) => r.includes('hot'))
-    if (hot) {
-      return (
-        <>
-          It's a <mark>hot one</mark> — cold drinks at {shop.name} are tracking +20%.
-        </>
-      )
+    if (weather?.isHot && isDrinks) {
+      return <>It's a <mark>hot one</mark> — cold drinks at {shop.name} are tracking +20%.</>
     }
-    const morn = reasons.find((r) => r.includes('morning'))
-    if (morn) {
-      return (
-        <>
-          <mark>Morning</mark> bakery peak. Fresh pastry timing — beat the queue at {shop.name}.
-        </>
-      )
+    if (hour >= 7 && hour <= 10 && isBakery) {
+      return <><mark>Morning</mark> bakery peak — beat the queue at {shop.name}.</>
     }
-    const lunch = reasons.find((r) => r.includes('lunch'))
-    if (lunch) {
-      return (
-        <>
-          <mark>Lunch peak</mark> — restaurants like {shop.name} are humming right now.
-        </>
-      )
+    if (hour >= 11 && hour <= 13 && isRestaurant) {
+      return <><mark>Lunch peak</mark> — {shop.name} is humming right now.</>
     }
-    const arvo = reasons.find((r) => r.includes('arvo'))
-    if (arvo) {
-      return (
-        <>
-          <mark>Afternoon slump</mark> — a coffee at {shop.name} fixes that.
-        </>
-      )
+    if (hour >= 14 && hour <= 16 && isCafe) {
+      return <><mark>Afternoon slump</mark> — a coffee at {shop.name} fixes that.</>
     }
-    const evening = reasons.find((r) => r.includes('PM commute'))
-    if (evening) {
-      return (
-        <>
-          <mark>Evening commute</mark> peak — dinner at {shop.name} pairs with the walk home.
-        </>
-      )
+    if (hour >= 17 && hour <= 20 && isRestaurant) {
+      return <><mark>Evening commute</mark> peak — dinner at {shop.name} pairs with the walk home.</>
     }
-    // fallback — multiplier-driven
-    return (
-      <>
-        {shop.name} hits <mark>{shop.mult}× points</mark> right now — best ROI on the map.
-      </>
-    )
-  }, [reasons, weather, shop.name, shop.mult])
+    // fallback — multiplier-driven, always safe
+    return <>{shop.name} hits <mark>{shop.mult}× points</mark> right now — best ROI on the map.</>
+  }, [weather, hour, shop])
 
   const onStart = () => {
     sessionStorage.setItem('cc:selectedShopId', shop.id)

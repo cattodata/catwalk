@@ -2854,8 +2854,9 @@ button { font-family: inherit; cursor: pointer; }
 .cc-vaul-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(45, 36, 24, 0.32);
-  z-index: 50;
+  background: rgba(45, 36, 24, 0.42);
+  /* Above Leaflet's max pane (800 = controls). Map markers + popups otherwise bleed through. */
+  z-index: 1000;
 }
 .cc-vaul-content {
   position: fixed;
@@ -2865,7 +2866,7 @@ button { font-family: inherit; cursor: pointer; }
   background: var(--card);
   border-radius: var(--r-sheet) var(--r-sheet) 0 0;
   padding: 8px 18px 28px;
-  z-index: 51;
+  z-index: 1001;
   box-shadow: var(--shadow-sheet);
   max-width: 393px;
   margin: 0 auto;
@@ -3500,8 +3501,16 @@ button { font-family: inherit; cursor: pointer; }
 .cc-shop-mini-top {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   min-width: 0;
+}
+.cc-shop-mini-top b {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.cc-shop-mini-mult {
+  flex: 0 0 auto;
+  margin-inline-start: 4px;
 }
 .cc-shop-mini-top b {
   font-family: var(--font-display);
@@ -6625,11 +6634,17 @@ a.cc-owner-cta {
   display: flex;
   gap: 6px;
   overflow-x: auto;
-  padding-bottom: 4px;
+  padding: 2px 14px 4px 0;
   margin-bottom: 4px;
   scrollbar-width: none;
+  scroll-padding-inline-end: 14px;
+  scroll-snap-type: x proximity;
+  /* right edge fade hints "more to scroll" */
+  mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
 }
 .cc-cuisine-row::-webkit-scrollbar { display: none; }
+.cc-cuisine-chip { scroll-snap-align: start; }
 .cc-cuisine-chip {
   flex: 0 0 auto;
   display: inline-flex;
@@ -7943,6 +7958,9 @@ a.cc-owner-cta {
   letter-spacing: 0.04em;
   color: var(--ink-soft);
   line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ---------- REWARDS HOME (/walk/rewards) + PROFILE shared ---------- */
@@ -8261,7 +8279,11 @@ a.cc-owner-cta {
   gap: 10px;
   margin-bottom: 6px;
 }
-.cc-reward-v55-bar > :first-child { flex: 1; min-width: 0; }
+.cc-reward-v55-bar > .cc-tier-ribbon {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
 .cc-reward-v55-close {
   width: 36px;
   height: 36px;
@@ -8933,5 +8955,56 @@ a.cc-owner-cta {
   }
   .cc-mshell-inner .cc-impact-body > section:first-child {
     grid-column: 1 / -1;
+  }
+
+  /* ---- BottomNav: expand to inner shell width (was stuck at 393 mobile) ---- */
+  .cc-botnav {
+    max-width: 100% !important;
+    left: 50% !important;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 1100px !important;
+    padding: 10px 24px calc(16px + env(safe-area-inset-bottom, 0px));
+    border-radius: 18px 18px 0 0;
+  }
+  /* TierRibbon: cap width so it doesn't stretch full-bleed on desktop */
+  .cc-mshell-inner .cc-tier-ribbon { max-width: 720px; margin-left: auto; margin-right: auto; }
+  .cc-walker > .cc-tier-ribbon { max-width: none; margin: 0; }
+
+  /* AppBar centre-cap so logo doesn't float far-left on a 1200px shell */
+  .cc-mshell-inner > .cc-walker > .cc-appbar,
+  .cc-mshell-inner .cc-owner-bar,
+  .cc-mshell-inner .cc-council-bar,
+  .cc-mshell-inner .cc-pick-bar,
+  .cc-mshell-inner .cc-plan-bar { max-width: 1100px; margin: 0 auto; }
+
+  /* Drop the sheet drag-handle on desktop (phone ornament) */
+  .cc-mshell-inner .cc-sheet-grab,
+  .cc-mshell-inner .cc-walker .cc-sheet-grab { display: none; }
+
+  /* Reward screen: lift its gradient bleed; centre as a 520px card */
+  .cc-mshell-inner > .cc-reward-v55 {
+    max-width: 520px;
+    margin: 24px auto;
+    border-radius: 24px;
+    padding-top: 24px;
+    box-shadow: 0 24px 60px -20px rgba(45, 26, 34, 0.25);
+  }
+  /* SmartPick + Plan + Park screens: card-like presentation */
+  .cc-mshell-inner > .cc-pick-screen,
+  .cc-mshell-inner > .cc-plan-screen,
+  .cc-mshell-inner > .cc-park-screen {
+    margin: 16px auto 32px;
+    padding-bottom: 24px;
+  }
+  /* Owner forecast: cap content width */
+  .cc-mshell-inner > .cc-owner-forecast .cc-owner-v5 { max-width: 640px; margin: 0 auto; }
+
+  /* Onboarding: vertically centre on tall desktop screens */
+  .cc-mshell-inner > .cc-onb {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 }
