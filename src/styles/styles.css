@@ -7761,6 +7761,303 @@ a.cc-owner-cta {
   color: var(--ink-soft);
 }
 
+/* ---------- REWARDS HOME (/walk/rewards) + PROFILE shared ---------- */
+.cc-rewards-screen,
+.cc-profile-screen {
+  min-height: 100dvh;
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px));
+}
+.cc-rewards-body,
+.cc-profile-body {
+  padding: 4px 18px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.cc-rewards-tier {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cc-rewards-tier-cta {
+  margin: 4px 8px 0;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.cc-rewards-tier-cta mark {
+  background: transparent;
+  color: var(--coral);
+  font-weight: 700;
+}
+
+.cc-rewards-h {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+.cc-rewards-h-r {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+.cc-rewards-badges > header,
+.cc-rewards-history > header,
+.cc-profile-section > h3,
+.cc-profile-section > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+.cc-profile-section > h3 {
+  margin: 0 0 8px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+
+.cc-rewards-badge-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.cc-rewards-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 6px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  text-align: center;
+  opacity: 0.4;
+  transition: opacity 0.2s ease, border-color 0.2s ease;
+}
+.cc-rewards-badge.is-on {
+  opacity: 1;
+  border-color: var(--coral);
+  box-shadow: 0 4px 12px -4px rgba(255, 107, 157, 0.35);
+}
+.cc-rewards-badge-em {
+  font-size: 28px;
+  line-height: 1;
+}
+.cc-rewards-badge-l {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 11.5px;
+  letter-spacing: -0.1px;
+  color: var(--ink);
+}
+.cc-rewards-badge small {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+}
+
+.cc-rewards-history ul,
+.cc-profile-walks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cc-rewards-history li,
+.cc-profile-walks li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.cc-rewards-hist-em {
+  font-size: 22px;
+  flex: 0 0 26px;
+  text-align: center;
+}
+.cc-rewards-hist-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.cc-rewards-hist-body > span {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: -0.1px;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cc-rewards-hist-body small {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-soft);
+}
+.cc-rewards-hist-pts {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--coral);
+  letter-spacing: -0.2px;
+  flex: 0 0 auto;
+}
+
+.cc-rewards-lifetime {
+  margin-top: 4px;
+  padding: 14px 18px 16px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cc-rewards-life-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.cc-rewards-life-v {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.4px;
+  color: var(--ink);
+}
+.cc-rewards-life-l {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--ink-soft);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.cc-rewards-profile-link,
+.cc-profile-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px auto 0;
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* PROFILE-specific */
+.cc-profile-id {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 14px;
+  background: linear-gradient(135deg, #FFE6CB 0%, #FFD8E6 100%);
+  border-radius: 18px;
+}
+.cc-profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  flex: 0 0 64px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+.cc-profile-avatar span {
+  font-size: 34px;
+}
+.cc-profile-name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cc-profile-name h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.4px;
+  color: var(--ink);
+}
+.cc-profile-name small {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+}
+.cc-profile-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cc-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  font-family: var(--font-ui);
+  text-align: left;
+  cursor: pointer;
+  color: var(--ink);
+}
+.cc-profile-row-ic {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--paper);
+  display: grid;
+  place-items: center;
+  color: var(--ink-soft);
+  flex: 0 0 32px;
+}
+.cc-profile-row-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.cc-profile-row-body b {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13.5px;
+  letter-spacing: -0.1px;
+}
+.cc-profile-row-body small {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
 /* ---------- REWARD v5.5 (product-hero circle) ---------- */
 .cc-reward-v55 {
   min-height: 100dvh;
