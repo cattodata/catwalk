@@ -3163,10 +3163,10 @@ button { font-family: inherit; cursor: pointer; }
   width: 34px;
   height: 34px;
   border-radius: 11px;
-  background: linear-gradient(135deg, #FFD27A, #FF8FB4);
+  background: linear-gradient(135deg, #FF6B9D 0%, #F5C842 100%);
   display: grid;
   place-items: center;
-  box-shadow: 0 4px 10px rgba(255, 107, 157, 0.3);
+  box-shadow: 0 6px 14px -4px rgba(255, 107, 157, 0.45);
 }
 .cc-appbar-text {
   display: flex;

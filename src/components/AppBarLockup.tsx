@@ -22,10 +22,13 @@ export function AppBarLockup({
       <div className="cc-appbar-logo">
         <span className="cc-appbar-logo-tile" aria-hidden="true">
           <svg viewBox="0 0 32 32" width="22" height="22">
-            <rect width="32" height="32" rx="8" fill="#2D2418" />
-            <rect x="9" y="11" width="3" height="3" fill="#F5C842" />
-            <rect x="20" y="11" width="3" height="3" fill="#F5C842" />
-            <rect x="13" y="19" width="6" height="2" fill="#FF6B9D" />
+            {/* Tiny ears */}
+            <path d="M7 8 L10 8 L8.5 5 Z" fill="#fff" opacity="0.92" />
+            <path d="M22 8 L25 8 L23.5 5 Z" fill="#fff" opacity="0.92" />
+            {/* Catto pixel face — white on gradient bg from outer tile */}
+            <rect x="9" y="11" width="3" height="3" fill="#fff" />
+            <rect x="20" y="11" width="3" height="3" fill="#fff" />
+            <rect x="13" y="19" width="6" height="2" fill="#fff" rx="1" />
           </svg>
         </span>
         <span className="cc-appbar-text">
