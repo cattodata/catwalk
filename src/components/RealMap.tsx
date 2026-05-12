@@ -109,19 +109,20 @@ function ShopClusterLayer({
       },
     })
 
-    const esc = (raw: string) =>
-      String(raw).replace(/[&<>"']/g, (c) =>
-        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] || c),
-      )
     for (const s of shops) {
       if (!s.lat || !s.lng) continue
       const cuisineMatch = cuisineFilter === 'all' || s.cuisine === cuisineFilter
       const tagMatch = !tagFilter.length || tagFilter.every((t) => s.tags.includes(t))
       if (!cuisineMatch || !tagMatch) continue
-      const m = L.marker([s.lat, s.lng], { icon: makeShopIcon(s, selectedShop?.id === s.id) })
-      m.bindPopup(
-        `<b>${esc(s.emoji)} ${esc(s.name)}</b><br/>${esc(s.type)} · ${s.dist}m walk · ${s.mult}× pts<br/><small>${esc(s.street ?? '')}</small>`,
-      )
+      const m = L.marker([s.lat, s.lng], {
+        icon: makeShopIcon(s, selectedShop?.id === s.id),
+        // Larger touch keepInView on mobile; default 7px tolerance is too tight
+        riseOnHover: true,
+        keyboard: false,
+      })
+      // No bindPopup — the bottom sheet (ShopDetailSheet) handles details.
+      // Popups + cluster + flyTo all fighting for the same gesture caused the
+      // "bouncing, can't tap" feel on mobile (Issue: map marker tap).
       m.on('click', () => onSelect(s))
       cluster.addLayer(m)
     }
