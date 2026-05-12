@@ -13,20 +13,25 @@ export function ShopMini({ shop, walkMin, onSelect, onAdd, picked = false }: Pro
   const multColor = shop.mult === 3 ? 'var(--coral)' : shop.mult === 2 ? '#cf9a17' : 'var(--blue)'
   return (
     <div className={`cc-shop-mini${picked ? ' is-picked' : ''}`}>
+      {/* Corner badges (don't compete with the name line) */}
       {shop.off >= 15 && (
         <span className="cc-shop-mini-off" aria-label={`${shop.off}% off`}>
           −{shop.off}%
         </span>
       )}
+      {shop.mult > 1 && (
+        <span
+          className="cc-shop-mini-mult"
+          style={{ color: multColor, borderColor: multColor }}
+          aria-label={`${shop.mult} times points`}
+        >
+          {shop.mult}×
+        </span>
+      )}
       <button type="button" className="cc-shop-mini-tap" onClick={() => onSelect(shop)}>
         <span className="cc-shop-mini-em" aria-hidden="true">{shop.emoji}</span>
         <span className="cc-shop-mini-body">
-          <span className="cc-shop-mini-top">
-            <b>{shop.name}</b>
-            <span className="cc-shop-mini-mult" style={{ color: multColor, borderColor: multColor }}>
-              {shop.mult}×
-            </span>
-          </span>
+          <b className="cc-shop-mini-name">{shop.name}</b>
           <small>{shop.dist}m · {walkMin} min</small>
         </span>
       </button>

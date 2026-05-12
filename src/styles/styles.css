@@ -3498,40 +3498,40 @@ button { font-family: inherit; cursor: pointer; }
   min-width: 0;
   flex: 1;
 }
-.cc-shop-mini-top {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-}
-.cc-shop-mini-top b {
-  min-width: 0;
-  flex: 1 1 auto;
-}
-.cc-shop-mini-mult {
-  flex: 0 0 auto;
-  margin-inline-start: 4px;
-}
-.cc-shop-mini-top b {
+.cc-shop-mini-name {
+  display: block;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 12.5px;
-  white-space: nowrap;
+  font-size: 13px;
+  line-height: 1.2;
+  letter-spacing: -0.1px;
+  color: var(--ink);
+  /* Allow up to 2 lines so "Three Beans" / "Seocho-Dong" stop truncating */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-  flex: 1;
 }
 .cc-shop-mini-mult {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: var(--card);
   font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 9.5px;
-  padding: 1px 5px;
+  font-size: 9px;
+  padding: 2px 5px;
   border-radius: 8px;
   border: 1.5px solid currentColor;
-  background: var(--card);
-  flex: 0 0 auto;
+  pointer-events: none;
+  z-index: 1;
 }
+/* When both OFF badge and mult chip are present, stack mult below OFF */
+.cc-shop-mini-off + .cc-shop-mini-mult {
+  top: 26px;
+}
+/* old .cc-shop-mini-top removed — name is now its own block (cc-shop-mini-name)
+   and the mult chip is positioned as a corner badge. */
 .cc-shop-mini-body small {
   font-family: var(--font-mono);
   font-size: 10px;
@@ -4575,8 +4575,38 @@ button { font-family: inherit; cursor: pointer; }
   background:
     repeating-linear-gradient(45deg, transparent 0 12px, rgba(245, 200, 66, 0.06) 12px 14px),
     var(--card);
-  cursor: pointer;
   overflow: hidden;
+}
+.cc-photo-drop-em {
+  font-size: 28px;
+  line-height: 1;
+}
+.cc-photo-drop-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  width: 100%;
+  justify-content: center;
+}
+.cc-photo-drop-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  background: #fff;
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.cc-photo-drop-btn:hover { border-color: var(--coral); }
+.cc-photo-drop-btn-primary {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
 }
 .cc-photo-drop-img {
   display: block;
