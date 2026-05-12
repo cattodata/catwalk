@@ -17,30 +17,23 @@ test.describe('Catto Compass — happy path (v5.4)', () => {
     await expect(page.getByRole('button', { name: /council/i })).toBeVisible()
   })
 
-  test('walker home renders map, smart pick, plan-a-day, search, cuisine row', async ({ page }) => {
+  test('walker home (v5.5 calm) renders map, smart pick, cuisine row, shop rail', async ({ page }) => {
     await page.goto('/walk')
     await expect(page.locator('.leaflet-container')).toBeVisible({ timeout: 20_000 })
     await expect(page.getByRole('button', { name: /Smart pick/i })).toBeVisible()
-    await expect(page.getByRole('button', { name: /Plan a day/i })).toBeVisible()
-    await expect(page.getByPlaceholder(/search shops/i)).toBeVisible()
-    await expect(page.getByRole('combobox', { name: /sort shops/i })).toBeVisible()
     await expect(page.getByRole('radio', { name: /^All$/ })).toBeVisible()
     await expect(page.getByRole('radio', { name: /^Asian$/ })).toBeVisible()
     await expect(page.getByRole('radio', { name: /^Sweets$/ })).toBeVisible()
-  })
-
-  test('search filters shops by name and shows clear button', async ({ page }) => {
-    await page.goto('/walk')
-    await page.locator('.leaflet-container').waitFor({ timeout: 20_000 })
-    const search = page.getByPlaceholder(/search shops/i)
-    await search.fill('chu')
-    await expect(page.getByRole('button', { name: /clear search/i })).toBeVisible()
-    await search.fill('xyz-impossible-query-zzz')
-    await expect(page.getByText(/No shops match/i)).toBeVisible()
+    // v5.5 strip-down: no TierRibbon, no Plan-a-day button, no search bar by default
+    await expect(page.getByRole('button', { name: /^Plan a day/i })).toHaveCount(0)
+    await expect(page.getByPlaceholder(/search shops/i)).toHaveCount(0)
   })
 
   test('basket flow: + button picks shops, basket pill links to plan, plan hydrates', async ({ page }) => {
     await page.goto('/walk')
+    // Clear basket from prior tests
+    await page.evaluate(() => window.localStorage.removeItem('cc:planBasket'))
+    await page.reload()
     // Real OSM shops swap in over fallback after the Overpass fetch settles;
     // basket pill needs IDs that match the currently-rendered shops to render.
     await page.waitForLoadState('networkidle', { timeout: 30_000 }).catch(() => {})
@@ -112,17 +105,52 @@ test.describe('Catto Compass — happy path (v5.4)', () => {
     await expect(page.getByText(/\+312%/i)).toBeVisible()
   })
 
-  test('mobile bottom nav visible on small screens (Walker only)', async ({ page }, testInfo) => {
+  test('mobile bottom nav: 4 Walker-mode tabs (Discover/Plan/Rewards/Profile)', async ({ page }, testInfo) => {
     if (testInfo.project.name !== 'mobile-chrome') {
       test.skip()
       return
     }
     await page.goto('/walk')
-    const nav = page.getByRole('navigation', { name: /personas/i })
+    const nav = page.getByRole('navigation', { name: /walker modes/i })
     await expect(nav).toBeVisible()
-    await expect(nav.getByRole('link', { name: /^Walk$/ })).toBeVisible()
-    await expect(nav.getByRole('link', { name: /^Owners$/ })).toBeVisible()
-    await expect(nav.getByRole('link', { name: /^Council$/ })).toBeVisible()
+    await expect(nav.getByRole('link', { name: /^Discover$/ })).toBeVisible()
+    await expect(nav.getByRole('link', { name: /^Plan$/ })).toBeVisible()
+    await expect(nav.getByRole('link', { name: /^Rewards$/ })).toBeVisible()
+    await expect(nav.getByRole('link', { name: /^Profile$/ })).toBeVisible()
+  })
+
+  test('Smart pick · 1 quote page (/walk/pick) renders hero + stats + CTA', async ({ page }) => {
+    await page.goto('/walk/pick')
+    // Wait for shops to resolve (smart pick depends on them)
+    await page.waitForLoadState('networkidle', { timeout: 20_000 }).catch(() => {})
+    await expect(page.getByText(/Today's pick/i)).toBeVisible()
+    await expect(page.getByText(/CATTO PICKED/i)).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByRole('button', { name: /Walk me there/i })).toBeVisible()
+  })
+
+  test('Rewards home (/walk/rewards) renders tier + badges + history', async ({ page }) => {
+    await page.goto('/walk/rewards')
+    await expect(page.getByText(/ACHIEVEMENT BADGES/i)).toBeVisible()
+    await expect(page.getByText(/RECENT WALKS/i)).toBeVisible()
+    await expect(page.getByText(/LIFETIME/i)).toBeVisible()
+  })
+
+  test('Profile (/walk/profile) renders avatar + tier + settings', async ({ page }) => {
+    await page.goto('/walk/profile')
+    await expect(page.getByRole('heading', { name: /Walker/i })).toBeVisible()
+    await expect(page.getByText(/SETTINGS/i)).toBeVisible()
+    await expect(page.getByText(/Pilot city/i)).toBeVisible()
+    await expect(page.getByText(/Switch role/i)).toBeVisible()
+  })
+
+  test('Council Impact tab renders radar + heatmap + KPI dials', async ({ page }) => {
+    await page.goto('/council')
+    await page.getByRole('tab', { name: /^Impact$/i }).click()
+    await expect(page.getByText(/GOAL ALIGNMENT/i)).toBeVisible()
+    await expect(page.getByText(/STREET HEATMAP/i)).toBeVisible()
+    // Disambiguate from radar caption ("% of 2036 targets reached")
+    await expect(page.getByText('% OF 2036 TARGET', { exact: true })).toBeVisible()
+    await expect(page.getByText(/of 2036 targets reached/i)).toBeVisible()
   })
 
   test('health endpoint responds when server-side functions available', async ({ page }) => {
