@@ -7761,6 +7761,87 @@ a.cc-owner-cta {
   color: var(--ink-soft);
 }
 
+/* ---------- SHOP SEARCH SHEET (Map FAB → search overlay) ---------- */
+.cc-search-sheet {
+  padding-bottom: 22px;
+}
+.cc-search-sheet-title {
+  margin: 6px 0 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -0.3px;
+  color: var(--ink);
+}
+.cc-search-sheet-bar {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0 8px;
+}
+.cc-search-sheet-bar .cc-search-input { flex: 1; }
+.cc-search-sheet-empty {
+  margin: 16px 4px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--ink-soft);
+  text-align: center;
+}
+.cc-search-sheet-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+.cc-search-sheet-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-family: var(--font-ui);
+  text-align: left;
+  cursor: pointer;
+  color: var(--ink);
+}
+.cc-search-sheet-em {
+  font-size: 22px;
+  flex: 0 0 26px;
+  text-align: center;
+}
+.cc-search-sheet-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.cc-search-sheet-body > span {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: -0.1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cc-search-sheet-body small {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-soft);
+}
+.cc-search-sheet-body small svg {
+  color: #cf9a17;
+}
+
 /* ---------- COUNCIL IMPACT tab (radar + heatmap + KPI dials) ---------- */
 .cc-impact-body {
   padding: 8px 18px 24px;

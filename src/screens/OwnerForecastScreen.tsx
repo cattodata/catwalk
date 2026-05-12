@@ -129,8 +129,8 @@ export function OwnerForecastScreen() {
       return {
         body: (
           <>
-            Bundle <mark>croissant + flat white</mark> at $9 with EN · 中文 · 한국어 signage.
-            Push <mark>11:30–13:30</mark> before rain.
+            Bundle <mark>croissant + flat white</mark> at $9. Push <mark>11:30–13:30</mark> before
+            rain · trilingual signage auto-generated.
           </>
         ),
       }

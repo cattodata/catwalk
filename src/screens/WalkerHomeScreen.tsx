@@ -4,7 +4,9 @@ import type { Shop, TransportId, CuisineId } from '../types/shop'
 
 import { AppBarLockup } from '../components/AppBarLockup'
 import { BottomNav } from '../components/BottomNav'
+import { TierRibbon } from '../components/TierRibbon'
 import { MapFab } from '../components/MapFab'
+import { MapPulseChip } from '../components/MapPulseChip'
 import { SmartPickCta } from '../components/SmartPickCta'
 import { ShopMiniRail } from '../components/ShopMini'
 import { ShopDetailSheet } from '../components/ShopDetailSheet'
@@ -12,6 +14,7 @@ import { CuisineRow } from '../components/CuisineRow'
 import { PlanBasketPill } from '../components/PlanBasketPill'
 import { PlanBasketToast } from '../components/PlanBasketToast'
 import { RealMap } from '../components/RealMap'
+import { ShopSearchSheet } from '../components/ShopSearchSheet'
 
 import { usePlanBasket } from '../hooks/usePlanBasket'
 import { planBasket } from '../lib/planBasket'
@@ -19,8 +22,11 @@ import { useGooglePlaces } from '../hooks/useGooglePlaces'
 import { useRealShops } from '../hooks/useRealShops'
 import { useWeather } from '../hooks/useWeather'
 import { useGeolocation } from '../hooks/useGeolocation'
+import { useUserStats } from '../hooks/useUserStats'
+import { useSupabaseAuth } from '../hooks/useSupabaseAuth'
 import { useNow } from '../hooks/useNow'
 import { smartPick } from '../lib/smartPick'
+import { tierFromCo2 } from '../data/tiers'
 import { getTodayEvent } from '../data/events'
 
 export function WalkerHomeScreen() {
@@ -30,12 +36,18 @@ export function WalkerHomeScreen() {
   const shops = useGooglePlaces(rawShops)
   const { weather } = useWeather()
   const geo = useGeolocation(true)
+  const auth = useSupabaseAuth()
+  const { total_co2 } = useUserStats(auth.user?.id ?? null)
+  const tier = tierFromCo2(total_co2)
+  const tierLevel = tier.id === 'sprout' ? 1 : tier.id === 'bronze' ? 2 : tier.id === 'silver' ? 3 : 4
+  const tierPct = tier.next != null ? Math.round(((total_co2 - tier.min) / (tier.next - tier.min)) * 100) : 100
   const todayEvent = getTodayEvent(now)
 
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null)
   const [transport, setTransport] = useState<TransportId>('walk')
   const [recenterNonce, setRecenterNonce] = useState(0)
   const [cuisine, setCuisine] = useState<CuisineId>('all')
+  const [searchOpen, setSearchOpen] = useState(false)
   const basketIds = usePlanBasket()
 
   const onTogglePlan = (s: Shop) => {
@@ -99,9 +111,17 @@ export function WalkerHomeScreen() {
     return parts.join('  ·  ')
   }, [weather, todayEvent])
 
+  const shopsCount = shops.length
+
   return (
     <div className="cc-walker">
       <AppBarLockup />
+      <TierRibbon
+        tierLevel={tierLevel}
+        tierName="Walker"
+        progressPct={tierPct}
+        kgSaved={total_co2}
+      />
 
       <div className="cc-walker-map" aria-label="Chatswood map">
         <RealMap
@@ -127,7 +147,17 @@ export function WalkerHomeScreen() {
             <span className="cc-walker-ribbon-arr" aria-hidden="true">›</span>
           </button>
         )}
-        <MapFab onRecenter={() => setRecenterNonce((n) => n + 1)} />
+        <div className="cc-map-overlays" style={smart && !selectedShop ? { top: 64 } : undefined}>
+          <MapPulseChip tone="sage">
+            {selectedShop
+              ? `ROUTE READY · ${Math.max(1, Math.round(selectedShop.dist / 80))} MIN`
+              : `${shopsCount || '…'} SHOPS OPEN`}
+          </MapPulseChip>
+        </div>
+        <MapFab
+          onRecenter={() => setRecenterNonce((n) => n + 1)}
+          onSearch={() => setSearchOpen(true)}
+        />
       </div>
 
       <section className="cc-sheet" aria-label="Where to today">
@@ -165,6 +195,17 @@ export function WalkerHomeScreen() {
       <PlanBasketToast />
       <PlanBasketPill shops={shops} />
       <BottomNav />
+
+      {searchOpen && (
+        <ShopSearchSheet
+          shops={shops}
+          onSelect={(s) => {
+            setSelectedShop(s)
+            setSearchOpen(false)
+          }}
+          onClose={() => setSearchOpen(false)}
+        />
+      )}
     </div>
   )
 }
