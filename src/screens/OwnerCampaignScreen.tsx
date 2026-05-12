@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
+import { CULTURAL_EVENTS } from '../data/culturalEvents'
 import { ArrowLeft, Sparkles, Copy, Share, CloudRain, MapPin, TrainFront, TrendingUp } from 'lucide-react'
 import type { BizType } from '../types/shop'
 
@@ -82,6 +83,9 @@ export function OwnerCampaignScreen() {
   const { weather } = useWeather()
   const { counts } = useCompetitorCounts()
   const todayEvent = getTodayEvent(now)
+  const [searchParams] = useSearchParams()
+  const eventId = searchParams.get('event')
+  const linkedEvent = useMemo(() => CULTURAL_EVENTS.find((e) => e.id === eventId) ?? null, [eventId])
 
   // Persisted state — survives accidental refresh during demo.
   // Shop name "Saint Honoré" → Bakery as default (real bakery)
@@ -181,6 +185,15 @@ export function OwnerCampaignScreen() {
               Catto reads it + live signals → ready-to-post campaign in 3 languages.
             </p>
           </div>
+          {linkedEvent && (
+            <div className="cc-camp-event-hint" role="note">
+              <span className="cc-camp-event-em" aria-hidden="true">{linkedEvent.emoji}</span>
+              <span>
+                <b>Event: {linkedEvent.name}</b>
+                <small>{linkedEvent.ownerAction} · predicted +{linkedEvent.predictedLift}% walks</small>
+              </span>
+            </div>
+          )}
           <PhotoDrop photoUrl={photoUrl} onFile={setPhotoFile} />
           <BizPills value={bizType} onChange={setBizType} />
           <InsightsLiveCard

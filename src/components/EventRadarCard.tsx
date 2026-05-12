@@ -5,36 +5,60 @@ import { Radar, ArrowRight } from 'lucide-react'
 interface Props {
   event: CulturalEvent
   upcoming?: boolean
+  /** Walker-discover mode (filter cuisine on tap) or Owner-sell mode (open campaign generator). Default: 'sell' */
+  mode?: 'discover' | 'sell'
   onSelectCuisine?: (id: CuisineId) => void
+  onSellAction?: () => void
 }
 
 /**
- * "Today's vibe" event radar — surfaces an active or upcoming cultural event
- * with the predicted cuisine boost. Tap to apply the cuisine filter on the
- * Walker home. AI sees the world outside, not just the shop data.
+ * v5.5: EventRadarCard is now Owner-side sell-mode by default. Walker
+ * removed the radar from Discover (calm v2 silhouette); Owner uses it
+ * as a sell signal — "today's event near you" with a CTA into the
+ * campaign generator pre-filled with event context.
  */
-export function EventRadarCard({ event, upcoming = false, onSelectCuisine }: Props) {
+export function EventRadarCard({
+  event,
+  upcoming = false,
+  mode = 'sell',
+  onSelectCuisine,
+  onSellAction,
+}: Props) {
+  const onClick = mode === 'sell' ? onSellAction : () => onSelectCuisine?.(event.cuisineHint)
+  const eyebrowText =
+    mode === 'sell' ? "TODAY'S EVENT NEAR YOU" : upcoming ? "WHAT'S NEXT" : "TODAY'S VIBE"
+
   return (
     <button
       type="button"
-      className="cc-radar-card"
-      onClick={() => onSelectCuisine?.(event.cuisineHint)}
-      aria-label={`Filter by ${event.cuisineHint}`}
+      className={`cc-radar-card cc-radar-${mode}`}
+      onClick={onClick}
+      aria-label={mode === 'sell' ? `Open campaign for ${event.name}` : `Filter by ${event.cuisineHint}`}
     >
       <span className="cc-radar-eb" aria-hidden="true">
         <Radar size={11} strokeWidth={2.4} />
-        <span>{upcoming ? "WHAT'S NEXT" : "TODAY'S VIBE"}</span>
+        <span>{eyebrowText}</span>
       </span>
       <span className="cc-radar-body">
         <span className="cc-radar-em" aria-hidden="true">{event.emoji}</span>
         <span>
           <b>{event.name}</b>
           <small>
-            <mark>+{event.predictedLift}%</mark> {event.cuisineHint.toLowerCase()} walks
+            {mode === 'sell' ? (
+              <>
+                Peak walk-by · <mark>+{event.predictedLift}%</mark> nearby
+              </>
+            ) : (
+              <>
+                <mark>+{event.predictedLift}%</mark> {event.cuisineHint.toLowerCase()} walks
+              </>
+            )}
           </small>
         </span>
       </span>
-      <ArrowRight size={14} strokeWidth={2.4} aria-hidden="true" />
+      <span className="cc-radar-cta">
+        {mode === 'sell' ? <>Catto play <ArrowRight size={12} strokeWidth={2.4} /></> : <ArrowRight size={14} strokeWidth={2.4} />}
+      </span>
     </button>
   )
 }

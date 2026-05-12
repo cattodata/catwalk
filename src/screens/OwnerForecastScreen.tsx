@@ -5,6 +5,7 @@ import { Camera, Repeat, Footprints, CloudRain, Zap, CalendarHeart } from 'lucid
 import { SwitchRoleGear } from '../components/SwitchRoleSheet'
 import { CattoPill } from '../components/CattoPill'
 import { OwnerReading } from '../components/OwnerReading'
+import { EventRadarCard } from '../components/EventRadarCard'
 import { useWeather } from '../hooks/useWeather'
 import { useCompetitorCounts } from '../hooks/useCompetitorCounts'
 import { useDemographics } from '../hooks/useDemographics'
@@ -197,6 +198,16 @@ export function OwnerForecastScreen() {
 
         {/* 2) Reading now — inline signal → conclusion (the AI's working memory) */}
         <OwnerReading rows={readingRows} />
+
+        {/* 2b) Event radar — today's cultural event near the shop with a 1-tap into pre-filled campaign */}
+        {cultural && (
+          <EventRadarCard
+            event={cultural}
+            upcoming={cultural.start > now.toISOString().slice(0, 10)}
+            mode="sell"
+            onSellAction={() => navigate(`/owner/campaign?event=${cultural.id}`)}
+          />
+        )}
 
         {/* 3) AI CTA — concrete play recommendation + Generate inside the card */}
         <div className="cc-ai-cta">

@@ -8189,6 +8189,63 @@ a.cc-owner-cta {
   color: #b62963;
   font-weight: 800;
 }
+/* Sell-mode (Owner) variant — pinker for AI seller signal */
+.cc-radar-sell {
+  background: linear-gradient(135deg, rgba(255, 107, 157, 0.12) 0%, rgba(245, 200, 66, 0.10) 100%);
+  border: 1px solid rgba(255, 107, 157, 0.35);
+  margin-top: 10px;
+}
+.cc-radar-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 99px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  flex: 0 0 auto;
+}
+.cc-radar-discover .cc-radar-cta { background: transparent; color: var(--ink-soft); padding: 0; }
+
+/* Event hint banner inside campaign wizard step 1 */
+.cc-camp-event-hint {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  margin: 4px 0;
+  background: linear-gradient(100deg, rgba(180, 158, 251, 0.14), rgba(255, 107, 157, 0.08));
+  border: 1px solid rgba(180, 158, 251, 0.35);
+  border-radius: 14px;
+  font-family: var(--font-ui);
+}
+.cc-camp-event-em {
+  font-size: 22px;
+  flex: 0 0 28px;
+  text-align: center;
+}
+.cc-camp-event-hint > span:last-child {
+  display: flex;
+  flex-direction: column;
+}
+.cc-camp-event-hint b {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: -0.1px;
+  color: var(--ink);
+}
+.cc-camp-event-hint small {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
 
 .cc-council-dl {
   width: 36px;
