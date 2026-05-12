@@ -12,9 +12,12 @@ import { InsightsLiveCard } from '../components/InsightsLiveCard'
 
 import { useWeather } from '../hooks/useWeather'
 import { useCompetitorCounts } from '../hooks/useCompetitorCounts'
+import { useDemographics } from '../hooks/useDemographics'
 import { useNow } from '../hooks/useNow'
 import { generateInsights } from '../lib/insights'
 import { getTodayEvent } from '../data/events'
+import { generateCampaign } from '../lib/claude'
+import type { Campaign } from '../types/campaign'
 
 type Step = 1 | 2 | 3
 type Lang = 'en' | 'zh' | 'ko'
@@ -82,6 +85,7 @@ export function OwnerCampaignScreen() {
   const now = useNow(60_000)
   const { weather } = useWeather()
   const { counts } = useCompetitorCounts()
+  const { demographics } = useDemographics()
   const todayEvent = getTodayEvent(now)
   const [searchParams] = useSearchParams()
   const eventId = searchParams.get('event')
@@ -96,6 +100,9 @@ export function OwnerCampaignScreen() {
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
   const [lang, setLang] = useState<Lang>(persisted.lang ?? 'en')
   const [copied, setCopied] = useState(false)
+  const [campaign, setCampaign] = useState<Campaign | null>(null)
+  const [assetTab, setAssetTab] = useState<'ig' | 'google' | 'sign' | 'script'>('ig')
+  const [error, setError] = useState<string | null>(null)
 
   // Persist on every change so a mid-form refresh doesn't lose work
   useEffect(() => {
@@ -131,9 +138,56 @@ export function OwnerCampaignScreen() {
     return ai.slice(0, 3).map((i) => ({ emoji: i.icon, text: `${i.title} — ${i.sub}` }))
   }, [bizType, weather, counts, now, todayEvent])
 
-  const generate = () => {
+  const generate = async () => {
     setStep(2)
-    setTimeout(() => setStep(3), 1800)
+    setError(null)
+    if (!photoFile) {
+      // Mock fallback when no photo — keeps demo flow working
+      setTimeout(() => setStep(3), 1800)
+      return
+    }
+    try {
+      const photoBase64 = await fileToBase64(photoFile)
+      const photoMime = photoFile.type || 'image/jpeg'
+      const result = await generateCampaign({
+        photoBase64,
+        photoMime,
+        bizType,
+        weather,
+        hour: now.getHours(),
+        dayOfWeek: now.getDay(),
+        shopName: 'Saint Honoré',
+        competitorCounts: counts ? { cafes: counts.cafes, restaurants: counts.restaurants, bakeries: counts.bakeries } : undefined,
+        demographics: demographics
+          ? {
+              population: demographics.population ?? 25000,
+              chinese_pct: Math.round(demographics.chinese_ancestry_pct),
+              korean_pct: Math.round(demographics.korean_ancestry_pct),
+            }
+          : undefined,
+      })
+      setCampaign(result.campaign)
+      setStep(3)
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown error'
+      console.warn('generate failed, falling back to mock:', msg)
+      setError(msg)
+      setTimeout(() => setStep(3), 600) // still advance with mock copy
+    }
+  }
+
+  function fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => {
+        const result = reader.result as string
+        // Strip data:image/jpeg;base64, prefix — API wants raw base64
+        const comma = result.indexOf(',')
+        resolve(comma >= 0 ? result.slice(comma + 1) : result)
+      }
+      reader.onerror = () => reject(reader.error)
+      reader.readAsDataURL(file)
+    })
   }
 
   const asset = COPY_BY_LANG[lang]
@@ -225,22 +279,64 @@ export function OwnerCampaignScreen() {
       )}
 
       {step === 3 && (
-        <div className="cc-camp-v5">
-          {/* Hero photo */}
-          <div className="cc-camp-hero-photo">
-            {photoUrl ? (
-              <img src={photoUrl} alt="" className="cc-camp-hero-img" />
-            ) : (
-              <div className="cc-camp-hero-placeholder cc-camp-hero-placeholder-static">
-                🥐
-              </div>
-            )}
-            <div className="cc-camp-hero-meta">
-              <CattoPill tone="dark">CATTO WROTE THIS</CattoPill>
-              <h3>{asset.title}</h3>
+        <div className="cc-camp-v55-result">
+          {/* DARK REVENUE HERO */}
+          <div className="cc-camp-revenue">
+            <span className="cc-camp-revenue-eb">EST. EXTRA REVENUE · TODAY</span>
+            <h2 className="cc-camp-revenue-num">+${(campaign?.revenue ?? 285).toLocaleString()}</h2>
+            <div className="cc-camp-revenue-meta">
+              +{campaign?.orders ?? 19} orders @ ${campaign?.avg ?? 15} avg · window {campaign?.windowText ?? '5–7PM'}
+            </div>
+            <div className="cc-camp-play-card">
+              <b>{campaign?.name ?? 'Rainy Day Pour-Over Push'}</b>
+              <small>chosen strategy · {campaign?.score ?? 96}/100 opportunity</small>
             </div>
           </div>
 
+          {/* OPPORTUNITY SCORE */}
+          <div className="cc-camp-oppy">
+            <header>
+              <span>Opportunity score</span>
+              <b>{campaign?.score ?? 96}<small>/100</small></b>
+            </header>
+            <div className="cc-camp-oppy-bar">
+              <span style={{ width: `${campaign?.score ?? 96}%` }} />
+            </div>
+            <div className="cc-camp-oppy-sigs">
+              {(campaign?.signals ?? [
+                { name: 'RAIN', impact: '' },
+                { name: 'STATION PEAK', impact: '' },
+                { name: 'LOW COMPETITORS', impact: '@ 5PM' },
+              ])
+                .slice(0, 3)
+                .map((s, i) => (
+                  <span key={i}>{s.name}{s.impact ? ` ${s.impact}` : ''}</span>
+                ))}
+            </div>
+          </div>
+
+          {/* ASSET TABS */}
+          <div className="cc-camp-asset-tabs" role="tablist">
+            {[
+              { id: 'ig' as const, emoji: '📷', label: 'Instagram' },
+              { id: 'google' as const, emoji: '🔍', label: 'Google' },
+              { id: 'sign' as const, emoji: '🪧', label: 'Sign' },
+              { id: 'script' as const, emoji: '🎭', label: 'Script' },
+            ].map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                role="tab"
+                aria-selected={assetTab === t.id}
+                className={`cc-camp-asset-tab${assetTab === t.id ? ' is-on' : ''}`}
+                onClick={() => setAssetTab(t.id)}
+              >
+                <span aria-hidden="true">{t.emoji}</span> {t.label}
+              </button>
+            ))}
+          </div>
+
+          {/* LANG PILLS */}
           <div className="cc-lang-row" role="radiogroup" aria-label="Language">
             {LANGS.map((l) => (
               <button
@@ -256,16 +352,33 @@ export function OwnerCampaignScreen() {
             ))}
           </div>
 
-          <div className="cc-camp-caption">
-            <div className="cc-camp-caption-head">{asset.head}</div>
-            <p className="cc-camp-caption-body">{asset.body}</p>
+          {/* ASSET CARD — IG-mock style */}
+          <div className="cc-camp-asset-card">
+            <header>
+              <span className="cc-camp-asset-thumb" aria-hidden="true">
+                {photoUrl ? <img src={photoUrl} alt="" /> : <span>🥐</span>}
+              </span>
+              <div>
+                <b>@sainthonore_chatswood</b>
+                <small>sponsored · 3 langs</small>
+              </div>
+            </header>
+            <p className="cc-camp-asset-body">
+              {assetTab === 'ig' && (campaign?.assets.ig[lang] ?? COPY_BY_LANG[lang].body)}
+              {assetTab === 'google' && (campaign?.assets.google[lang] ?? COPY_BY_LANG[lang].head)}
+              {assetTab === 'sign' && (campaign
+                ? `${campaign.assets.sign[lang].big} — ${campaign.assets.sign[lang].sub}`
+                : COPY_BY_LANG[lang].head)}
+              {assetTab === 'script' && (campaign?.assets.script[lang] ?? COPY_BY_LANG[lang].body)}
+            </p>
             <div className="cc-camp-uplift">
               <TrendingUp size={14} strokeWidth={2.4} aria-hidden="true" />
-              <span>{asset.uplift}</span>
-              <b>+${upliftValue}</b>
+              <span>Predicted uplift</span>
+              <b>+${campaign?.revenue ?? upliftValue}</b>
             </div>
           </div>
 
+          {/* SECONDARY ACTIONS */}
           <div className="cc-camp-actions">
             <button type="button" className="cc-camp-secondary" onClick={onCopy}>
               <Copy size={14} strokeWidth={2.2} aria-hidden="true" />
@@ -278,8 +391,18 @@ export function OwnerCampaignScreen() {
           </div>
 
           <button type="button" className="cc-camp-cta">
-            {asset.ship}
+            {COPY_BY_LANG[lang].ship}
           </button>
+
+          {/* "Live AI" badge when real data, error hint when fallback */}
+          {campaign && (
+            <div className="cc-camp-live-badge">
+              <CattoPill tone="dark">⚡ LIVE · Azure OpenAI vision · {campaign.score}/100</CattoPill>
+            </div>
+          )}
+          {!campaign && error && (
+            <p className="cc-camp-error">Live AI unavailable — showing demo copy. ({error})</p>
+          )}
         </div>
       )}
     </div>
