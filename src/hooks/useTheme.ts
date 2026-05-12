@@ -1,43 +1,28 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 type Theme = 'light' | 'dark'
 const KEY = 'cc-theme'
 
-function readInitial(): Theme {
-  if (typeof window === 'undefined') return 'light'
-  const saved = window.localStorage.getItem(KEY)
-  if (saved === 'light' || saved === 'dark') return saved
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-}
-
+/**
+ * Theme hook — locked to light mode. Dark mode is disabled by product
+ * decision (warm-paper palette only). Keeps the same API surface for
+ * any consumer expecting `theme` / `toggle` but `toggle` is a no-op.
+ */
 export function useTheme() {
-  const [theme, setTheme] = useState<Theme>(readInitial)
-  const [hasUserOverride, setHasUserOverride] = useState<boolean>(
-    () => !!window.localStorage.getItem(KEY),
-  )
-
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme)
-  }, [theme])
-
-  // Listen to OS-level theme change — only follow if user hasn't explicitly toggled
-  useEffect(() => {
-    if (hasUserOverride) return
-    const mq = window.matchMedia?.('(prefers-color-scheme: dark)')
-    if (!mq) return
-    const onChange = (e: MediaQueryListEvent) => setTheme(e.matches ? 'dark' : 'light')
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
-  }, [hasUserOverride])
-
-  const toggle = useCallback(() => {
-    setTheme((t) => {
-      const next = t === 'light' ? 'dark' : 'light'
-      window.localStorage.setItem(KEY, next)
-      return next
-    })
-    setHasUserOverride(true)
+    document.documentElement.setAttribute('data-theme', 'light')
+    // Clear any stale dark preference left over from older sessions
+    try {
+      const saved = window.localStorage.getItem(KEY)
+      if (saved === 'dark') window.localStorage.removeItem(KEY)
+    } catch {
+      /* ignore */
+    }
   }, [])
+
+  const theme: Theme = 'light'
+  const setTheme = () => undefined
+  const toggle = () => undefined
 
   return { theme, setTheme, toggle }
 }

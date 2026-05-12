@@ -1,14 +1,13 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Drawer } from 'vaul'
-import { Sun, Moon, MapPin, ArrowRight, Check } from 'lucide-react'
+import { MapPin, ArrowRight, Check } from 'lucide-react'
 
 import { AppBarLockup } from '../components/AppBarLockup'
 import { BottomNav } from '../components/BottomNav'
 import { TierRibbon } from '../components/TierRibbon'
 import { useUserStats } from '../hooks/useUserStats'
 import { useSupabaseAuth } from '../hooks/useSupabaseAuth'
-import { useTheme } from '../hooks/useTheme'
 import { useUserRole } from '../context/UserRoleContext'
 import { tierFromCo2 } from '../data/tiers'
 import { CITY_LIST, getActiveCityId, setActiveCityId } from '../config/cities'
@@ -30,7 +29,6 @@ export function ProfileScreen() {
   const navigate = useNavigate()
   const auth = useSupabaseAuth()
   const { total_co2 } = useUserStats(auth.user?.id ?? null)
-  const { theme, toggle } = useTheme()
   const { switchRole } = useUserRole()
 
   const tier = useMemo(() => tierFromCo2(total_co2), [total_co2])
@@ -110,17 +108,6 @@ export function ProfileScreen() {
         <section className="cc-profile-section">
           <h3>SETTINGS</h3>
           <div className="cc-profile-settings">
-            <button type="button" className="cc-profile-row" onClick={toggle}>
-              <span className="cc-profile-row-ic" aria-hidden="true">
-                {theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
-              </span>
-              <span className="cc-profile-row-body">
-                <b>Appearance</b>
-                <small>{theme === 'dark' ? 'Dark' : 'Light'} · tap to toggle</small>
-              </span>
-              <ArrowRight size={14} strokeWidth={2.4} />
-            </button>
-
             <Drawer.Root>
               <Drawer.Trigger asChild>
                 <button type="button" className="cc-profile-row">
