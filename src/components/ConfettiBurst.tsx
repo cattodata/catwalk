@@ -4,29 +4,25 @@ import confetti from 'canvas-confetti'
 const COLORS = ['#FF6B9D', '#F5C842', '#7BC97F', '#B49EFB', '#5B9BD5']
 
 /**
- * Two-shot canvas-confetti burst on mount. Used for Reward · Payoff moment.
+ * Single-shot canvas-confetti burst on mount. v5.5: reduced from 2 shots
+ * × 80 particles → 1 shot × 40 with faster decay for a calmer payoff.
  */
 export function ConfettiBurst() {
   useEffect(() => {
     // Honour user's reduced-motion preference (a11y)
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
 
-    const fire = (angle: number, originX: number) => {
-      confetti({
-        particleCount: 80,
-        angle,
-        spread: 70,
-        startVelocity: 38,
-        decay: 0.92,
-        scalar: 1,
-        colors: COLORS,
-        origin: { x: originX, y: 0.6 },
-        zIndex: 1000,
-      })
-    }
-    fire(60, 0.25)
-    const t = setTimeout(() => fire(120, 0.75), 120)
-    return () => clearTimeout(t)
+    confetti({
+      particleCount: 40,
+      angle: 90,
+      spread: 120,
+      startVelocity: 30,
+      decay: 0.95,
+      scalar: 1,
+      colors: COLORS,
+      origin: { x: 0.5, y: 0.35 },
+      zIndex: 1000,
+    })
   }, [])
   return null
 }

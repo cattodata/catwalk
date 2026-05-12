@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Gift, Leaf, Car, ArrowRight } from 'lucide-react'
+import { X } from 'lucide-react'
 
 import { ConfettiBurst } from '../components/ConfettiBurst'
 import { PointsDisplay } from '../components/PointsDisplay'
+import { TierRibbon } from '../components/TierRibbon'
 import { useUserStats } from '../hooks/useUserStats'
 import { useSupabaseAuth } from '../hooks/useSupabaseAuth'
 import { tierFromCo2 } from '../data/tiers'
@@ -59,55 +60,69 @@ export function RewardScreen() {
   const tierLevelOf = (id: string) =>
     id === 'sprout' ? 1 : id === 'bronze' ? 2 : id === 'silver' ? 3 : 4
   const isTierUp = tierBefore.id !== tierAfter.id
+  const tierPct =
+    tierAfter.next != null ? Math.round(((total_co2 - tierAfter.min) / (tierAfter.next - tierAfter.min)) * 100) : 100
 
   if (!data) return null
 
+  const walkMin = Math.max(1, Math.round(data.dist / 80))
+
   return (
-    <div className="cc-reward">
+    <div className="cc-reward-v55">
       <ConfettiBurst />
-      <div className="cc-reward-inner">
-        <span className="cc-reward-eb">
-          {data.isVerifiedGps ? '✓ GPS VERIFIED' : '◇ DEMO MODE'} · {data.dist}M · WALK <span className="cc-reward-verif" aria-hidden="true">●</span>
-        </span>
 
-        <div className="cc-reward-mascot" aria-hidden="true">
-          <span>🐱</span>
-        </div>
-
-        <PointsDisplay value={data.points} />
-
-        {isTierUp && (
-          <span className="cc-tier-up">
-            UNLOCKED · TIER {tierLevelOf(tierBefore.id)} → TIER {tierLevelOf(tierAfter.id)} 🎉
-          </span>
-        )}
-
-        <div className="cc-reward-cards">
-          <button type="button" className="cc-rc cc-rc-action">
-            <span className="cc-rc-em" aria-hidden="true"><Gift size={20} /></span>
-            <span className="cc-rc-body">
-              <b>{data.discount}% off</b> at {data.shopName}
-            </span>
-            <ArrowRight size={16} aria-hidden="true" />
-          </button>
-          <div className="cc-rc">
-            <span className="cc-rc-em" aria-hidden="true"><Leaf size={20} /></span>
-            <span className="cc-rc-body">
-              <b>{data.co2Kg.toFixed(2)} kg CO₂</b> saved · trip receipt
-            </span>
-          </div>
-          <div className="cc-rc">
-            <span className="cc-rc-em" aria-hidden="true"><Car size={20} /></span>
-            <span className="cc-rc-body">
-              You'd have paid <b>$8.50 parking</b>
-            </span>
-          </div>
-        </div>
-
-        <button type="button" className="cc-reward-cta" onClick={() => navigate('/walk')}>
-          Show code at counter →
+      <header className="cc-reward-v55-bar">
+        <TierRibbon
+          tierLevel={tierLevelOf(tierAfter.id)}
+          tierName={tierAfter.label}
+          progressPct={tierPct}
+          kgSaved={total_co2}
+        />
+        <button
+          type="button"
+          className="cc-reward-v55-close"
+          aria-label="Close"
+          onClick={() => navigate('/walk')}
+        >
+          <X size={18} strokeWidth={2.4} />
         </button>
+      </header>
+
+      <span className="cc-reward-v55-eb">
+        You made it 🎉 · <span>{walkMin} MIN WALK</span>
+      </span>
+
+      <div className="cc-reward-v55-hero" aria-hidden="true">
+        {/* sparkle decorations */}
+        <span className="cc-sparkle s1">✦</span>
+        <span className="cc-sparkle s2">✧</span>
+        <span className="cc-sparkle s3">✦</span>
+        <span className="cc-sparkle s4">✧</span>
+        <span className="cc-sparkle s5">✦</span>
+        <div className="cc-reward-v55-disc">
+          <span className="cc-reward-v55-emoji">{data.shopEmoji}</span>
+        </div>
       </div>
+
+      <h2 className="cc-reward-v55-h">Treat unlocked!</h2>
+      <p className="cc-reward-v55-body">
+        Show this at the counter for your <b>{data.discount}% off</b> at {data.shopName}.
+      </p>
+
+      <div className="cc-reward-v55-points">
+        <PointsDisplay value={data.points} />
+        <span className="cc-reward-v55-pl">POINTS EARNED</span>
+      </div>
+
+      {isTierUp && (
+        <span className="cc-tier-up">
+          UNLOCKED · TIER {tierLevelOf(tierBefore.id)} → TIER {tierLevelOf(tierAfter.id)} 🎉
+        </span>
+      )}
+
+      <button type="button" className="cc-reward-v55-cta" onClick={() => navigate('/walk')}>
+        Show code at counter
+      </button>
     </div>
   )
 }
