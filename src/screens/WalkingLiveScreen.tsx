@@ -167,14 +167,24 @@ export function WalkingLiveScreen() {
 
       <button
         type="button"
-        className={`cc-walking-v5-arrive${session.phase === 'arrived' ? ' is-ready' : ''}`}
-        disabled={session.phase !== 'arrived'}
+        className={`cc-walking-v5-arrive${session.phase === 'arrived' || session.phase === 'completed' ? ' is-ready' : ''}`}
         onClick={() => {
-          if (session.phase === 'arrived') navigate('/walk/reward')
+          // If we're already arrived, just navigate. If still walking, fast-forward
+          // so the pitch demo can skip the 3.5s walk animation.
+          if (session.phase === 'arrived' || session.phase === 'completed') {
+            navigate('/walk/reward')
+            return
+          }
+          if (!confirmedRef.current) {
+            confirmedRef.current = true
+            session.confirmArrival()
+          }
         }}
       >
         <Check size={18} strokeWidth={2.6} aria-hidden="true" />
-        I've arrived · Claim reward
+        {session.phase === 'arrived' || session.phase === 'completed'
+          ? "I've arrived · Claim reward"
+          : 'Skip walk · arrive now (demo)'}
       </button>
     </div>
   )
