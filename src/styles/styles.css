@@ -3469,13 +3469,20 @@ button { font-family: inherit; cursor: pointer; }
 
 /* Shop mini rail */
 .cc-shop-mini-rail {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   gap: 8px;
-  margin-bottom: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 4px;
+  margin: 0 -4px 10px;
+  padding: 2px 4px 6px;
+  scrollbar-width: none;
 }
+.cc-shop-mini-rail::-webkit-scrollbar { display: none; }
 .cc-shop-mini {
   position: relative;
+  flex: 0 0 calc(50% - 4px);
+  scroll-snap-align: start;
   display: flex;
   gap: 4px;
   padding: 10px 10px 10px 12px;
@@ -3487,6 +3494,21 @@ button { font-family: inherit; cursor: pointer; }
   align-items: center;
   min-width: 0;
   transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.cc-shop-mini-off {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: var(--coral);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 2px 6px;
+  border-radius: 99px;
+  z-index: 1;
+  pointer-events: none;
 }
 .cc-shop-mini.is-picked {
   border-color: var(--coral);

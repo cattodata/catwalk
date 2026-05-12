@@ -13,6 +13,11 @@ export function ShopMini({ shop, walkMin, onSelect, onAdd, picked = false }: Pro
   const multColor = shop.mult === 3 ? 'var(--coral)' : shop.mult === 2 ? '#cf9a17' : 'var(--blue)'
   return (
     <div className={`cc-shop-mini${picked ? ' is-picked' : ''}`}>
+      {shop.off >= 15 && (
+        <span className="cc-shop-mini-off" aria-label={`${shop.off}% off`}>
+          −{shop.off}%
+        </span>
+      )}
       <button type="button" className="cc-shop-mini-tap" onClick={() => onSelect(shop)}>
         <span className="cc-shop-mini-em" aria-hidden="true">{shop.emoji}</span>
         <span className="cc-shop-mini-body">
@@ -27,9 +32,6 @@ export function ShopMini({ shop, walkMin, onSelect, onAdd, picked = false }: Pro
               <span className="cc-rating" title={shop.ratingReal ? 'Google rating' : 'Estimated rating'}>
                 <Star size={10} strokeWidth={2.4} fill="currentColor" />
                 {shop.rating.toFixed(1)}
-                {shop.reviewCount != null && (
-                  <span className="cc-rating-n">({shop.reviewCount})</span>
-                )}
                 {' · '}
               </span>
             )}

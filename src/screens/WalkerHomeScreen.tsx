@@ -3,19 +3,14 @@ import { useNavigate } from 'react-router-dom'
 import type { Shop, TransportId, CuisineId } from '../types/shop'
 
 import { AppBarLockup } from '../components/AppBarLockup'
-import { TierRibbon } from '../components/TierRibbon'
 import { BottomNav } from '../components/BottomNav'
-import { MapPulseChip } from '../components/MapPulseChip'
 import { MapFab } from '../components/MapFab'
 import { SmartPickCta } from '../components/SmartPickCta'
 import { ShopMiniRail } from '../components/ShopMini'
 import { ShopDetailSheet } from '../components/ShopDetailSheet'
 import { CuisineRow } from '../components/CuisineRow'
-import { LiveDealsRail } from '../components/LiveDealsRail'
 import { PlanBasketPill } from '../components/PlanBasketPill'
 import { PlanBasketToast } from '../components/PlanBasketToast'
-import { ShopSearchBar, type SortBy } from '../components/ShopSearchBar'
-import { EventRadarCard } from '../components/EventRadarCard'
 import { RealMap } from '../components/RealMap'
 
 import { usePlanBasket } from '../hooks/usePlanBasket'
@@ -24,13 +19,9 @@ import { useGooglePlaces } from '../hooks/useGooglePlaces'
 import { useRealShops } from '../hooks/useRealShops'
 import { useWeather } from '../hooks/useWeather'
 import { useGeolocation } from '../hooks/useGeolocation'
-import { useUserStats } from '../hooks/useUserStats'
-import { useSupabaseAuth } from '../hooks/useSupabaseAuth'
 import { useNow } from '../hooks/useNow'
 import { smartPick } from '../lib/smartPick'
-import { tierFromCo2 } from '../data/tiers'
 import { getTodayEvent } from '../data/events'
-import { getActiveCulturalEvent, getUpcomingCulturalEvent } from '../data/culturalEvents'
 
 export function WalkerHomeScreen() {
   const navigate = useNavigate()
@@ -38,23 +29,13 @@ export function WalkerHomeScreen() {
   const { shops: rawShops } = useRealShops()
   const shops = useGooglePlaces(rawShops)
   const { weather } = useWeather()
-  const geo = useGeolocation(true) // try real GPS; falls back to demo coords if denied
-  const auth = useSupabaseAuth()
-  const { total_co2 } = useUserStats(auth.user?.id ?? null)
-  const tier = tierFromCo2(total_co2)
-  const tierLevel = tier.id === 'sprout' ? 1 : tier.id === 'bronze' ? 2 : tier.id === 'silver' ? 3 : 4
-  const tierPct = tier.next != null ? Math.round(((total_co2 - tier.min) / (tier.next - tier.min)) * 100) : 100
+  const geo = useGeolocation(true)
   const todayEvent = getTodayEvent(now)
-  const activeCultural = getActiveCulturalEvent(now)
-  const upcomingCultural = activeCultural ? null : getUpcomingCulturalEvent(now, 28)
-  const radarEvent = activeCultural ?? upcomingCultural
 
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null)
   const [transport, setTransport] = useState<TransportId>('walk')
   const [recenterNonce, setRecenterNonce] = useState(0)
   const [cuisine, setCuisine] = useState<CuisineId>('all')
-  const [search, setSearch] = useState('')
-  const [sortBy, setSortBy] = useState<SortBy>('distance')
   const basketIds = usePlanBasket()
 
   const onTogglePlan = (s: Shop) => {
@@ -64,8 +45,6 @@ export function WalkerHomeScreen() {
 
   const filteredShops = useMemo(() => {
     if (cuisine === 'all') return shops
-    // 'Sweets' chip widens to bakeries / dessert / cafés-with-pastry — OSM Chatswood
-    // returns 0 amenity=bakery, so we sniff name + emoji to surface real shops here.
     if (cuisine === 'Sweets') {
       const SWEET_NAME = /(bakery|patisserie|cake|cakery|dessert|sweet|donut|doughnut|gelato|ice ?cream|chocolate|cookie|crois|honor|pastry|tart)/i
       const SWEET_EMOJI = ['🥐', '🍩', '🍰', '🧁', '🍪', '🍫', '🍦']
@@ -76,43 +55,19 @@ export function WalkerHomeScreen() {
           SWEET_NAME.test(s.name) ||
           SWEET_EMOJI.includes(s.emoji),
       )
-      // Fall back to all-cafés if no name matches (judge-safe)
       return matches.length > 0 ? matches : shops.filter((s) => s.type === 'Cafe')
     }
     return shops.filter((s) => s.cuisine === cuisine)
   }, [shops, cuisine])
 
-  const searchedShops = useMemo(() => {
-    const q = search.trim().toLowerCase()
-    if (!q) return filteredShops
-    return filteredShops.filter((s) => s.name.toLowerCase().includes(q))
-  }, [filteredShops, search])
-
-  const sortedShops = useMemo(() => {
-    const arr = [...searchedShops]
-    if (sortBy === 'rating') arr.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
-    else if (sortBy === 'points') arr.sort((a, b) => b.pts - a.pts)
-    else arr.sort((a, b) => a.dist - b.dist)
-    return arr
-  }, [searchedShops, sortBy])
-
   const railShops = useMemo(
-    () => (search.trim() ? sortedShops.slice(0, 12) : sortedShops.slice(0, 4)),
-    [sortedShops, search],
-  )
-
-  // Live deals — shops with discount >= 15%. Sorted by discount desc, then dist
-  const dealShops = useMemo(
-    () =>
-      filteredShops
-        .filter((s) => s.off >= 15)
-        .sort((a, b) => b.off - a.off || a.dist - b.dist)
-        .slice(0, 6),
+    () => [...filteredShops].sort((a, b) => a.dist - b.dist),
     [filteredShops],
   )
 
   const hour = now.getHours()
   const smart = useMemo(() => smartPick(shops, weather, hour), [shops, weather, hour])
+
   const smartSubtext = useMemo(() => {
     if (!smart) return 'Finding the best pick…'
     const bits: string[] = [`${smart.shop.mult}× points`]
@@ -123,7 +78,10 @@ export function WalkerHomeScreen() {
   }, [smart, weather, hour])
 
   const onSmartPick = () => {
-    if (smart) setSelectedShop(smart.shop)
+    if (!smart) return
+    // v5.5: route to the dedicated "1 quote" page instead of opening inline sheet
+    sessionStorage.setItem('cc:smartPickShopId', smart.shop.id)
+    navigate('/walk/pick')
   }
 
   const onStartWalk = () => {
@@ -141,12 +99,9 @@ export function WalkerHomeScreen() {
     return parts.join('  ·  ')
   }, [weather, todayEvent])
 
-  const shopsCount = shops.length
-
   return (
     <div className="cc-walker">
       <AppBarLockup />
-      <TierRibbon tierLevel={tierLevel} tierName="Walker" progressPct={tierPct} kgSaved={total_co2} />
 
       <div className="cc-walker-map" aria-label="Chatswood map">
         <RealMap
@@ -159,12 +114,11 @@ export function WalkerHomeScreen() {
           userPosition={geo.position}
           recenterNonce={recenterNonce}
         />
-        {/* V5 AI moment — black "Catto picked one" ribbon at top of map */}
         {smart && !selectedShop && (
           <button
             type="button"
             className="cc-walker-ribbon"
-            onClick={() => setSelectedShop(smart.shop)}
+            onClick={onSmartPick}
           >
             <span className="cc-walker-ribbon-dot" aria-hidden="true" />
             <span className="cc-walker-ribbon-txt">
@@ -173,11 +127,6 @@ export function WalkerHomeScreen() {
             <span className="cc-walker-ribbon-arr" aria-hidden="true">›</span>
           </button>
         )}
-        <div className="cc-map-overlays" style={smart && !selectedShop ? { top: 64 } : undefined}>
-          <MapPulseChip>
-            {selectedShop ? `ROUTE READY · ${Math.max(1, Math.round(selectedShop.dist / 80))} MIN` : `${shopsCount || '…'} SHOPS OPEN`}
-          </MapPulseChip>
-        </div>
         <MapFab onRecenter={() => setRecenterNonce((n) => n + 1)} />
       </div>
 
@@ -195,51 +144,18 @@ export function WalkerHomeScreen() {
           <>
             <h4 className="cc-sheet-h4">Where to today?</h4>
             {conditionRow && <div className="cc-sheet-cond">{conditionRow}</div>}
-            {radarEvent && (
-              <EventRadarCard
-                event={radarEvent}
-                upcoming={!activeCultural}
-                onSelectCuisine={(c) => setCuisine(c)}
-              />
-            )}
             <SmartPickCta subtext={smartSubtext} reasons={smart?.reasons} onClick={onSmartPick} />
-            <button
-              type="button"
-              className="cc-plan-entry"
-              onClick={() => navigate('/walk/plan')}
-            >
-              <span className="cc-plan-entry-em" aria-hidden="true">🐾</span>
-              <span className="cc-plan-entry-body">
-                <span className="cc-plan-entry-lab">Plan a day</span>
-                <small>Chain 3+ stops · earn bonus + skip the car</small>
-              </span>
-              <span className="cc-plan-entry-arr" aria-hidden="true">›</span>
-            </button>
-            <LiveDealsRail
-              shops={dealShops}
-              onSelect={(s) => setSelectedShop(s)}
-              onAdd={onTogglePlan}
-              pickedIds={basketIds}
-            />
-            <ShopSearchBar
-              query={search}
-              onQueryChange={setSearch}
-              sortBy={sortBy}
-              onSortChange={setSortBy}
-            />
             <CuisineRow active={cuisine} onChange={setCuisine} />
             {railShops.length > 0 ? (
               <ShopMiniRail
-                shops={railShops.slice(0, search.trim() ? 12 : 4)}
+                shops={railShops}
                 onSelect={(s) => setSelectedShop(s)}
                 onAdd={onTogglePlan}
                 pickedIds={basketIds}
               />
             ) : (
               <div className="cc-empty-row">
-                {search.trim()
-                  ? `No shops match "${search}". Try a different name or clear search.`
-                  : `No ${cuisine === 'all' ? 'shops' : cuisine.toLowerCase()} nearby. Try a different filter.`}
+                No {cuisine === 'all' ? 'shops' : cuisine.toLowerCase()} nearby. Try a different filter.
               </div>
             )}
           </>
