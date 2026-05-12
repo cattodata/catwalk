@@ -7761,6 +7761,150 @@ a.cc-owner-cta {
   color: var(--ink-soft);
 }
 
+/* ---------- SMART PICK · 1 QUOTE screen (v5.5) ---------- */
+.cc-pick-screen {
+  min-height: 100dvh;
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  padding: 14px 18px 32px;
+  gap: 16px;
+}
+.cc-pick-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cc-pick-back {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: #fff;
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+  cursor: pointer;
+  flex: 0 0 36px;
+}
+.cc-pick-bar-title {
+  display: flex;
+  flex-direction: column;
+}
+.cc-pick-bar-h {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -0.3px;
+  color: var(--ink);
+}
+.cc-pick-bar-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.cc-pick-hero {
+  position: relative;
+  background: linear-gradient(135deg, #FFE3EF 0%, #FFC8DF 100%);
+  border-radius: 24px;
+  padding: 20px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 340px;
+  overflow: hidden;
+}
+.cc-pick-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 36px;
+  line-height: 1.05;
+  letter-spacing: -1px;
+  color: var(--ink);
+  position: relative;
+  z-index: 2;
+  max-width: 75%;
+}
+.cc-pick-emoji {
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
+  font-size: 200px;
+  line-height: 1;
+  opacity: 0.95;
+  pointer-events: none;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.18));
+  transform: rotate(-8deg);
+}
+.cc-pick-quote {
+  margin: 4px 4px 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--ink);
+  letter-spacing: -0.2px;
+}
+.cc-pick-quote mark {
+  background: rgba(245, 200, 66, 0.4);
+  color: var(--ink);
+  font-weight: 700;
+  padding: 0 4px;
+  border-radius: 4px;
+}
+.cc-pick-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 8px 4px;
+}
+.cc-pick-stats > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cc-pick-stat-v {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+}
+.cc-pick-stat-l {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+.cc-pick-cta {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  border: none;
+  border-radius: 18px;
+  background: var(--ink);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.2px;
+  cursor: pointer;
+  box-shadow: 0 12px 28px -8px rgba(45, 26, 34, 0.55);
+}
+.cc-pick-empty {
+  padding: 40px 16px;
+  text-align: center;
+  font-family: var(--font-ui);
+  color: var(--ink-soft);
+}
+
 /* ---------- PLAN BASKET FLOATING PILL ---------- */
 .cc-basket-pill {
   position: fixed;
