@@ -216,7 +216,7 @@ export function RealMap({
         center={center}
         zoom={16}
         scrollWheelZoom={false}
-        style={{ width: '100%', height: 'clamp(360px, 60vh, 520px)', borderRadius: 16 }}
+        className="cc-leaf-map"
         attributionControl={true}
       >
         {/* Azure Maps — microsoft.base.road style (Google-Maps-like). Falls back to OSM if no key. */}

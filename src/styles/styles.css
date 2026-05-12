@@ -1972,6 +1972,16 @@ button { font-family: inherit; cursor: pointer; }
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 6px 24px rgba(45, 36, 24, 0.06);
+  height: 100%;
+}
+.cc-leaf-map {
+  width: 100%;
+  height: clamp(360px, 60vh, 520px);
+  border-radius: 16px;
+}
+@media (min-width: 900px) {
+  .cc-leaf-map { height: 100%; min-height: 560px; }
+  .cc-leaf-card { height: 100%; }
 }
 .leaflet-container {
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
@@ -2806,57 +2816,8 @@ button { font-family: inherit; cursor: pointer; }
   position: relative;
 }
 
-/* Desktop: frame the mobile shell so it looks like an intentional
-   phone-demo rather than a stranded narrow column. */
-@media (min-width: 880px) {
-  .cc-mshell {
-    flex-direction: column;
-    background:
-      radial-gradient(circle at 20% 10%, rgba(255, 107, 157, 0.08), transparent 50%),
-      radial-gradient(circle at 80% 90%, rgba(91, 155, 213, 0.08), transparent 50%),
-      linear-gradient(135deg, #2d2418 0%, #1a1410 100%);
-    padding: 28px 0;
-    gap: 14px;
-    align-items: center;
-    color: #fff;
-  }
-  .cc-mshell-inner {
-    width: 393px;
-    height: 844px;
-    min-height: 844px;
-    max-height: 844px;
-    flex-shrink: 0;
-    border-radius: 38px;
-    overflow: hidden;
-    box-shadow:
-      0 0 0 8px #2d2418,
-      0 0 0 10px #4a3d2a,
-      0 40px 80px -20px rgba(0, 0, 0, 0.55);
-  }
-  /* Floating bottom nav re-anchors inside the phone bezel on desktop */
-  .cc-mshell-inner .cc-botnav {
-    position: absolute;
-  }
-  .cc-mshell::before {
-    content: '🐱  Catto Compass · Chatswood pilot';
-    font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 22px;
-    letter-spacing: -0.3px;
-    color: #fff;
-    opacity: 0.95;
-    order: -1;
-  }
-  .cc-mshell::after {
-    content: 'iPhone 14 · 393 × 852 · designed mobile-first';
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.5);
-    order: 1;
-  }
-}
+/* Desktop responsive moved to end of file (after all other rules) for
+   correct cascade. See @media (min-width: 900px) at file tail. */
 
 .cc-icon-btn {
   width: 36px;
@@ -3595,10 +3556,16 @@ button { font-family: inherit; cursor: pointer; }
 }
 .cc-shop-mini-body small {
   font-family: var(--font-mono);
-  font-size: 9.5px;
+  font-size: 10px;
   color: var(--ink-soft);
   letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  max-width: 100%;
 }
+
 
 /* Transport modes row */
 .cc-modes-row {
@@ -8906,4 +8873,96 @@ a.cc-owner-cta {
 @keyframes cc-toast-in {
   from { transform: translateY(10px); opacity: 0; }
   to   { transform: translateY(0); opacity: 1; }
+}
+
+/* ============================================================================
+   DESKTOP RESPONSIVE (>= 900px)
+   ============================================================================
+   Mobile (< 900px) keeps the original 393×852 design intact.
+   Desktop drops the phone bezel and expands key screens to use the wider
+   viewport. Placed at file tail so all selectors win on cascade order.
+   ============================================================================ */
+@media (min-width: 900px) {
+  .cc-mshell {
+    background: var(--paper);
+    padding: 0;
+  }
+  .cc-mshell-inner {
+    max-width: 1200px;
+    width: 100%;
+    min-height: 100dvh;
+    background: var(--paper);
+    margin: 0 auto;
+  }
+
+  /* ---- Walker home: 2-column grid (map left, sheet right) ---- */
+  .cc-mshell-inner > .cc-walker {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(420px, 1.5fr) minmax(360px, 1fr);
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas:
+      'bar bar'
+      'tier tier'
+      'map sheet';
+    gap: 14px 16px;
+    padding: 8px 18px 88px;
+  }
+  .cc-walker > .cc-appbar { grid-area: bar; }
+  .cc-walker > .cc-tier-ribbon { grid-area: tier; margin: 0; }
+  .cc-walker > .cc-walker-map {
+    grid-area: map;
+    height: calc(100dvh - 240px);
+    min-height: 560px;
+    border-radius: 18px;
+    overflow: hidden;
+  }
+  .cc-walker > .cc-sheet {
+    grid-area: sheet;
+    position: static;
+    border-radius: 18px;
+    margin: 0;
+    box-shadow: 0 8px 24px -10px rgba(45, 26, 34, 0.15);
+    max-height: calc(100dvh - 240px);
+    overflow-y: auto;
+    border: 1px solid var(--line);
+  }
+  .cc-walker > .cc-sheet > .cc-sheet-grab { display: none; }
+
+  /* ---- Onboarding: narrow centred splash ---- */
+  .cc-mshell-inner > .cc-onboarding,
+  .cc-mshell-inner > .cc-onb {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  /* ---- Other screens: comfortable centred max-width ---- */
+  .cc-mshell-inner > .cc-owner-forecast,
+  .cc-mshell-inner > .cc-camp-screen,
+  .cc-mshell-inner > .cc-pick-screen,
+  .cc-mshell-inner > .cc-reward-v55,
+  .cc-mshell-inner > .cc-plan-screen,
+  .cc-mshell-inner > .cc-rewards-screen,
+  .cc-mshell-inner > .cc-profile-screen,
+  .cc-mshell-inner > .cc-park-screen {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  /* ---- Council: wider so Impact tab can be 2-column ---- */
+  .cc-mshell-inner > .cc-council-screen {
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  /* Council Impact tab: 2-column grid (first card spans both for the radar hero) */
+  .cc-mshell-inner .cc-impact-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 12px 18px 32px;
+  }
+  .cc-mshell-inner .cc-impact-body > section:first-child {
+    grid-column: 1 / -1;
+  }
 }

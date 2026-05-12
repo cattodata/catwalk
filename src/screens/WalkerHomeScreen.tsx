@@ -11,10 +11,10 @@ import { SmartPickCta } from '../components/SmartPickCta'
 import { ShopMiniRail } from '../components/ShopMini'
 import { ShopDetailSheet } from '../components/ShopDetailSheet'
 import { CuisineRow } from '../components/CuisineRow'
+import { ShopSearchBar, type SortBy } from '../components/ShopSearchBar'
 import { PlanBasketPill } from '../components/PlanBasketPill'
 import { PlanBasketToast } from '../components/PlanBasketToast'
 import { RealMap } from '../components/RealMap'
-import { ShopSearchSheet } from '../components/ShopSearchSheet'
 
 import { usePlanBasket } from '../hooks/usePlanBasket'
 import { planBasket } from '../lib/planBasket'
@@ -47,7 +47,8 @@ export function WalkerHomeScreen() {
   const [transport, setTransport] = useState<TransportId>('walk')
   const [recenterNonce, setRecenterNonce] = useState(0)
   const [cuisine, setCuisine] = useState<CuisineId>('all')
-  const [searchOpen, setSearchOpen] = useState(false)
+  const [search, setSearch] = useState('')
+  const [sortBy, setSortBy] = useState<SortBy>('distance')
   const basketIds = usePlanBasket()
 
   const onTogglePlan = (s: Shop) => {
@@ -72,10 +73,18 @@ export function WalkerHomeScreen() {
     return shops.filter((s) => s.cuisine === cuisine)
   }, [shops, cuisine])
 
-  const railShops = useMemo(
-    () => [...filteredShops].sort((a, b) => a.dist - b.dist),
-    [filteredShops],
-  )
+  const searchedShops = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    return q ? filteredShops.filter((s) => s.name.toLowerCase().includes(q)) : filteredShops
+  }, [filteredShops, search])
+
+  const railShops = useMemo(() => {
+    const arr = [...searchedShops]
+    if (sortBy === 'rating') arr.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+    else if (sortBy === 'points') arr.sort((a, b) => b.pts - a.pts)
+    else arr.sort((a, b) => a.dist - b.dist)
+    return arr
+  }, [searchedShops, sortBy])
 
   const hour = now.getHours()
   const smart = useMemo(() => smartPick(shops, weather, hour), [shops, weather, hour])
@@ -154,10 +163,7 @@ export function WalkerHomeScreen() {
               : `${shopsCount || '…'} SHOPS OPEN`}
           </MapPulseChip>
         </div>
-        <MapFab
-          onRecenter={() => setRecenterNonce((n) => n + 1)}
-          onSearch={() => setSearchOpen(true)}
-        />
+        <MapFab onRecenter={() => setRecenterNonce((n) => n + 1)} />
       </div>
 
       <section className="cc-sheet" aria-label="Where to today">
@@ -176,6 +182,12 @@ export function WalkerHomeScreen() {
             {conditionRow && <div className="cc-sheet-cond">{conditionRow}</div>}
             <SmartPickCta subtext={smartSubtext} reasons={smart?.reasons} onClick={onSmartPick} />
             <CuisineRow active={cuisine} onChange={setCuisine} />
+            <ShopSearchBar
+              query={search}
+              onQueryChange={setSearch}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+            />
             {railShops.length > 0 ? (
               <ShopMiniRail
                 shops={railShops}
@@ -185,7 +197,9 @@ export function WalkerHomeScreen() {
               />
             ) : (
               <div className="cc-empty-row">
-                No {cuisine === 'all' ? 'shops' : cuisine.toLowerCase()} nearby. Try a different filter.
+                {search.trim()
+                  ? `No shops match "${search}". Try a different name or clear search.`
+                  : `No ${cuisine === 'all' ? 'shops' : cuisine.toLowerCase()} nearby. Try a different filter.`}
               </div>
             )}
           </>
@@ -195,17 +209,6 @@ export function WalkerHomeScreen() {
       <PlanBasketToast />
       <PlanBasketPill shops={shops} />
       <BottomNav />
-
-      {searchOpen && (
-        <ShopSearchSheet
-          shops={shops}
-          onSelect={(s) => {
-            setSelectedShop(s)
-            setSearchOpen(false)
-          }}
-          onClose={() => setSearchOpen(false)}
-        />
-      )}
     </div>
   )
 }
