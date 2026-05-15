@@ -1,7 +1,7 @@
 export type BizType = 'Cafe' | 'Restaurant' | 'Bakery'
 export type CuisineId = 'all' | 'Asian' | 'Western' | 'Drinks' | 'Sweets'
 export type ShopTag = 'Halal' | 'Vegan' | 'Late-night'
-export type TransportId = 'walk' | 'bike' | 'scoot' | 'bus'
+export type TransportId = 'walk' | 'bike' | 'scoot' | 'bus' | 'ev'
 
 export interface Shop {
   id: string

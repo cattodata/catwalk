@@ -1,11 +1,16 @@
 import { useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Footprints, Bike, TrainFront } from 'lucide-react'
+import { Footprints, Bike, TrainFront, Zap } from 'lucide-react'
 import type { TransportId } from '../types/shop'
 import { TRANSPORT } from '../data/shops'
 
-const ICONS = { walk: Footprints, bike: Bike, bus: TrainFront } as const
-const SHOWN: TransportId[] = ['walk', 'bike', 'bus']
+const ICONS: Partial<Record<TransportId, typeof Footprints>> = {
+  walk: Footprints,
+  bike: Bike,
+  bus: TrainFront,
+  ev: Zap,
+}
+const SHOWN: TransportId[] = ['walk', 'bike', 'scoot', 'bus', 'ev']
 
 interface Props {
   active: TransportId
@@ -45,9 +50,11 @@ export function TransportModesRow({
     <div className="cc-tm">
       <div className="cc-tm-row" role="radiogroup" aria-label="Transport mode">
         {modes.map((m) => {
-          const Icon = ICONS[m.id as keyof typeof ICONS]
+          const Icon = ICONS[m.id]
           const on = m.id === active
           const dots = m.ptsMult >= 0.9 ? 3 : m.ptsMult >= 0.7 ? 2 : 1
+          const shortLabel =
+            m.id === 'bus' ? 'Train' : m.id === 'scoot' ? 'Scoot' : m.id === 'ev' ? 'EV' : m.label
           return (
             <motion.button
               key={m.id}
@@ -60,8 +67,12 @@ export function TransportModesRow({
               animate={{ y: on ? -2 : 0 }}
               transition={{ type: 'spring', stiffness: 480, damping: 26 }}
             >
-              <Icon size={16} strokeWidth={2.2} aria-hidden="true" />
-              <span className="cc-tm-l">{m.id === 'bus' ? 'Train' : m.label}</span>
+              {Icon ? (
+                <Icon size={16} strokeWidth={2.2} aria-hidden="true" />
+              ) : (
+                <span className="cc-tm-emo" aria-hidden="true">{m.emoji}</span>
+              )}
+              <span className="cc-tm-l">{shortLabel}</span>
               <span className="cc-tm-x">
                 {m.ptsMult.toFixed(2).replace(/0$/, '')}×
                 <i className={`cc-tm-d d${dots}`} aria-hidden="true" />

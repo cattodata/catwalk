@@ -5439,13 +5439,14 @@ a.cc-owner-cta {
 
 /* ---------- TRANSPORT MODES V2 (living tradeoff readout) ---------- */
 .cc-tm { display: flex; flex-direction: column; gap: 10px; }
-.cc-tm-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.cc-tm-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
 .cc-tm-pill {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
-  padding: 9px 4px 8px;
+  gap: 2px;
+  padding: 8px 2px 7px;
+  min-width: 0;
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -5460,19 +5461,20 @@ a.cc-owner-cta {
   color: #fff;
   box-shadow: var(--shadow-card);
 }
-.cc-tm-l { font-family: var(--font-display); font-weight: 600; font-size: 11px; }
+.cc-tm-l { font-family: var(--font-display); font-weight: 600; font-size: 10.5px; line-height: 1.1; }
+.cc-tm-emo { font-size: 14px; line-height: 1; }
 .cc-tm-x {
   font-family: var(--font-mono);
-  font-size: 9.5px;
-  letter-spacing: 0.03em;
+  font-size: 8.5px;
+  letter-spacing: 0.02em;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   opacity: 0.92;
 }
 .cc-tm-d {
-  width: 18px;
-  height: 4px;
+  width: 14px;
+  height: 3px;
   border-radius: 2px;
   display: inline-block;
 }

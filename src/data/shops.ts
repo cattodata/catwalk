@@ -173,4 +173,5 @@ export const TRANSPORT: Transport[] = [
   { id: 'bike',  emoji: '🚲', label: 'Bike',       co2Mult: 0.85, ptsMult: 0.80, speed: 0.40, driveCost: 4.20, hint: 'Faster · racks at Concourse' },
   { id: 'scoot', emoji: '🛴', label: 'e-Scooter',  co2Mult: 0.65, ptsMult: 0.65, speed: 0.45, driveCost: 4.20, hint: 'Lime + Beam in CBD pilot zone' },
   { id: 'bus',   emoji: '🚌', label: 'Bus + walk', co2Mult: 0.55, ptsMult: 0.55, speed: 0.70, driveCost: 4.20, hint: 'Opal · 2 stops on Pacific' },
+  { id: 'ev',    emoji: '⚡',  label: 'EV rideshare', co2Mult: 0.30, ptsMult: 0.40, speed: 0.30, driveCost: 4.20, hint: 'Uber Green · 90% lower emissions vs petrol' },
 ]

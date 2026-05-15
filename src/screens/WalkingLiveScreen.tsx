@@ -23,7 +23,7 @@ export function WalkingLiveScreen() {
   const [shop, setShop] = useState<Shop | null>(null)
   const transport = useMemo<TransportId>(() => {
     const t = sessionStorage.getItem('cc:transport') as TransportId | null
-    return t === 'bike' || t === 'scoot' || t === 'bus' ? t : 'walk'
+    return t === 'bike' || t === 'scoot' || t === 'bus' || t === 'ev' ? t : 'walk'
   }, [])
 
   useEffect(() => {
