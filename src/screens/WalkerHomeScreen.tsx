@@ -7,7 +7,7 @@ import { BottomNav } from '../components/BottomNav'
 import { TierRibbon } from '../components/TierRibbon'
 import { MapFab } from '../components/MapFab'
 import { MapPulseChip } from '../components/MapPulseChip'
-import { SmartPickCta } from '../components/SmartPickCta'
+import { MultiModalOptimizer } from '../components/MultiModalOptimizer'
 import { ShopMiniRail } from '../components/ShopMini'
 import { ShopDetailSheet } from '../components/ShopDetailSheet'
 import { CuisineRow } from '../components/CuisineRow'
@@ -89,18 +89,15 @@ export function WalkerHomeScreen() {
   const hour = now.getHours()
   const smart = useMemo(() => smartPick(shops, weather, hour), [shops, weather, hour])
 
-  const smartSubtext = useMemo(() => {
-    if (!smart) return 'Finding the best pick…'
-    const bits: string[] = [`${smart.shop.mult}× points`]
-    if (weather?.isRain) bits.push('indoor pick')
-    else if (smart.shop.tags?.includes('Late-night') && hour >= 18) bits.push('open late')
-    else if (hour >= 17) bits.push('great for tonight')
-    return `${bits.join(' · ')} · ${smart.shop.name}`
-  }, [smart, weather, hour])
-
-  const onSmartPick = () => {
+  const onWheelsPick = (mode: TransportId) => {
     if (!smart) return
-    // v5.5: route to the dedicated "1 quote" page instead of opening inline sheet
+    sessionStorage.setItem('cc:smartPickShopId', smart.shop.id)
+    sessionStorage.setItem('cc:transport', mode)
+    navigate('/walk/pick')
+  }
+
+  const onSmartRibbon = () => {
+    if (!smart) return
     sessionStorage.setItem('cc:smartPickShopId', smart.shop.id)
     navigate('/walk/pick')
   }
@@ -147,7 +144,7 @@ export function WalkerHomeScreen() {
           <button
             type="button"
             className="cc-walker-ribbon"
-            onClick={onSmartPick}
+            onClick={onSmartRibbon}
           >
             <span className="cc-walker-ribbon-dot" aria-hidden="true" />
             <span className="cc-walker-ribbon-txt">
@@ -183,7 +180,14 @@ export function WalkerHomeScreen() {
           <>
             <h4 className="cc-sheet-h4">Where to today?</h4>
             {conditionRow && <div className="cc-sheet-cond">{conditionRow}</div>}
-            <SmartPickCta subtext={smartSubtext} reasons={smart?.reasons} onClick={onSmartPick} />
+            {smart && (
+              <MultiModalOptimizer
+                shop={smart.shop}
+                reasons={smart.reasons}
+                isRain={weather?.isRain ?? false}
+                onPick={onWheelsPick}
+              />
+            )}
             <CuisineRow active={cuisine} onChange={setCuisine} />
             <ShopSearchBar
               query={search}

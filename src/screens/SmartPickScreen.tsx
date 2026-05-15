@@ -92,7 +92,7 @@ export function SmartPickScreen() {
 
   const onStart = () => {
     sessionStorage.setItem('cc:selectedShopId', shop.id)
-    sessionStorage.setItem('cc:transport', 'walk')
+    if (!sessionStorage.getItem('cc:transport')) sessionStorage.setItem('cc:transport', 'walk')
     sessionStorage.removeItem('cc:smartPickShopId')
     navigate('/walk/live')
   }
