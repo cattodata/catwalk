@@ -5,9 +5,8 @@ import { X } from 'lucide-react'
 import { ConfettiBurst } from '../components/ConfettiBurst'
 import { PointsDisplay } from '../components/PointsDisplay'
 import { TierRibbon } from '../components/TierRibbon'
-import { useUserStats } from '../hooks/useUserStats'
-import { useSupabaseAuth } from '../hooks/useSupabaseAuth'
 import { tierFromCo2 } from '../data/tiers'
+import { seedTotals } from '../data/walkHistory'
 
 interface RewardData {
   shopName: string
@@ -33,8 +32,10 @@ export function RewardScreen() {
   const navigate = useNavigate()
   const [search] = useSearchParams()
   const isDemo = search.get('demo') === '1'
-  const auth = useSupabaseAuth()
-  const { total_co2 } = useUserStats(auth.user?.id ?? null)
+  // Use the same shared seed as /walk + /walk/rewards + /walk/profile so the
+  // reward screen's KG SAVED matches the rest of the app instead of reading
+  // the empty Supabase store (which always returns 0 in pitch demo).
+  const total_co2 = useMemo(() => seedTotals().co2, [])
 
   const [data, setData] = useState<RewardData | null>(null)
   useEffect(() => {

@@ -60,11 +60,12 @@ export function CouncilSandboxScreen() {
             type="button"
             className="cc-council-radar-link"
             onClick={() => navigate('/radar')}
-            aria-label="Open Catto Radar"
+            aria-label="Open Catto Radar — Council business intelligence"
             title="Open Catto Radar — business intelligence"
           >
-            <Radar size={14} strokeWidth={2.4} />
-            <span>Radar</span>
+            <Radar size={16} strokeWidth={2.4} />
+            <span>Open Radar</span>
+            <span className="cc-council-radar-arr" aria-hidden="true">›</span>
           </button>
           <button
             type="button"

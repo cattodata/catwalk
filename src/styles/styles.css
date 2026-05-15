@@ -9781,20 +9781,44 @@ a.cc-owner-cta {
 }
 .cc-radar-btn.is-ghost { background: transparent; }
 
-/* ---- Council header → radar link ---- */
+/* ---- Council header → radar link (hero CTA, judges' entry to Radar) ---- */
 .cc-council-radar-link {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 9px;
+  gap: 6px;
+  min-height: 44px;
+  padding: 10px 16px;
   background: var(--g-brand);
   border: 0;
-  border-radius: 9px;
+  border-radius: 12px;
   color: #fff;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 11px;
+  font-size: 13px;
+  letter-spacing: 0.01em;
   cursor: pointer;
+  box-shadow: 0 6px 14px rgba(255, 107, 157, 0.32), 0 2px 4px rgba(245, 200, 66, 0.18);
+  position: relative;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  animation: cc-radar-pulse 2.6s ease-in-out infinite;
+}
+.cc-council-radar-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(255, 107, 157, 0.4), 0 3px 6px rgba(245, 200, 66, 0.22);
+}
+.cc-council-radar-link:active { transform: translateY(0); }
+.cc-council-radar-arr {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  opacity: 0.9;
+  margin-left: 2px;
+}
+@keyframes cc-radar-pulse {
+  0%, 100% { box-shadow: 0 6px 14px rgba(255, 107, 157, 0.32), 0 2px 4px rgba(245, 200, 66, 0.18); }
+  50% { box-shadow: 0 8px 20px rgba(255, 107, 157, 0.5), 0 3px 8px rgba(245, 200, 66, 0.28); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cc-council-radar-link { animation: none; }
 }
 
 /* ---- Bulk contact modal ---- */

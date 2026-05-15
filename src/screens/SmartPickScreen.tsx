@@ -128,7 +128,7 @@ export function SmartPickScreen() {
         <div className="cc-pick-bar-title">
           <span className="cc-pick-bar-h">Today's pick</span>
           <span className="cc-pick-bar-sub">
-            {hour < 11 ? 'Morning' : hour < 14 ? 'Lunch' : hour < 17 ? 'Arvo' : hour < 21 ? 'Evening' : 'Late'} · CHATSWOOD
+            {hour < 6 ? 'Late night' : hour < 11 ? 'Morning' : hour < 14 ? 'Lunch' : hour < 17 ? 'Arvo' : 'Evening'} · CHATSWOOD
           </span>
         </div>
       </header>
