@@ -31,13 +31,25 @@ const AVAILABILITY: Record<TransportId, 'high' | 'med' | 'low'> = {
 }
 
 function rankModes(walkMin: number, baseCo2: number, isRain: boolean): RankedMode[] {
+  const isShortTrip = walkMin <= 6
+  const isMediumTrip = walkMin > 6 && walkMin <= 14
   return TRANSPORT.map((t) => {
     const eta = Math.max(1, Math.round(walkMin * t.speed))
     const co2 = +(baseCo2 * t.co2Mult).toFixed(2)
     const costSaved = +(t.driveCost * (1 - t.co2Mult * 0.3)).toFixed(2)
-    let score = Math.round(140 - eta * 5 - co2 * 320 + costSaved * 4 + t.ptsMult * 18)
-    if (isRain && (t.id === 'bike' || t.id === 'scoot')) score -= 35
-    if (isRain && (t.id === 'bus' || t.id === 'ev')) score += 15
+    let score = Math.round(120 - eta * 2.5 - co2 * 320 + costSaved * 3 + t.ptsMult * 30)
+    if (isShortTrip) {
+      if (t.id === 'walk') score += 28
+      else if (t.id === 'bike') score += 8
+      else if (t.id === 'ev' || t.id === 'bus') score -= 18
+    } else if (isMediumTrip) {
+      if (t.id === 'bike' || t.id === 'scoot') score += 12
+      else if (t.id === 'walk') score += 4
+    } else {
+      if (t.id === 'bus' || t.id === 'ev') score += 8
+    }
+    if (isRain && (t.id === 'bike' || t.id === 'scoot' || t.id === 'walk')) score -= 28
+    if (isRain && (t.id === 'bus' || t.id === 'ev')) score += 18
     return {
       id: t.id,
       emoji: t.emoji,
@@ -87,7 +99,7 @@ export function MultiModalOptimizer({ shop, reasons = [], isRain = false, onPick
         aria-expanded={open}
         aria-controls="cc-mmo-list"
       >
-        <span>{open ? 'hide ranked' : `compare ${rest.length} more modes`}</span>
+        <span>{open ? 'Hide ranked modes' : `Compare ${rest.length} more modes ›`}</span>
         <ChevronDown size={13} strokeWidth={2.4} aria-hidden="true" />
       </button>
       {open && (

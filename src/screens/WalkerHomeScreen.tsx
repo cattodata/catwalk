@@ -22,12 +22,11 @@ import { useGooglePlaces } from '../hooks/useGooglePlaces'
 import { useRealShops } from '../hooks/useRealShops'
 import { useWeather } from '../hooks/useWeather'
 import { useGeolocation } from '../hooks/useGeolocation'
-import { useUserStats } from '../hooks/useUserStats'
-import { useSupabaseAuth } from '../hooks/useSupabaseAuth'
 import { useNow } from '../hooks/useNow'
 import { smartPick } from '../lib/smartPick'
 import { tierFromCo2 } from '../data/tiers'
 import { getTodayEvent } from '../data/events'
+import { seedTotals } from '../data/walkHistory'
 
 export function WalkerHomeScreen() {
   const navigate = useNavigate()
@@ -36,8 +35,8 @@ export function WalkerHomeScreen() {
   const shops = useGooglePlaces(rawShops)
   const { weather } = useWeather()
   const geo = useGeolocation(true)
-  const auth = useSupabaseAuth()
-  const { total_co2 } = useUserStats(auth.user?.id ?? null)
+  const totals = useMemo(() => seedTotals(), [])
+  const total_co2 = totals.co2
   const tier = tierFromCo2(total_co2)
   const tierLevel = tier.id === 'sprout' ? 1 : tier.id === 'bronze' ? 2 : tier.id === 'silver' ? 3 : 4
   const tierPct = tier.next != null ? Math.round(((total_co2 - tier.min) / (tier.next - tier.min)) * 100) : 100
@@ -124,7 +123,7 @@ export function WalkerHomeScreen() {
       <AppBarLockup />
       <TierRibbon
         tierLevel={tierLevel}
-        tierName="Walker"
+        tierName={tier.label}
         progressPct={tierPct}
         kgSaved={total_co2}
       />

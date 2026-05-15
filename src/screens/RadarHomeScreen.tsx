@@ -120,11 +120,30 @@ export function RadarHomeScreen() {
           user: `Sample of ${filtered.length} businesses in scope: ${JSON.stringify(sample)}`,
         }),
       })
+      if (!res.ok) throw new Error(`brief-${res.status}`)
       const data = await res.json()
-      setAiBrief(typeof data.text === 'string' ? data.text : data.content ?? 'Brief unavailable.')
+      if (typeof data.text === 'string' && data.text.trim()) {
+        setAiBrief(data.text)
+      } else {
+        throw new Error('brief-empty')
+      }
     } catch {
+      const critical = filtered.filter((r) => r.tier === 'critical').length
+      const atRisk = filtered.filter((r) => r.tier === 'at-risk').length
+      const thriving = filtered.filter((r) => r.tier === 'thriving').length
+      const reachable = critical + atRisk
+      const topStreet =
+        [...new Set(filtered.filter((r) => r.tier !== 'thriving').map((r) => r.street ?? 'Chatswood'))]
+          .filter((s) => s !== 'Unknown')
+          .slice(0, 1)[0] ?? 'Chatswood'
+      const cohortLine =
+        reachable === 0
+          ? `No at-risk or critical merchants in current filter set — system is healthy.`
+          : reachable === 1
+            ? `1 merchant needs outreach this week (${critical} critical, ${atRisk} at-risk). Single-touch follow-up via the bulk contact sheet.`
+            : `${reachable} merchants need outreach this week (${critical} critical + ${atRisk} at-risk). Recommend bulk multilingual contact via Resend.`
       setAiBrief(
-        `${filtered.length} businesses in scope. ${filtered.filter((r) => r.tier === 'critical').length} flagged critical, ${filtered.filter((r) => r.tier === 'thriving').length} thriving. Cluster watch: ${[...new Set(filtered.filter((r) => r.tier !== 'thriving').map((r) => r.street ?? 'Chatswood'))].slice(0, 3).join(', ')}. Recommend bulk outreach to at-risk via multilingual templates this week.`,
+        `${filtered.length} businesses in scope · avg health ${Math.round(filtered.reduce((s, r) => s + r.health, 0) / Math.max(1, filtered.length))}/100. ${cohortLine} ${thriving} thriving merchants — pair top performers with at-risk neighbours on ${topStreet} for cross-traffic boost.`,
       )
     } finally {
       setAiLoading(false)

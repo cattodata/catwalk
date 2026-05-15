@@ -184,7 +184,7 @@ export function WalkingLiveScreen() {
         <Check size={18} strokeWidth={2.6} aria-hidden="true" />
         {session.phase === 'arrived' || session.phase === 'completed'
           ? "I've arrived · Claim reward"
-          : 'Skip walk · arrive now (demo)'}
+          : 'Skip · simulate arrival'}
       </button>
     </div>
   )

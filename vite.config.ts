@@ -1,10 +1,69 @@
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+
+/**
+ * Tiny dev-only plugin: routes /api/* to the Vercel-style handlers in api/
+ * so the SPA gets the same shape as production. Handlers gracefully return
+ * stub data when API keys are missing.
+ */
+function devApiHandlers(): Plugin {
+  return {
+    name: 'cattocompressv2-dev-api',
+    apply: 'serve',
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        if (!req.url || !req.url.startsWith('/api/')) return next()
+        const route = req.url.replace(/^\/api\//, '').replace(/\?.*$/, '')
+        const allowed = new Set([
+          'claude-text',
+          'resend',
+          'claude',
+          'claude-ab',
+          'claude-policy',
+          'places',
+          'nominatim',
+        ])
+        if (!allowed.has(route)) return next()
+        try {
+          const mod = await server.ssrLoadModule(`/api/${route}.ts`)
+          const handler = mod.default
+          if (typeof handler !== 'function') return next()
+          let raw = ''
+          req.on('data', (c: Buffer) => (raw += c.toString()))
+          req.on('end', async () => {
+            try {
+              const body = raw ? JSON.parse(raw) : undefined
+              const adaptedReq = Object.assign(req, { body })
+              const adaptedRes = Object.assign(res, {
+                status(code: number) {
+                  res.statusCode = code
+                  return adaptedRes
+                },
+                json(payload: unknown) {
+                  res.setHeader('content-type', 'application/json')
+                  res.end(JSON.stringify(payload))
+                },
+              })
+              await handler(adaptedReq, adaptedRes)
+            } catch (err) {
+              res.statusCode = 500
+              res.setHeader('content-type', 'application/json')
+              res.end(JSON.stringify({ error: 'dev-handler-failed', message: String(err) }))
+            }
+          })
+        } catch {
+          next()
+        }
+      })
+    },
+  }
+}
 
 export default defineConfig({
   plugins: [
     react(),
+    devApiHandlers(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['assets/cattodata-logo.png', 'assets/cattodata-brand.png'],

@@ -29,9 +29,15 @@ export function RadarActionBar({ total, basketCount, onExport, onBulkEmail, onAi
           <Mail size={14} strokeWidth={2.2} />
           <span>Bulk email · Resend</span>
         </button>
-        <button type="button" className="cc-radar-btn is-ghost" onClick={onAiBrief}>
+        <button
+          type="button"
+          className="cc-radar-btn is-ghost"
+          onClick={onAiBrief}
+          aria-label="AI weekly brief"
+        >
           <Sparkles size={14} strokeWidth={2.2} />
-          <span>AI weekly brief</span>
+          <span className="cc-radar-btn-lab">AI weekly brief</span>
+          <span className="cc-radar-btn-lab-short" aria-hidden="true">Brief</span>
         </button>
       </div>
     </div>

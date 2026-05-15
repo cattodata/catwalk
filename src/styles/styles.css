@@ -9739,6 +9739,13 @@ a.cc-owner-cta {
   transition: background 160ms ease;
 }
 .cc-radar-btn span { white-space: nowrap; }
+.cc-radar-btn-lab-short { display: none; }
+@media (max-width: 899px) {
+  .cc-radar-btn-lab { display: none; }
+  .cc-radar-btn-lab-short { display: inline; }
+  .cc-radar-btn { padding: 7px 9px; font-size: 11px; }
+  .cc-radar-action-cta { gap: 4px; }
+}
 .cc-radar-btn.is-primary {
   background: var(--g-brand);
   border-color: transparent;

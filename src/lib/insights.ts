@@ -33,7 +33,7 @@ export function generateInsights(ctx: InsightContext): Insight[] {
       icon: '🌧️',
       color: '#5B9BD5',
       title: `Rain · ${ctx.weather.precipitation.toFixed(1)}mm today`,
-      sub: 'Push warm, cosy indoor offers',
+      sub: 'Cosy indoor cafés nearby get a bonus today.',
     })
   } else if (ctx.weather?.isHot) {
     out.push({

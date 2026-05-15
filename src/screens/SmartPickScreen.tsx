@@ -8,6 +8,16 @@ import { useGooglePlaces } from '../hooks/useGooglePlaces'
 import { useWeather } from '../hooks/useWeather'
 import { useNow } from '../hooks/useNow'
 import { smartPick } from '../lib/smartPick'
+import { TRANSPORT } from '../data/shops'
+import type { TransportId } from '../types/shop'
+
+const MODE_LABEL: Record<TransportId, string> = {
+  walk: 'WALK',
+  bike: 'BIKE',
+  scoot: 'SCOOT',
+  bus: 'TRAIN',
+  ev: 'EV',
+}
 
 /**
  * v5.5 "Smart pick · 1 quote" full-bleed destination page.
@@ -54,8 +64,15 @@ export function SmartPickScreen() {
   }
 
   const { shop } = pick
-  const walkMin = Math.max(1, Math.round(shop.dist / 80))
+  const baseWalkMin = Math.max(1, Math.round(shop.dist / 80))
+  const transportId = (typeof window !== 'undefined'
+    ? (sessionStorage.getItem('cc:transport') as TransportId | null)
+    : null) ?? 'walk'
+  const transportEntry = TRANSPORT.find((t) => t.id === transportId) ?? TRANSPORT[0]
+  const walkMin = Math.max(1, Math.round(baseWalkMin * transportEntry.speed))
+  const modeLabel = MODE_LABEL[transportId] ?? 'WALK'
   const treatDollars = +(shop.off * 0.35).toFixed(2)
+  const earnedPts = Math.round(shop.pts * transportEntry.ptsMult)
 
   // Build a single prose insight — gated by shop category so the copy never
   // contradicts the picked shop (e.g. "warm pastry" when the pick is bubble tea).
@@ -127,10 +144,10 @@ export function SmartPickScreen() {
       <div className="cc-pick-stats">
         <div>
           <div className="cc-pick-stat-v">{walkMin} min</div>
-          <div className="cc-pick-stat-l">WALK</div>
+          <div className="cc-pick-stat-l">{modeLabel}</div>
         </div>
         <div>
-          <div className="cc-pick-stat-v">+{shop.pts} pts</div>
+          <div className="cc-pick-stat-v">+{earnedPts} pts</div>
           <div className="cc-pick-stat-l">TREAT</div>
         </div>
         <div>

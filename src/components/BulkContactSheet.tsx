@@ -132,7 +132,10 @@ export function BulkContactSheet({ recipients, open, onClose }: Props) {
             <h3>Bulk contact</h3>
             <small>
               {recipients.length} recipient{recipients.length === 1 ? '' : 's'} ·{' '}
-              {[...new Set(recipients.map((r) => r.street ?? 'Chatswood'))].length} streets
+              {(() => {
+                const n = new Set(recipients.map((r) => r.street ?? 'Chatswood')).size
+                return `${n} street${n === 1 ? '' : 's'}`
+              })()}
             </small>
           </div>
           <button type="button" className="cc-bulk-close" onClick={onClose} aria-label="Close">

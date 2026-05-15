@@ -2,6 +2,41 @@ import { Star, Globe, Building2, Languages, Plus, Check, X } from 'lucide-react'
 import type { BusinessRecord } from '../lib/businessHealth'
 import { colorForTier, labelForTier } from '../lib/businessHealth'
 
+function aiSummary(r: BusinessRecord): string {
+  const sourceCount = [r.sources.osm, r.sources.google, r.sources.abr, r.sources.council].filter(
+    Boolean,
+  ).length
+  const sourceCite =
+    sourceCount === 4
+      ? 'all 4 sources verified'
+      : sourceCount === 1
+        ? 'only OSM coverage'
+        : `${sourceCount}/4 sources`
+  const reviewCite = r.signals.reviewCount < 80 ? `only ${r.signals.reviewCount} reviews` : `${r.signals.reviewCount} reviews`
+  const ratingCite = r.signals.rating < 4.0 ? `rating ${r.signals.rating.toFixed(1)} below cluster avg 4.0` : `rating ${r.signals.rating.toFixed(1)}`
+  const langCite = r.signals.multilingual
+    ? 'multilingual signage detected'
+    : 'no multilingual signage'
+  const webCite = r.signals.websiteStatus === 'live' ? 'website live' : 'no live website found'
+  const street = r.street ?? 'Chatswood'
+
+  switch (r.tier) {
+    case 'thriving':
+      return `${r.name} on ${street}: health ${r.health}/100. Signals — ${ratingCite}, ${reviewCite}, ${sourceCite}, ${langCite}. Feature-amplify candidate for the next council campaign push.`
+    case 'stable':
+      return `${r.name} holds at ${r.health}/100 on ${street}. Signals — ${ratingCite}, ${reviewCite}, ${sourceCite}. Action: ${
+        r.signals.multilingual ? 'maintain multilingual coverage' : 'add 中文/한국어 signage subsidy ($240 cap) to lift discoverability'
+      }.`
+    case 'watch':
+      return `${r.name} drifting (health ${r.health}/100). Footprint thinning on ${street}: ${reviewCite}, ${sourceCite}, ${webCite}. Suggest week-of check-in via Catto Compass bulk contact.`
+    case 'at-risk':
+      return `${r.name} flagged at-risk (health ${r.health}/100) on ${street}. Drivers — ${ratingCite}, ${reviewCite}, ${webCite}. Recommend immediate outreach: business-name registration + signage subsidy + multilingual inclusion.`
+    case 'critical':
+    default:
+      return `Critical: ${r.name} on ${street} scoring ${r.health}/100. Compound risk — ${ratingCite}, ${reviewCite}, ${sourceCite}, ${webCite}. Council should schedule in-person visit this week and offer the shop-front grants packet (Lunar NY round closes Fri).`
+  }
+}
+
 interface Props {
   selected: BusinessRecord | null
   basketIds: Set<string>
@@ -99,17 +134,7 @@ export function RadarDetailPanel({ selected, basketIds, basketCount, onAddToBask
 
       <div className="cc-radar-detail-ai">
         <span className="cc-radar-detail-h">AI summary</span>
-        <p>
-          {r.tier === 'thriving'
-            ? `${r.name} is one of the strongest performers on ${r.street ?? 'this strip'} — high engagement and consistent visibility. Consider feature-amplify in the upcoming council campaign.`
-            : r.tier === 'stable'
-            ? `${r.name} holds steady. Multilingual signage ${r.signals.multilingual ? 'is in place' : 'could lift discoverability'}. Low-touch nudge recommended.`
-            : r.tier === 'watch'
-            ? `Watch: ${r.name}'s footprint is thinning. Review rate trending below cluster average. Suggest a check-in.`
-            : r.tier === 'at-risk'
-            ? `${r.name} is at-risk. Suggest immediate engagement — registration, signage subsidy, or multilingual campaign inclusion.`
-            : `Critical: ${r.name} shows multiple warning signals (low reviews, source gaps). Recommend in-person council outreach this week.`}
-        </p>
+        <p>{aiSummary(r)}</p>
       </div>
 
       <div className="cc-radar-detail-action">
