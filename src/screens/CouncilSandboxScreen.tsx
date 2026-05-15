@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Download } from 'lucide-react'
+import { Download, Radar } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { downloadCouncilBriefing } from '../lib/councilBriefing'
 import { GoalRadarChart } from '../components/GoalRadarChart'
 import { KpiDialGrid } from '../components/KpiDialGrid'
@@ -31,6 +32,7 @@ const TAB_TITLE: Record<TabId, { title: string; sub: string }> = {
 export function CouncilSandboxScreen() {
   const council = useCouncilStats('chatswood')
   const [tab, setTab] = useState<TabId>('pulse')
+  const navigate = useNavigate()
 
   return (
     <div className="cc-council-screen">
@@ -54,6 +56,16 @@ export function CouncilSandboxScreen() {
           </span>
         </div>
         <div className="cc-council-bar-actions">
+          <button
+            type="button"
+            className="cc-council-radar-link"
+            onClick={() => navigate('/radar')}
+            aria-label="Open Catto Radar"
+            title="Open Catto Radar — business intelligence"
+          >
+            <Radar size={14} strokeWidth={2.4} />
+            <span>Radar</span>
+          </button>
           <button
             type="button"
             className="cc-council-dl"

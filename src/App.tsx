@@ -14,6 +14,7 @@ import { ProfileScreen } from './screens/ProfileScreen'
 import { OwnerForecastScreen } from './screens/OwnerForecastScreen'
 import { OwnerCampaignScreen } from './screens/OwnerCampaignScreen'
 import { CouncilSandboxScreen } from './screens/CouncilSandboxScreen'
+import { RadarHomeScreen } from './screens/RadarHomeScreen'
 
 export function App() {
   return (
@@ -41,6 +42,7 @@ function AppRoutes() {
       <Route path="/owner" element={<OwnerForecastScreen />} />
       <Route path="/owner/campaign" element={<OwnerCampaignScreen />} />
       <Route path="/council" element={<CouncilSandboxScreen />} />
+      <Route path="/radar" element={<RadarHomeScreen />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
