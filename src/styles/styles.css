@@ -2805,6 +2805,7 @@ button { font-family: inherit; cursor: pointer; }
   /* P1.6 — bumped from 36×36 to meet Apple HIG / Material 44×44 touch minimum */
   width: 44px;
   height: 44px;
+  flex-shrink: 0;   /* don't shrink in flex parents */
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2814,7 +2815,7 @@ button { font-family: inherit; cursor: pointer; }
   color: var(--ink);
   cursor: pointer;
   text-decoration: none;
-  padding: 0 10px;
+  padding: 0;
 }
 
 /* Placeholder (used until each screen ships) */
@@ -4931,8 +4932,10 @@ button { font-family: inherit; cursor: pointer; }
 .cc-council-bar-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;        /* P2.13 — was 6, meet 8px touch-spacing */
+  flex-shrink: 0;  /* don't shrink the icon buttons below 44pt */
 }
+.cc-council-bar-actions > * { flex-shrink: 0; }
 
 /* Segmented tabs */
 .cc-seg-tabs {
@@ -9819,7 +9822,8 @@ a.cc-owner-cta {
   align-items: center;
   gap: 6px;
   min-height: 44px;
-  padding: 10px 16px;
+  flex-shrink: 0;
+  padding: 10px 14px;
   background: var(--g-brand);
   border: 0;
   border-radius: 12px;
