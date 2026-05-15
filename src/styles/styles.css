@@ -10119,7 +10119,7 @@ a.cc-owner-cta {
     padding: 0;
   }
   .cc-mshell-inner {
-    max-width: 1200px;
+    max-width: 1480px;
     width: 100%;
     min-height: 100dvh;
     background: var(--paper);
@@ -10177,12 +10177,14 @@ a.cc-owner-cta {
   .cc-mshell-inner > .cc-rewards-screen,
   .cc-mshell-inner > .cc-profile-screen,
   .cc-mshell-inner > .cc-park-screen {
+    width: 100%;
     max-width: 760px;
     margin: 0 auto;
   }
 
   /* ---- Council: wider so Impact tab can be 2-column ---- */
   .cc-mshell-inner > .cc-council-screen {
+    width: 100%;
     max-width: 1080px;
     margin: 0 auto;
   }
