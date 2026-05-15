@@ -55,8 +55,8 @@ function SwitchRoleSheetContent() {
       </Drawer.Description>
       <button type="button" className="cc-srs-action" onClick={handleSwitchRole}>
         <span className="cc-srs-action-body">
-          <b>Switch role</b>
-          <small>Go back to the role picker</small>
+          <b>Switch mode</b>
+          <small>Walker · Shop owner · Council</small>
         </span>
         <ArrowRight size={16} aria-hidden="true" />
       </button>

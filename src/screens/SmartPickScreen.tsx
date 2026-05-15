@@ -128,7 +128,7 @@ export function SmartPickScreen() {
         <div className="cc-pick-bar-title">
           <span className="cc-pick-bar-h">Today's pick</span>
           <span className="cc-pick-bar-sub">
-            {now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })} · CHATSWOOD
+            {hour < 11 ? 'Morning' : hour < 14 ? 'Lunch' : hour < 17 ? 'Arvo' : hour < 21 ? 'Evening' : 'Late'} · CHATSWOOD
           </span>
         </div>
       </header>

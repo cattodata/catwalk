@@ -147,8 +147,8 @@ export function ProfileScreen() {
             <button type="button" className="cc-profile-row" onClick={onSwitchRole}>
               <span className="cc-profile-row-ic" aria-hidden="true">↻</span>
               <span className="cc-profile-row-body">
-                <b>Switch role</b>
-                <small>Go back to the role picker</small>
+                <b>Switch mode</b>
+                <small>Walker · Shop owner · Council</small>
               </span>
               <ArrowRight size={14} strokeWidth={2.4} />
             </button>

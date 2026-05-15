@@ -8954,9 +8954,12 @@ a.cc-owner-cta {
   letter-spacing: 0.02em;
   color: var(--ink-soft, #555);
   opacity: 0.85;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
+  word-break: break-word;
 }
 .cc-mmo-arr {
   width: 24px;
@@ -9299,8 +9302,15 @@ a.cc-owner-cta {
   border: 1px solid var(--line);
   border-radius: 14px;
   overflow: hidden;
+  background: #e8e6df; /* mid-grey fallback so faint Azure tiles don't bleed onto cream */
 }
 .cc-radar-mapwrap > * { width: 100%; height: 100%; }
+.cc-radar-mapwrap .leaflet-tile-pane {
+  filter: contrast(1.35) saturate(1.4) brightness(0.92);
+}
+.cc-walker-map .leaflet-tile-pane {
+  filter: contrast(1.2) saturate(1.3);
+}
 .cc-radar-legend {
   list-style: none;
   margin: 0;

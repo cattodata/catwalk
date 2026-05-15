@@ -57,6 +57,17 @@ function hashName(name: string): number {
   return h
 }
 
+const CHATSWOOD_STREETS = [
+  'Victoria Avenue',
+  'Help Street',
+  'Spring Street',
+  'Anderson Street',
+  'Railway Street',
+  'Pacific Highway',
+  'Albert Avenue',
+  'Endeavour Street',
+] as const
+
 export function enrichShop(shop: Shop): BusinessRecord {
   const h = hashName(shop.name)
   const rating = shop.rating ?? 3.5 + ((h % 15) / 10)
@@ -69,6 +80,9 @@ export function enrichShop(shop: Shop): BusinessRecord {
   const council = (h % 7) === 0
   const multilingual = /Asian|Drinks/.test(shop.cuisine) && (h % 3) !== 0
   const websiteStatus: 'live' | 'unknown' = (h % 4) === 0 ? 'unknown' : 'live'
+  // Synthesise street when OSM didn't expose one — keeps the Street facet
+  // useful for council rollups in a pilot demo
+  const street = shop.street ?? CHATSWOOD_STREETS[h % CHATSWOOD_STREETS.length]
 
   let score = 0
   score += (rating - 1) * 12
@@ -82,6 +96,7 @@ export function enrichShop(shop: Shop): BusinessRecord {
 
   return {
     ...shop,
+    street,
     health: score,
     tier: tierFromScore(score),
     sources: { osm, google, abr, council },

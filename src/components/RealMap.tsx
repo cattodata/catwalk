@@ -97,7 +97,7 @@ function ShopClusterLayer({
       showCoverageOnHover: false,
       spiderfyOnMaxZoom: true,
       removeOutsideVisibleBounds: false,
-      maxClusterRadius: 40,
+      maxClusterRadius: 60,
       iconCreateFunction: (c: L.MarkerCluster) => {
         const count = c.getChildCount()
         const size = count < 10 ? 36 : count < 30 ? 44 : 52
