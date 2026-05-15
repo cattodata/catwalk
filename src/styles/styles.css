@@ -9304,13 +9304,26 @@ a.cc-owner-cta {
   overflow: hidden;
   background: #e8e6df; /* mid-grey fallback so faint Azure tiles don't bleed onto cream */
 }
-.cc-radar-mapwrap > * { width: 100%; height: 100%; }
-.cc-radar-mapwrap .leaflet-tile-pane {
-  filter: contrast(1.35) saturate(1.4) brightness(0.92);
+/* RealMap renders <div className="cc-leaf-card"><MapContainer/></div>.
+   Inside a CSS grid the leaflet container can init at 0×0 before the grid
+   track resolves, leaving the tile pane permanently empty. Pin the leaf
+   card to absolute so Leaflet sees a definite size from frame 1. */
+.cc-radar-mapwrap .cc-leaf-card {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
 }
-.cc-walker-map .leaflet-tile-pane {
-  filter: contrast(1.2) saturate(1.3);
+.cc-radar-mapwrap .cc-leaf-card > div,
+.cc-radar-mapwrap .leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
+  background: #f4f1ea;
 }
+.cc-radar-legend { z-index: 500; }
+/* CartoDB Voyager tiles already have good contrast; reset any prior filter. */
+.cc-radar-mapwrap .leaflet-tile-pane,
+.cc-walker-map .leaflet-tile-pane { filter: none; }
 .cc-radar-legend {
   list-style: none;
   margin: 0;

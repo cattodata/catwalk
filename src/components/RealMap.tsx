@@ -163,6 +163,29 @@ function RecenterOnNonce({ nonce, user }: { nonce: number | undefined; user: Geo
 }
 
 /**
+ * Force Leaflet to recompute its container size after the parent layout
+ * settles. Without this, inside a CSS grid (e.g. Radar 3-pane) the tile pane
+ * initialises at 0×0 and never paints. Runs once on mount + on window resize.
+ */
+function InvalidateOnLayout() {
+  const map = useMap()
+  useEffect(() => {
+    const fire = () => map.invalidateSize({ pan: false })
+    const r1 = requestAnimationFrame(fire)
+    const r2 = requestAnimationFrame(() => requestAnimationFrame(fire))
+    const t = setTimeout(fire, 300)
+    window.addEventListener('resize', fire)
+    return () => {
+      cancelAnimationFrame(r1)
+      cancelAnimationFrame(r2)
+      clearTimeout(t)
+      window.removeEventListener('resize', fire)
+    }
+  }, [map])
+  return null
+}
+
+/**
  * Auto-fit map to include both Chatswood and user position (if user is far away).
  * Useful for users at e.g. Macquarie Park (~5km away) so they can see the whole journey.
  */
@@ -219,21 +242,17 @@ export function RealMap({
         className="cc-leaf-map"
         attributionControl={true}
       >
-        {/* Azure Maps — microsoft.base.road style (Google-Maps-like). Falls back to OSM if no key. */}
-        {import.meta.env.VITE_AZURE_MAPS_KEY ? (
-          <TileLayer
-            url={`https://atlas.microsoft.com/map/tile?subscription-key=${import.meta.env.VITE_AZURE_MAPS_KEY}&api-version=2.1&tilesetId=microsoft.base.road&zoom={z}&x={x}&y={y}&tileSize=256&language=en-AU&view=Auto`}
-            attribution='&copy; <a href="https://learn.microsoft.com/en-us/azure/azure-maps/legal-terms">Microsoft</a> &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; TomTom'
-            maxZoom={20}
-          />
-        ) : (
-          <TileLayer
-            url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            maxZoom={19}
-          />
-        )}
+        {/* CartoDB Voyager — Google-Maps-like styling, free, no key, high
+            contrast on light cream background. Subdomains a/b/c for parallel
+            fetches. Falls back to OSM if CartoDB ever 5xxs. */}
+        <TileLayer
+          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+          subdomains={['a', 'b', 'c', 'd']}
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          maxZoom={20}
+        />
 
+        <InvalidateOnLayout />
         <FlyToShop shop={selectedShop} />
         <FitToUser userPosition={userPosition ?? null} hasShop={!!selectedShop} />
         <RecenterOnNonce nonce={recenterNonce} user={userPosition ?? null} />
