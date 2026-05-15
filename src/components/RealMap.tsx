@@ -102,7 +102,7 @@ function ShopClusterLayer({
         const count = c.getChildCount()
         const size = count < 10 ? 36 : count < 30 ? 44 : 52
         return L.divIcon({
-          html: `<div class="cc-cluster"><span>${count}</span></div>`,
+          html: `<div class="cc-cluster" role="button" tabindex="0" aria-label="${count} shops nearby — tap to expand"><span>${count}</span></div>`,
           className: 'cc-cluster-wrap',
           iconSize: [size, size],
         })

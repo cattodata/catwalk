@@ -120,6 +120,7 @@ export function WalkerHomeScreen() {
 
   return (
     <div className="cc-walker">
+      <h1 className="cc-sr-only">Walker home — Chatswood discovery</h1>
       <AppBarLockup />
       <TierRibbon
         tierLevel={tierLevel}
@@ -144,6 +145,7 @@ export function WalkerHomeScreen() {
             type="button"
             className="cc-walker-ribbon"
             onClick={onSmartRibbon}
+            aria-label={`Catto's pick: ${smart.shop.name}, ${Math.max(1, Math.round(smart.shop.dist / 75))} minute walk`}
           >
             <span className="cc-walker-ribbon-dot" aria-hidden="true" />
             <span className="cc-walker-ribbon-txt">

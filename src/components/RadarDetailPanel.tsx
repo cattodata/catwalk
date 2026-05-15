@@ -50,7 +50,7 @@ export function RadarDetailPanel({ selected, basketIds, basketCount, onAddToBask
     return (
       <aside className="cc-radar-detail" aria-label="Detail panel">
         <div className="cc-radar-detail-empty">
-          <h5>No business selected</h5>
+          <h4>No business selected</h4>
           <p>Pick a pin on the map or a row in the table.</p>
           {basketCount > 0 && (
             <div className="cc-radar-detail-basket">

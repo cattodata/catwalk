@@ -125,7 +125,13 @@ export function BulkContactSheet({ recipients, open, onClose }: Props) {
 
   return (
     <div className="cc-bulk" role="dialog" aria-modal="true" aria-label="Bulk contact">
-      <button type="button" className="cc-bulk-overlay" aria-label="Close" onClick={onClose} />
+      <button
+        type="button"
+        className="cc-bulk-overlay"
+        aria-label="Dismiss bulk contact sheet"
+        tabIndex={-1}
+        onClick={onClose}
+      />
       <div className="cc-bulk-sheet">
         <header className="cc-bulk-head">
           <div>

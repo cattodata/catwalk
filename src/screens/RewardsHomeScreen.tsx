@@ -27,6 +27,7 @@ export function RewardsHomeScreen() {
   return (
     <div className="cc-rewards-screen">
       <AppBarLockup />
+      <h1 className="cc-sr-only">Rewards — tier, badges, lifetime stats</h1>
 
       <div className="cc-rewards-body">
         <div className="cc-rewards-tier">

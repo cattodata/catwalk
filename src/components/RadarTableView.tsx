@@ -91,7 +91,17 @@ export function RadarTableView({ rows, selectedId, basketIds, onSelect, onToggle
               <span className="cc-radar-table-rating">{r.signals.rating.toFixed(1)}</span>
               <span className="cc-radar-table-rev">{r.signals.reviewCount}</span>
               <span className="cc-radar-table-street">{r.street ?? 'Chatswood'}</span>
-              <span className="cc-radar-table-sources">
+              <span
+                className="cc-radar-table-sources"
+                aria-label={`Verified by ${[
+                  r.sources.osm && 'OSM',
+                  r.sources.google && 'Google',
+                  r.sources.abr && 'ABR',
+                  r.sources.council && 'Council',
+                ]
+                  .filter(Boolean)
+                  .join(', ') || 'no sources'}`}
+              >
                 {r.sources.osm && <i title="OSM" />}
                 {r.sources.google && <i className="g" title="Google" />}
                 {r.sources.abr && <i className="a" title="ABR" />}
