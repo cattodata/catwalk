@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Catto Compass v6 — Calm + Complete</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --coral:#FF6B9D; --amber:#F5C842; --sky:#5B9BD5; --sage:#7BC97F; --lav:#B49EFB;
+    --ink:#2D1A22; --ink-soft:#8a6671; --paper:#FFF1F2; --cream:#FFE6EC; --line:#F0DDE2;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#0f0a06;color:#fff;font-family:'Plus Jakarta Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  body{padding:56px 32px 80px}
+  .wrap{max-width:1480px;margin:0 auto}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2.4px;color:#F5C842;text-transform:uppercase;font-weight:600}
+  h1.title{font-family:'Outfit';font-weight:900;font-size:54px;line-height:1;letter-spacing:-1.6px;margin:14px 0 0;color:#fff;max-width:980px;text-wrap:balance}
+  h1.title em{font-style:normal;background:linear-gradient(135deg,#FFB3CB,#FF6B9D);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{max-width:820px;font-size:16px;line-height:1.6;color:#b9a98e;margin:20px 0 0}
+  .lede b{color:#fff}
+  .lede mark{background:rgba(245,200,66,.18);color:#F5C842;padding:1px 6px;border-radius:4px;font-weight:600}
+
+  .group{margin-top:50px}
+  .group-head{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:14px;margin-bottom:8px}
+  .group-head .n{font-family:'JetBrains Mono';font-size:11px;letter-spacing:2px;font-weight:600}
+  .group-head .t{font-family:'Outfit';font-weight:800;font-size:22px;color:#fff;letter-spacing:-.3px}
+  .group-head .tag{font-family:'JetBrains Mono';font-size:10px;color:#9b8c75;letter-spacing:.6px;margin-left:auto;text-transform:uppercase}
+  .group.walker .n{color:#5B9BD5}
+  .group.owner .n{color:#F5C842}
+  .group.council .n{color:#7BC97F}
+
+  .screens{display:flex;gap:48px;overflow-x:auto;padding:40px 4px 24px;scroll-snap-type:x mandatory}
+  .screens::-webkit-scrollbar{height:8px}.screens::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:8px}
+  .col{scroll-snap-align:start;flex:0 0 auto;width:360px;display:flex;flex-direction:column;align-items:center}
+  .label{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;width:100%}
+  .label .n{font-family:'JetBrains Mono';font-size:10px;color:#9b8c75;letter-spacing:1.6px;font-weight:600}
+  .label .t{font-family:'Outfit';font-weight:700;font-size:16px;color:#fff}
+  .note{font-size:12.5px;color:#9b8c75;margin:18px 4px 0;line-height:1.55;width:340px}
+  .note b{color:#FFE6CB}
+  .note .keep{color:#7BC97F;font-weight:600}
+  .note .cut{color:#FF6B9D;font-weight:600}
+
+  .phone{width:340px;height:720px;background:#1a1410;border-radius:46px;padding:10px;position:relative;box-shadow:0 36px 70px -28px rgba(0,0,0,.65)}
+  .phone::before{content:"";position:absolute;left:50%;top:18px;transform:translateX(-50%);width:92px;height:26px;background:#000;border-radius:13px;z-index:5}
+  .ps{width:100%;height:100%;background:var(--paper);border-radius:36px;overflow:hidden;position:relative;display:flex;flex-direction:column;color:var(--ink)}
+  .sb{display:flex;justify-content:space-between;align-items:center;padding:14px 24px 6px;font-family:'Outfit';font-weight:700;font-size:12.5px}
+  .sb .r{display:flex;gap:5px;font-size:10.5px}
+  .hi{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:110px;height:5px;border-radius:4px;background:#1a1410;opacity:.5}
+
+  .bar{display:flex;align-items:center;justify-content:space-between;padding:8px 22px 12px}
+  .bar .ttl{font-family:'Outfit';font-weight:800;font-size:17px;letter-spacing:-.3px}
+  .bar .ttl small{display:block;font-family:'JetBrains Mono';font-size:9.5px;letter-spacing:1.3px;color:var(--ink-soft);margin-top:2px;text-transform:uppercase}
+  .icb{width:32px;height:32px;border-radius:50%;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:13px}
+
+  .ai-pill{display:inline-flex;align-items:center;gap:7px;padding:4px 10px;border-radius:99px;background:#1a1410;color:#fff;font-family:'JetBrains Mono';font-size:9.5px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase}
+  .ai-pill .d{width:6px;height:6px;border-radius:50%;background:#F5C842;box-shadow:0 0 0 3px rgba(245,200,66,.25);animation:pls 1.4s infinite}
+  .ai-pill.grad{background:linear-gradient(135deg,#FF6B9D,#F5C842)}
+  @keyframes pls{50%{opacity:.4}}
+
+  /* WALKER HOME */
+  .map{flex:1;position:relative;background:linear-gradient(180deg,#FFE0E6,#FFCDD8);overflow:hidden}
+  .map .grid{position:absolute;inset:0;background:
+    linear-gradient(90deg,transparent 24%,#fff 24%,#fff 25%,transparent 25%),
+    linear-gradient(90deg,transparent 55%,#fff 55%,#fff 56%,transparent 56%),
+    linear-gradient(0deg,transparent 30%,#fff 30%,#fff 31%,transparent 31%),
+    linear-gradient(0deg,transparent 62%,#fff 62%,#fff 63%,transparent 63%);
+    opacity:.55}
+  .map .me{position:absolute;left:48%;top:38%;width:18px;height:18px;border-radius:50%;background:var(--sky);border:3px solid #fff;box-shadow:0 0 0 6px rgba(91,155,213,.25);z-index:3}
+  .pin{position:absolute;width:34px;height:34px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 4px 10px rgba(0,0,0,.18);z-index:2}
+  .pin.gold{background:linear-gradient(135deg,#F5C842,#FF6B9D);color:#fff;width:42px;height:42px;font-size:18px}
+  .pin.gold::after{content:"";position:absolute;inset:-5px;border:2px solid #F5C842;border-radius:50%;animation:ripple 2.4s infinite}
+  @keyframes ripple{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.8);opacity:0}}
+
+  .ribbon{position:absolute;top:0;left:0;right:0;background:#1a1410;color:#fff;padding:11px 18px;display:flex;align-items:center;gap:10px;z-index:4}
+  .ribbon .dot{width:8px;height:8px;border-radius:50%;background:#F5C842;animation:pls 1.4s infinite}
+  .ribbon .txt{font-family:'Outfit';font-weight:600;font-size:13px;flex:1}
+  .ribbon .txt b{font-weight:800}
+  .ribbon .arr{color:#F5C842}
+
+  .map-fab{position:absolute;right:14px;bottom:14px;width:38px;height:38px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 12px rgba(0,0,0,.15);z-index:3;color:var(--coral);font-weight:700}
+
+  .sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:24px 24px 0 0;padding:8px 18px 14px;box-shadow:0 -8px 24px rgba(0,0,0,.08);z-index:3}
+  .sheet .grab{width:34px;height:4px;background:#E4D6BD;border-radius:3px;margin:0 auto 10px}
+  .sheet-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
+  .sheet-head h3{font-family:'Outfit';font-weight:800;font-size:17px;letter-spacing:-.3px;margin:0}
+  .sheet-head .cond{font-family:'JetBrains Mono';font-size:9.5px;color:var(--ink-soft);letter-spacing:.3px}
+  .smart{display:flex;align-items:center;gap:10px;background:#1a1410;color:#fff;border-radius:14px;padding:11px 14px}
+  .smart .l{flex:1;min-width:0}
+  .smart .pill-i{display:inline-block;font-family:'JetBrains Mono';font-size:8.5px;letter-spacing:1.1px;background:linear-gradient(135deg,#FF6B9D,#F5C842);color:#fff;padding:2px 6px;border-radius:4px;font-weight:700;margin-bottom:3px}
+  .smart .l b{display:block;font-family:'Outfit';font-weight:700;font-size:13px}
+  .smart .l span{font-family:'JetBrains Mono';font-size:9.5px;color:#F5C842;letter-spacing:.3px}
+  .smart .arr-r{font-size:18px;color:#F5C842}
+
+  .chips{display:flex;gap:6px;overflow:auto;margin:11px -18px 9px;padding:0 18px;scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .chips .ch{flex:0 0 auto;padding:6px 11px;border-radius:99px;background:var(--paper);border:1px solid var(--line);font-family:'Outfit';font-weight:600;font-size:12px;color:var(--ink-soft)}
+  .chips .ch.on{background:#1a1410;color:#fff;border-color:#1a1410}
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+  .tile{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:9px 7px}
+  .tile.sel{background:#fff;border-color:var(--coral);box-shadow:0 0 0 2px rgba(255,107,157,.12)}
+  .tile .em{font-size:20px;line-height:1}
+  .tile b{display:block;font-family:'Outfit';font-weight:800;font-size:11px;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tile .meta{font-family:'JetBrains Mono';font-size:8.5px;color:var(--ink-soft);font-weight:600;margin-top:2px}
+  .tile .off{position:absolute;top:5px;right:5px;background:#F5C842;color:#1a1410;font-family:'JetBrains Mono';font-size:7.5px;padding:2px 4px;border-radius:4px;font-weight:700}
+
+  .nav{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-top:1px solid var(--line);padding:6px 4px 8px}
+  .nav .nv{display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--ink-soft);font-family:'Outfit';font-size:9.5px;font-weight:600}
+  .nav .nv span{font-size:16px}
+  .nav .nv.on{color:var(--coral)}
+
+  /* SHOP DETAIL */
+  .detail{padding:0 18px 14px;display:flex;flex-direction:column;gap:12px;flex:1}
+  .detail .hero-img{height:140px;border-radius:18px;background:linear-gradient(135deg,#FFD0DB,#FFAACB);position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:14px}
+  .detail .hero-img::after{content:"🥐";position:absolute;right:-8px;top:-10px;font-size:110px;line-height:1;opacity:.9}
+  .detail .hero-img .meta{position:relative;z-index:1}
+  .detail .hero-img h3{font-family:'Outfit';font-weight:900;font-size:20px;margin:4px 0 0;letter-spacing:-.4px;color:var(--ink)}
+  .detail .hero-img .sub{font-family:'JetBrains Mono';font-size:10px;color:var(--ink);font-weight:600;letter-spacing:.4px}
+  .detail .stats3{display:flex;gap:8px}
+  .detail .s3{flex:1;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+  .detail .s3 b{display:block;font-family:'Outfit';font-weight:800;font-size:18px;letter-spacing:-.3px}
+  .detail .s3 span{font-family:'JetBrains Mono';font-size:8.5px;color:var(--ink-soft);letter-spacing:.6px}
+  .modes{display:flex;gap:5px}
+  .mode{flex:1;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 4px;text-align:center;font-family:'Outfit';font-size:10px;font-weight:600}
+  .mode.on{background:#1a1410;color:#fff;border-color:#1a1410}
+  .mode .em{font-size:14px;display:block;margin-bottom:2px}
+  .detail .cta{background:linear-gradient(135deg,#FF6B9D,#F5C842);color:#fff;text-align:center;padding:14px;border-radius:14px;font-family:'Outfit';font-weight:800;font-size:14px;margin-top:auto}
+
+  /* OWNER */
+  .own{flex:1;padding:0 22px 18px;display:flex;flex-direction:column;gap:14px;overflow:auto}
+  .stat-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px}
+  .stat-card .lab{font-family:'JetBrains Mono';font-size:9.5px;letter-spacing:1.2px;color:var(--ink-soft);font-weight:600;text-transform:uppercase}
+  .stat-card .num{font-family:'Outfit';font-weight:900;font-size:42px;letter-spacing:-1.8px;line-height:.95;margin:6px 0 4px;background:linear-gradient(135deg,#FF6B9D,#F5C842);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .stat-card .delta{font-family:'Outfit';font-weight:700;font-size:12px;color:var(--ink-soft)}
+  .stat-card .delta b{color:#b62963}
+  .stat-card .chart{display:flex;align-items:flex-end;gap:4px;margin-top:12px;height:42px}
+  .stat-card .b{flex:1;background:#FFE3EF;border-radius:3px 3px 0 0}
+  .stat-card .b.now{background:linear-gradient(180deg,#FF6B9D,#b62963)}
+
+  .reading{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 16px 4px}
+  .reading .hd{font-family:'JetBrains Mono';font-size:9.5px;letter-spacing:1.1px;color:var(--ink-soft);font-weight:600;text-transform:uppercase;display:flex;align-items:center;gap:7px;padding-bottom:2px}
+  .reading .hd .d{width:6px;height:6px;border-radius:50%;background:#FF6B9D;box-shadow:0 0 0 3px rgba(255,107,157,.2)}
+  .reading .hd .src{margin-left:auto;font-size:8.5px;color:#b8a48a;text-transform:none;font-weight:500}
+  .reading .row{display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--line);align-items:flex-start}
+  .reading .row:first-of-type{border-top:0}
+  .reading .row .ico{font-size:14px;flex:0 0 18px;line-height:1.3;margin-top:1px}
+  .reading .row .t{flex:1;font-family:'Outfit';font-size:12px;line-height:1.4;color:var(--ink);font-weight:600}
+  .reading .row .t .arr{color:#c9b9a3;margin:0 4px;font-weight:500}
+  .reading .row .t .conc{color:var(--ink-soft);font-weight:500}
+  .reading .row .t mark{background:transparent;color:#b62963;font-weight:700}
+  .reading .more{display:block;padding:9px 0;border-top:1px solid var(--line);font-family:'Outfit';font-size:11.5px;color:var(--ink-soft);font-weight:600;text-align:center}
+
+  .ai-cta{background:#1a1410;color:#fff;border-radius:20px;padding:18px}
+  .ai-cta .q{font-family:'Outfit';font-weight:700;font-size:16px;line-height:1.3;letter-spacing:-.3px;margin:12px 0 0}
+  .ai-cta .q mark{background:transparent;color:#F5C842;font-weight:800}
+  .ai-cta .btn{margin-top:14px;display:flex;align-items:center;justify-content:space-between;background:#fff;color:#1a1410;padding:12px 14px;border-radius:11px;font-family:'Outfit';font-weight:800;font-size:13px}
+  .ai-cta .btn .arr{font-size:15px}
+
+  /* COUNCIL */
+  .cou{flex:1;padding:0 22px 14px;display:flex;flex-direction:column;gap:12px;overflow:auto}
+  .seg{display:flex;background:#FFE6EC;border-radius:10px;padding:3px;margin:0 22px 4px}
+  .seg .s{flex:1;text-align:center;padding:7px 4px;border-radius:8px;font-family:'Outfit';font-weight:700;font-size:12px;color:var(--ink-soft)}
+  .seg .s.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.05)}
+
+  .pulse{text-align:center;padding:10px 0 0}
+  .pulse .num{font-family:'Outfit';font-weight:900;font-size:96px;line-height:.9;letter-spacing:-4px;margin:8px 0 4px;background:linear-gradient(135deg,#FF6B9D,#D63384);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .pulse .ttl{font-family:'Outfit';font-weight:700;font-size:14px;color:var(--ink)}
+  .pulse .sub{font-size:10.5px;color:var(--ink-soft);margin-top:2px;font-family:'JetBrains Mono';letter-spacing:.4px}
+
+  .tots{display:flex;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .tots .it{flex:1;text-align:center;border-right:1px solid var(--line)}
+  .tots .it:last-child{border-right:0}
+  .tots .it .v{font-family:'Outfit';font-weight:800;font-size:16px;letter-spacing:-.2px}
+  .tots .it .l{font-family:'JetBrains Mono';font-size:8.5px;color:var(--ink-soft);letter-spacing:.7px;margin-top:3px;text-transform:uppercase;font-weight:600}
+
+  .more-link{background:#fff;border:1px solid var(--line);border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:10px;font-family:'Outfit';font-weight:700;font-size:12.5px}
+  .more-link .em{font-size:16px}
+  .more-link .t{flex:1}
+  .more-link .t small{display:block;font-weight:500;font-size:10.5px;color:var(--ink-soft);margin-top:1px}
+  .more-link .arr{color:var(--ink-soft);font-size:16px}
+
+  /* TRAJECTORY */
+  .traj-row{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:10px}
+  .traj-row .top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
+  .traj-row .lab{font-family:'JetBrains Mono';font-size:9.5px;letter-spacing:1.1px;color:var(--ink-soft);font-weight:600;text-transform:uppercase}
+  .traj-row .val{font-family:'Outfit';font-weight:700;font-size:13px}
+  .traj-row .val mark{background:transparent;color:#b62963;font-weight:800}
+  .traj-bars{display:flex;align-items:flex-end;gap:6px;height:50px}
+  .traj-bars .b{flex:1;background:#FFE3EF;border-radius:4px 4px 0 0}
+  .traj-bars .b.now{background:linear-gradient(180deg,#FF6B9D,#b62963)}
+  .traj-bars.money .b{background:#FFF1D6}
+  .traj-bars.money .b.now{background:linear-gradient(180deg,#F5C842,#FF6B9D)}
+  .cohort{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+  .cohort .dot{width:16px;height:16px;border-radius:50%;background:#FFE3EF}
+  .cohort .dot.on{background:linear-gradient(135deg,#FF6B9D,#D63384)}
+  .cohort .lbl{flex:1;margin-left:6px;font-family:'Outfit';font-weight:500;font-size:11px;color:var(--ink-soft)}
+  .traj-next{background:#1a1410;color:#fff;border-radius:16px;padding:16px;margin-top:6px}
+  .traj-next .q{font-family:'Outfit';font-weight:700;font-size:14px;line-height:1.35;margin:10px 0 0}
+  .traj-next .q mark{background:transparent;color:#FF8FB8;font-weight:800}
+
+  /* IMPACT */
+  .impact-section{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
+  .impact-section header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+  .impact-section h5{font-family:'JetBrains Mono';font-size:10px;letter-spacing:1.2px;color:var(--ink-soft);font-weight:600;text-transform:uppercase;margin:0}
+  .impact-section .r{font-family:'JetBrains Mono';font-size:8.5px;color:#b8a48a;letter-spacing:.5px}
+  .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .kpi{background:var(--paper);border-radius:11px;padding:10px}
+  .kpi .em{font-size:18px}
+  .kpi .v{font-family:'Outfit';font-weight:800;font-size:14px;margin-top:4px;letter-spacing:-.2px}
+  .kpi .l{font-family:'JetBrains Mono';font-size:8.5px;color:var(--ink-soft);letter-spacing:.5px;margin-top:1px}
+  .kpi-bar{height:4px;background:#FFE3EF;border-radius:2px;margin-top:6px;position:relative;overflow:hidden}
+  .kpi-bar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#FF6B9D,#F5C842);border-radius:2px}
+
+  /* RADAR (advanced tool, simplified preview) */
+  .radar-body{flex:1;padding:0 18px 14px;display:flex;flex-direction:column;gap:11px;overflow:auto}
+  .radar-kpi-strip{display:flex;gap:6px}
+  .radar-kpi{flex:1;background:#fff;border:1px solid var(--line);border-radius:11px;padding:8px;text-align:center}
+  .radar-kpi .v{font-family:'Outfit';font-weight:800;font-size:14px;letter-spacing:-.2px}
+  .radar-kpi .l{font-family:'JetBrains Mono';font-size:8px;color:var(--ink-soft);letter-spacing:.4px;margin-top:1px}
+  .radar-list{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+  .radar-list h5{font-family:'Outfit';font-weight:800;font-size:12.5px;margin:0 0 8px;letter-spacing:-.2px}
+  .radar-item{display:flex;align-items:center;gap:9px;padding:7px 0;border-top:1px solid var(--line)}
+  .radar-item:first-of-type{border-top:0}
+  .radar-item .swatch{width:8px;height:8px;border-radius:2px;flex:0 0 8px}
+  .radar-item .name{flex:1;font-family:'Outfit';font-weight:700;font-size:12px;letter-spacing:-.1px}
+  .radar-item .name small{display:block;font-family:'JetBrains Mono';font-size:8.5px;color:var(--ink-soft);font-weight:500;margin-top:1px}
+  .radar-item .score{font-family:'Outfit';font-weight:800;font-size:13px}
+
+  .summary{margin-top:50px;padding:26px;border-radius:22px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);color:#b9a98e}
+  .summary h3{font-family:'Outfit';font-weight:800;font-size:20px;margin:0 0 12px;color:#fff;letter-spacing:-.3px}
+  .summary table{border-collapse:collapse;width:100%;font-size:13px}
+  .summary th,.summary td{padding:8px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06)}
+  .summary th{font-family:'JetBrains Mono';font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:#9b8c75;font-weight:600}
+  .summary td b{color:#FFE6CB}
+  .summary .cut{color:#FF8FB8}
+  .summary .move{color:#F5C842}
+  .summary .keep{color:#A8E0AE}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">v6 · calm + complete · 9 screens</div>
+  <h1 class="title">Every function still ships — <em>no screen carries more than 3 things.</em></h1>
+  <p class="lede">Repo ใส่ของกลับมารกอีก. v6 รักษา <b>ฟังก์ชันครบ</b>ของตอนนี้ (smart pick · multi-modal · plan basket · event radar · trajectory · 2036 impact · Catto Radar) แต่ <mark>กระจายลงแท็บ/หน้า secondary</mark> เพื่อให้ทุก screen มีเฉพาะ 2–3 element + 1 AI moment. Walker หลักกลับมา <b>v2 silhouette</b>; Owner home เหลือ 3 layer; Council เป็น <b>3-tab</b> Pulse/Trajectory/Impact ที่แต่ละแท็บมีเรื่องเดียว.</p>
+
+  <!-- WALKER -->
+  <div class="group walker">
+    <div class="group-head"><span class="n">01 · WALKER</span><span class="t">Discover → pick → walk → reward</span><span class="tag">4 screens · BottomNav: Discover · Plan · Rewards · Profile</span></div>
+    <div class="screens">
+
+      <!-- 01.1 Discover -->
+      <div class="col">
+        <div class="label"><span class="n">01.1</span><span class="t">Discover · map + sheet</span></div>
+        <div class="phone"><div class="ps">
+          <div class="sb"><span>9:41</span><div class="r"><span>●●●●●</span><span>5G</span><span>🔋</span></div></div>
+          <div class="bar"><div class="ttl">Chatswood<small>9:41 · Mon</small></div><div class="icb">🔍</div></div>
+          <div class="map">
+            <div class="ribbon"><span class="dot"></span><div class="txt"><b>Catto picked one</b> · Saint Honoré, 2 min</div><span class="arr">›</span></div>
+            <div class="grid"></div>
+            <div class="me"></div>
+            <div class="pin gold" style="left:22%;top:24%">🥐</div>
+            <div class="pin" style="left:65%;top:30%">☕</div>
+            <div class="pin" style="left:38%;top:62%">🍜</div>
+            <div class="pin" style="left:78%;top:54%">🥟</div>
+            <div class="map-fab">⊕</div>
+            <div class="sheet">
+              <div class="grab"></div>
+              <div class="sheet-head"><h3>Where to today?</h3><span class="cond">14°C · rain in 22m</span></div>
+              <div class="smart"><div class="l"><span class="pill-i">CATTO PICK</span><b>Saint Honoré · croissant</b><span>+30 pts · 2 min walk</span></div><span class="arr-r">→</span></div>
+              <div class="chips">
+                <span class="ch on">All</span><span class="ch">☕ Coffee</span><span class="ch">🥐 Bakery</span><span class="ch">🍜 Asian</span><span class="ch">🥟 Dim sum</span>
+              </div>
+              <div class="tiles">
+                <div class="tile sel"><div class="em">🥐</div><b>Saint H</b><div class="meta">2M · +30</div></div>
+                <div class="tile"><div class="em">☕</div><b>Maru</b><div class="meta">5M · +20</div><span class="off">15%</span></div>
+                <div class="tile"><div class="em">🍜</div><b>Hannam</b><div class="meta">7M · +40</div></div>
+                <div class="tile"><div class="em">🥟</div><b>Din Tai</b><div class="meta">9M · +25</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="nav">
+            <div class="nv on"><span>🧭</span><b>Discover</b></div>
+            <div class="nv"><span>📍</span><b>Plan</b></div>
+            <div class="nv"><span>🏆</span><b>Rewards</b></div>
+            <div class="nv"><span>👤</span><b>Profile</b></div>
+          </div>
+        </div></div>
+        <div class="note"><span class="cut">CUT</span> TierRibbon (→Rewards), MapPulseChip (ซ้ำ ribbon), default SearchBar (→ 🔍 icon expand), MultiModalOptimizer (→Pick screen), PlanBasketPill/Toast (→Plan tab) · <span class="keep">KEEP</span> map · Catto ribbon · smart card · cuisine chips · 4 tiles + deal badge</div>
+      </div>
+
+      <!-- 01.2 Smart Pick / Detail -->
+      <div class="col">
+        <div class="label"><span class="n">01.2</span><span class="t">Pick · multi-modal lives here</span></div>
+        <div class="phone"><div class="ps">
+          <div class="sb"><span>9:41</span><div class="r"><span>●●●●●</span><span>5G</span><span>🔋</span></div></div>
+          <div class="bar"><div class="ttl">Today's pick<small>9:41 AM · why this one</small></div><div class="icb">←</div></div>
+          <div class="detail">
+            <div class="hero-img"><div class="meta"><span class="ai-pill grad"><span class="d"></span>CATTO PICKED</span><h3>Saint Honoré · almond croissant</h3><div class="sub">2 MIN · +30 PTS · $5.50</div></div></div>
+            <div style="font-family:'Outfit';font-weight:600;font-size:14px;line-height:1.4;color:var(--ink);padding:0 4px">It's <mark style="background:rgba(245,200,66,.3);padding:1px 4px;border-radius:3px">raining in 22 min</mark> — grab a warm pastry on the way to work.</div>
+            <div class="stats3"><div class="s3"><b>2m</b><span>WALK</span></div><div class="s3"><b>+30</b><span>PTS</span></div><div class="s3"><b>0.4kg</b><span>CO₂</span></div></div>
+            <div style="font-family:'JetBrains Mono';font-size:9px;color:var(--ink-soft);letter-spacing:1px;text-transform:uppercase;font-weight:600;padding:0 4px">HOW TO GET THERE</div>
+            <div class="modes"><div class="mode on"><span class="em">🚶</span>Walk</div><div class="mode"><span class="em">🚲</span>Bike</div><div class="mode"><span class="em">🚆</span>Train+W</div></div>
+            <button class="cta">🐾 Start the walk</button>
+          </div>
+          <div class="hi"></div>
+        </div></div>
+        <div class="note"><span class="keep">KEEP</span> hero + reason quote + 3 stats + multi-modal · <span class="cut">CUT</span> reason bullet list. Multi-modal moved from sheet → here so Discover stays calm</div>
+      </div>
+
+      <!-- 01.3 Walking Live -->
+      <div class="col">
+        <div class="label"><span class="n">01.3</span><span class="t">Walking · live (cute mode)</span></div>
+        <div class="phone"><div class="ps" style="background:linear-gradient(180deg,#FFF1E8,#FFE6CB)">
+          <div class="sb"><span>9:43</span><div class="r"><span>●●●●●</span><span>5G</span><span>🔋</span></div></div>
+          <div style="display:flex;justify-content:space-between;padding:8px 22px 4px"><div class="icb">×</div><span style="font-family:'JetBrains Mono';font-size:10px;color:#3a7d3e;font-weight:700;letter-spacing:1.4px;display:inline-flex;align-items:center;gap:5px">●&nbsp;LIVE GPS</span><div class="icb">⋯</div></div>
+          <div style="flex:1;padding:8px 22px 18px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px">
+            <div><div style="font-family:'JetBrains Mono';font-size:10px;color:var(--ink-soft);letter-spacing:1.6px;font-weight:600">WALKING TO</div><h2 style="font-family:'Outfit';font-weight:800;font-size:22px;margin:2px 0 0;letter-spacing:-.4px">Saint Honoré 🥐</h2></div>
+            <div style="position:relative;width:210px;height:210px">
+              <div style="width:100%;height:100%;border-radius:50%;background:conic-gradient(from -90deg,#FF6B9D 0deg,#F5C842 220deg,rgba(0,0,0,.06) 220deg 360deg);display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 10px 20px rgba(255,107,157,.18))">
+                <div style="background:#FFF6EA;border-radius:50%;inset:14px;position:absolute;border:1px solid rgba(0,0,0,.04)"></div>
+                <div style="position:relative;text-align:center;z-index:1">
+                  <div style="font-family:'Outfit';font-weight:900;font-size:56px;letter-spacing:-2.2px;line-height:.9;background:linear-gradient(135deg,#FF6B9D,#F5C842);-webkit-background-clip:text;background-clip:text;color:transparent">180<span style="font-size:22px">m</span></div>
+                  <div style="font-family:'JetBrains Mono';font-size:9.5px;color:var(--ink-soft);letter-spacing:1.6px;font-weight:600;margin-top:4px">~ 3 MIN LEFT</div>
+                </div>
+              </div>
+            </div>
+            <div style="width:76px;height:76px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:40px;box-shadow:0 6px 14px rgba(255,107,157,.18);border:2px dashed #FFAACB">🐱</div>
+            <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;gap:10px;width:100%"><div style="font-size:20px">🌦</div><div style="text-align:left;font-size:11.5px;line-height:1.4"><b style="font-family:'Outfit';font-weight:800;display:block">Light rain in 6 min</b>Indoor seating — you'll be fine.</div></div>
+            <button style="width:100%;background:linear-gradient(135deg,#7BC97F,#5BB069);color:#fff;padding:14px;border-radius:14px;font-family:'Outfit';font-weight:800;font-size:14px;border:0;margin-top:auto">✓ I've arrived · Claim reward</button>
+          </div>
+          <div class="hi"></div>
+        </div></div>
+        <div class="note"><span class="keep">KEEP</span> as-is. หน้าสวยที่สุดของแอพ. ไม่แตะ.</div>
+      </div>
+
+      <!-- 01.4 Reward -->
+      <div class="col">
+        <div class="label"><span class="n">01.4</span><span class="t">Reward · payoff</span></div>
+        <div class="phone"><div class="ps" style="background:linear-gradient(180deg,#FFE0E6,#FFB3CB)">
+          <div class="sb"><span>9:51</span><div class="r"><span>●●●●●</span><span>5G</span><span>🔋</span></div></div>
+          <div class="bar"><div class="ttl">You made it 🎉<small>8 min walk</small></div><div class="icb">×</div></div>
+          <div style="flex:1;padding:0 22px 22px;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative">
+            <div style="margin-top:8px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle at 50% 45%,#FFD874,#F5C842 60%,#C99A1E);display:flex;align-items:center;justify-content:center;font-size:78px;box-shadow:0 18px 36px -10px rgba(245,200,66,.55)">🥐</div>
+            <h2 style="font-family:'Outfit';font-weight:900;font-size:30px;margin:18px 0 6px;letter-spacing:-1px">Treat unlocked!</h2>
+            <p style="font-size:13px;color:var(--ink-soft);max-width:240px;line-height:1.5;margin:0">Show this at the counter for your croissant + free flat white.</p>
+            <div style="margin-top:auto;font-family:'Outfit';font-weight:900;font-size:52px;letter-spacing:-1.8px;background:linear-gradient(135deg,#F5C842,#FF6B9D);-webkit-background-clip:text;background-clip:text;color:transparent">+30</div>
+            <div style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:1.6px;color:var(--ink-soft);font-weight:600;margin-top:2px">POINTS EARNED</div>
+            <div style="width:100%;background:var(--ink);color:#fff;padding:14px;border-radius:14px;font-family:'Outfit';font-weight:800;font-size:14px;margin-top:16px">Show code at counter</div>
+          </div>
+          <div class="hi"></div>
+        </div></div>
+        <div class="note"><span class="keep">KEEP</span> as-is. payoff moment.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- OWNER -->
+  <div class="group owner">
+    <div class="group-head"><span class="n">02 · OWNER</span><span class="t">Glance → why → ship</span><span class="tag">2 screens · "see all signals" expands inline</span></div>
+    <div class="screens">
+
+      <!-- 02.1 Owner Home -->
+      <div class="col">
+        <div class="label"><span class="n">02.1</span><span class="t">Owner home · 3 layers</span></div>
+        <div class="phone"><div class="ps">
+          <div class="sb"><span>9:41</span><div class="r"><span>●●●●●</span><span>5G</span><span>🔋</span></div></div>
+          <div class="bar"><div class="ttl">Saint Honoré<small>Yesterday's takings</small></div><div class="icb">⚙</div></div>
+          <div class="own">
+            <div class="stat-card">
+              <div class="lab">YESTERDAY · ALL DAY</div>
+              <div class="num">$1,847</div>
+              <div class="delta"><b>+$285</b> · +19 orders vs 14d avg</div>
+              <div class="chart"><div class="b" style="height:38%"></div><div class="b" style="height:50%"></div><div class="b" style="height:62%"></div><div class="b" style="height:48%"></div><div class="b" style="height:74%"></div><div class="b" style="height:88%"></div><div class="b now" style="height:100%"></div></div>
+            </div>
+            <div class="reading">
+              <div class="hd"><span class="d"></span>CATTO SEES<span class="src">5 signals · 0.8s</span></div>
+              <div class="row"><div class="ico">📸</div><div class="t">Croissant photo saves <mark>+47%</mark><span class="arr">→</span><span class="conc">make it hero</span></div></div>
+              <div class="row"><div class="ico">🚶</div><div class="t"><mark>23 Chinese walkers</mark> within 700m now<span class="arr">→</span><span class="conc">bilingual = +$4</span></div></div>
+              <div class="row"><div class="ico">☔</div><div class="t">Rain in 18min → pickup <mark>+320%</mark><span class="arr">→</span><span class="conc">prep 12 pastries</span></div></div>
+              <span class="more">+ 2 more signals · tap to expand ↓</span>
+            </div>
+            <div class="ai-cta">
+              <span class="ai-pill"><span class="d"></span>CATTO READY</span>
+              <p class="q">Bundle <mark>croissant + flat white</mark> at $9. Push <mark>11:30–13:30</mark> before rain.</p>
+              <div class="btn">Generate today's play<span class="arr">→</span></div>
+            </div>
+          </div>
+          <div class="hi"></div>
+        </div></div>
+        <div class="note"><span class="keep">KEEP</span> stat / reading / AI CTA · <span class="cut">CUT</span> EventRadarCard ซ้ำ (event อยู่ใน reading แล้ว). <span class="move">SHRINK</span> reading 6→3 rows + "+2 more ↓" expand. <span class="move">MERGE</span> cultural event เป็น row หนึ่งใน reading</div>
+      </div>
+
+      <!-- 02.2 Owner Campaign -->
+      <div class="col">
+        <div class="label"><span class="n">02.2</span><span class="t">Campaign · ship in 3 langs</span></div>
+        <div class="phone"><div class="ps">
+          <div class="sb"><span>9:41</span><div class="r"><span>●●●●●</span><span>5G</span><span>🔋</span></div></div>
+          <div class="bar"><div class="ttl">Today's play<small>Generated · 0.8s</small></div><div class="icb">←</div></div>
+          <div style="flex:1;padding:0 22px 22px;display:flex;flex-direction:column;gap:14px">
+            <div style="height:180px;border-radius:18px;background:linear-gradient(135deg,#FFD0DB,#FFAACB,#FF8FB8);position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:14px"><div style="position:absolute;right:6px;top:0;font-size:96px">🥐</div><div style="position:relative;z-index:1"><span class="ai-pill grad"><span class="d"></span>CATTO WROTE THIS</span><h3 style="font-family:'Outfit';font-weight:800;font-size:18px;margin:4px 0 0;letter-spacing:-.3px;color:var(--ink)">Croissant + flat white · $9</h3></div></div>
+            <div style="display:flex;gap:5px"><span style="font-family:'JetBrains Mono';font-size:9px;padding:4px 8px;border-radius:5px;background:var(--ink);color:#fff;font-weight:600">EN</span><span style="font-family:'JetBrains Mono';font-size:9px;padding:4px 8px;border-radius:5px;background:#f3edde;color:var(--ink-soft);font-weight:600">中文</span><span style="font-family:'JetBrains Mono';font-size:9px;padding:4px 8px;border-radius:5px;background:#f3edde;color:var(--ink-soft);font-weight:600">한국어</span></div>
+            <div style="background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px;flex:1"><div style="font-family:'Outfit';font-weight:800;font-size:18px;line-height:1.2;letter-spacing:-.4px">Beat the rain. Croissant + flat white for $9.</div><p style="font-size:12.5px;color:var(--ink-soft);margin:0;line-height:1.5">Walk in before 1:30. Warm pastry, warm cup, dry seat. EN · 中文 · 한국어.</p><div style="margin-top:auto;display:flex;align-items:center;gap:8px;font-family:'Outfit';font-weight:700;font-size:12.5px;color:#b62963;border-top:1px solid var(--line);padding-top:10px">↑ Predicted uplift<b style="margin-left:auto;font-family:'Outfit';font-weight:900;font-size:16px">+$285</b></div></div>
+            <button style="background:var(--ink);color:#fff;padding:14px;border-radius:14px;font-family:'Outfit';font-weight:800;font-size:14px;border:0">Ship to walkers nearby</button>
+          </div>
+          <div class="hi"></div>
+        </div></div>
+        <div class="note"><span class="keep">KEEP</span> as-is. simple ship flow.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- COUNCIL -->
+  <div class="group council">
+    <div class="group-head"><span class="n">03 · COUNCIL</span><span class="t">3 tabs · 1 idea each</span><span class="tag">Pulse · Trajectory · Impact · (Radar = power tool)</span></div>
+    <div class="screens">
+
+      <!-- 03.1 Pulse -->
+      <div class="col">
+        <div class="label"><span class="n">03.1</span><span class="t">Pulse · today's number</span></div>
+        <div class="phone"><div class="ps">
+          <div class="sb"><span>9:41</span><div class="r"><span>●●●●●</span><span>5G</span><span>🔋</span></div></div>
+          <div class="bar"><div class="ttl">Pilot · Live<small>Chatswood · Willoughby</small></div><div class="icb">⬇</div></div>
+          <div class="seg"><div class="s on">Pulse</div><div class="s">Trajectory</div><div class="s">Impact</div></div>
+          <div class="cou">
+            <div class="pulse">
+              <span class="ai-pill grad"><span class="d"></span>WALKING RIGHT NOW</span>
+              <div class="num">12</div>
+              <div class="ttl">in Chatswood</div>
+              <div class="sub">Realtime · refreshes every 8s</div>
+            </div>
+            <div class="tots">
+              <div class="it"><div class="v">1,247</div><div class="l">WALKS</div></div>
+              <div class="it"><div class="v">84.6kg</div><div class="l">CO₂</div></div>
+              <div class="it"><div class="v">$8.4k</div><div class="l">SHOP $</div></div>
+            </div>
+            <div class="reading">
+              <div class="hd"><span class="d"></span>TOP 3 PROOFS<span class="src">tap for all 6 ↓</span></div>
+              <div class="row"><div class="ico">🧪</div><div class="t">Boosted streets <mark>+312%</mark><span class="arr">→</span><span class="conc">control +4% · p&lt;0.01</span></div></div>
+              <div class="row"><div class="ico">💰</div><div class="t"><mark>$0.18</mark>/walk reward<span class="arr">→</span><span class="conc">cheapest mode-shift</span></div></div>
+              <div class="row"><div class="ico">📈</div><div class="t">Scale 5 suburbs<span class="arr">→</span><span class="conc"><mark>+$47k/wk</mark> · payback m4</span></div></div>
+            </div>
+            <div class="more-link"><span class="em">📡</span><div class="t">Catto Radar<small>892 businesses · health + outreach</small></div><span class="arr">›</span></div>
+          </div>
+          <div class="hi"></div>
+        </div></div>
+        <div class="note"><span class="keep">KEEP</span> pulse + tots + Top 3 proofs · <span class="move">FOLD</span> 6→3 proofs (tap expand) · <span class="move">MOVE</span> "boardroom cost transparency" → Trajectory tab · "Radar" stays as 1-tap link, not embedded</div>
+      </div>
+
+      <!-- 03.2 Trajectory -->
+      <div class="col">
+        <div class="label"><span class="n">03.2</span><span class="t">Trajectory · pilot proof</span></div>
+        <div class="phone"><div class="ps">
+          <div class="sb"><span>9:41</span><div class="r"><span>●●●●●</span><span>5G</span><span>🔋</span></div></div>
+          <div class="bar"><div class="ttl">Pilot trajectory<small>3 weeks · Chatswood</small></div><div class="icb">⬇</div></div>
+          <div class="seg"><div class="s">Pulse</div><div class="s on">Trajectory</div><div class="s">Impact</div></div>
+          <div class="cou">
+            <div class="traj-row">
+              <div class="top"><div class="lab">WALKS / WEEK</div><div class="val"><mark>+312%</mark> vs wk 1</div></div>
+              <div class="traj-bars"><div class="b" style="height:18%"></div><div class="b" style="height:42%"></div><div class="b" style="height:72%"></div><div class="b now" style="height:100%"></div></div>
+            </div>
+            <div class="traj-row">
+              <div class="top"><div class="lab">CUMULATIVE SPEND</div><div class="val">$8.4k <mark>+$2.1k wk3</mark></div></div>
+              <div class="traj-bars money"><div class="b" style="height:22%"></div><div class="b" style="height:48%"></div><div class="b" style="height:76%"></div><div class="b now" style="height:100%"></div></div>
+            </div>
+            <div class="traj-row">
+              <div class="top"><div class="lab">RETENTION</div><div class="val"><mark>64%</mark> repeat</div></div>
+              <div class="cohort"><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="lbl">6.4 / 10 come back</span></div>
+            </div>
+            <div class="traj-next">
+              <span class="ai-pill" style="background:rgba(255,255,255,.1)"><span class="d"></span>WHAT'S NEXT</span>
+              <p class="q">Scale to <mark>5 suburbs</mark> · <mark>+4,200 walks/wk</mark> · payback <mark>m4</mark>.</p>
+            </div>
+          </div>
+          <div class="hi"></div>
+        </div></div>
+        <div class="note"><span class="keep">KEEP</span> 3 charts + next-step · <span class="move">ADD</span> "boardroom" cost transparency เป็น `<details>` ล่างสุด (เก็บ functionality)</div>
+      </div>
+
+      <!-- 03.3 Impact -->
+      <div class="col">
+        <div class="label"><span class="n">03.3</span><span class="t">Impact · 2036 alignment</span></div>
+        <div class="phone"><div class="ps">
+          <div class="sb"><span>9:41</span><div class="r"><span>●●●●●</span><span>5G</span><span>🔋</span></div></div>
+          <div class="bar"><div class="ttl">2036 Impact<small>Our Future Willoughby</small></div><div class="icb">⬇</div></div>
+          <div class="seg"><div class="s">Pulse</div><div class="s">Trajectory</div><div class="s on">Impact</div></div>
+          <div class="cou">
+            <div class="impact-section">
+              <header><h5>% OF 2036 TARGET</h5><span class="r">at week 3</span></header>
+              <div class="kpi-grid">
+                <div class="kpi"><span class="em">🌿</span><div class="v">23%</div><div class="l">CO₂ AVOIDED</div><div class="kpi-bar"><i style="width:23%"></i></div></div>
+                <div class="kpi"><span class="em">🚶</span><div class="v">11%</div><div class="l">ACTIVE MODE</div><div class="kpi-bar"><i style="width:11%"></i></div></div>
+                <div class="kpi"><span class="em">💰</span><div class="v">8%</div><div class="l">LOCAL SPEND</div><div class="kpi-bar"><i style="width:8%"></i></div></div>
+                <div class="kpi"><span class="em">👪</span><div class="v">5%</div><div class="l">RESIDENTS</div><div class="kpi-bar"><i style="width:5%"></i></div></div>
+              </div>
+            </div>
+            <div class="impact-section">
+              <header><h5>STREET HEATMAP · 21D</h5><span class="r">vs control</span></header>
+              <div style="height:120px;border-radius:10px;background:linear-gradient(180deg,#FFE6EC,#FFF1F2);position:relative;overflow:hidden">
+                <div style="position:absolute;left:18%;top:30%;width:60px;height:60px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,157,.6),transparent 70%)"></div>
+                <div style="position:absolute;left:52%;top:18%;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,rgba(245,200,66,.55),transparent 70%)"></div>
+                <div style="position:absolute;left:35%;top:55%;width:50px;height:50px;border-radius:50%;background:radial-gradient(circle,rgba(255,107,157,.35),transparent 70%)"></div>
+              </div>
+              <p style="font-family:'JetBrains Mono';font-size:9.5px;color:var(--ink-soft);margin:8px 0 0;letter-spacing:.3px">Victoria Ave shows <mark style="background:transparent;color:#b62963;font-weight:700">+312% vs control</mark></p>
+            </div>
+          </div>
+          <div class="hi"></div>
+        </div></div>
+        <div class="note"><span class="keep">KEEP</span> GoalRadarChart + StreetHeatmap + KpiDialGrid functions แต่ <span class="move">SPLIT</span> เป็น 2 collapsed section. Radar chart → optional `<details>`</div>
+      </div>
+
+      <!-- 03.4 Radar (power tool) -->
+      <div class="col">
+        <div class="label"><span class="n">03.4</span><span class="t">Radar · power tool</span></div>
+        <div class="phone"><div class="ps">
+          <div class="sb"><span>9:41</span><div class="r"><span>●●●●●</span><span>5G</span><span>🔋</span></div></div>
+          <div class="bar"><div class="ttl">Catto Radar<small>892 businesses · Chatswood</small></div><div class="icb">←</div></div>
+          <div class="radar-body">
+            <div class="radar-kpi-strip">
+              <div class="radar-kpi"><div class="v">892</div><div class="l">TOTAL</div></div>
+              <div class="radar-kpi"><div class="v" style="color:#7BC97F">324</div><div class="l">THRIVING</div></div>
+              <div class="radar-kpi"><div class="v" style="color:#F5C842">198</div><div class="l">AT-RISK</div></div>
+              <div class="radar-kpi"><div class="v" style="color:#b62963">47</div><div class="l">CRITICAL</div></div>
+            </div>
+            <div style="background:#1a1410;color:#fff;border-radius:14px;padding:12px 14px">
+              <span class="ai-pill" style="background:rgba(255,255,255,.1)"><span class="d"></span>AI WEEKLY BRIEF</span>
+              <p style="font-family:'Outfit';font-weight:600;font-size:12.5px;line-height:1.45;margin:10px 0 0;color:rgba(255,255,255,.92)">47 critical merchants need outreach. <span style="color:#F5C842;font-weight:700">Victoria Ave cluster</span> shows 3 dim sum closures — pair with thriving cafes for cross-traffic.</p>
+            </div>
+            <div class="radar-list">
+              <h5>Critical · this week</h5>
+              <div class="radar-item"><span class="swatch" style="background:#b62963"></span><div class="name">Lucky Garden<small>VICTORIA AVE · DIM SUM</small></div><div class="score" style="color:#b62963">42</div></div>
+              <div class="radar-item"><span class="swatch" style="background:#b62963"></span><div class="name">Sun Phoenix<small>HELP ST · BAKERY</small></div><div class="score" style="color:#b62963">38</div></div>
+              <div class="radar-item"><span class="swatch" style="background:#F5C842"></span><div class="name">Maru Korean<small>SPRING ST · BBQ</small></div><div class="score" style="color:#a37000">56</div></div>
+            </div>
+            <button style="background:#1a1410;color:#fff;padding:12px;border-radius:12px;font-family:'Outfit';font-weight:700;font-size:12.5px;border:0">📤 Bulk multilingual outreach (3 selected)</button>
+          </div>
+          <div class="hi"></div>
+        </div></div>
+        <div class="note"><span class="cut">CUT</span> 3-pane layout (map+filter+detail), bulk contact sheet · <span class="move">SIMPLIFY</span> เป็น list-first mobile. Map + filter + table → desktop only / "advanced" link. AI brief + critical-list + bulk = 80% ของ value</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="summary">
+    <h3>🛠 What stays · what folds · what moves</h3>
+    <table>
+      <tr><th>Component</th><th>Status</th><th>New home</th></tr>
+      <tr><td>TierRibbon</td><td class="cut">MOVE</td><td>→ /walk/rewards (Rewards tab) header</td></tr>
+      <tr><td>MapPulseChip</td><td class="cut">CUT</td><td>ซ้ำกับ Catto ribbon</td></tr>
+      <tr><td>MultiModalOptimizer</td><td class="move">MOVE</td><td>→ SmartPickScreen เท่านั้น (Pick detail)</td></tr>
+      <tr><td>ShopSearchBar</td><td class="move">MOVE</td><td>→ 🔍 icon in AppBar, expand on tap</td></tr>
+      <tr><td>PlanBasketPill/Toast</td><td class="move">MOVE</td><td>→ Plan tab เท่านั้น (ไม่ลอยใน Discover)</td></tr>
+      <tr><td>EventRadarCard (owner)</td><td class="cut">CUT</td><td>event ย้ายเป็น row ใน OwnerReading</td></tr>
+      <tr><td>OwnerReading (6 rows)</td><td class="move">FOLD</td><td>โชว์ 3 rows + "+2 more ↓"</td></tr>
+      <tr><td>Cost transparency `<details>`</td><td class="move">MOVE</td><td>→ Trajectory tab bottom</td></tr>
+      <tr><td>2036 outcomes card</td><td class="move">MOVE</td><td>→ Impact tab</td></tr>
+      <tr><td>GoalRadarChart + KpiDialGrid + StreetHeatmap</td><td class="move">SPLIT</td><td>Impact tab · 2 sections + 1 optional `<details>`</td></tr>
+      <tr><td>RadarHomeScreen 3-pane</td><td class="move">SIMPLIFY</td><td>Mobile: list-first (KPI strip + AI brief + critical list + bulk). Map/Filter/Table → ≥900px desktop</td></tr>
+      <tr><td>Walker home sheet</td><td class="keep">KEEP</td><td>4 items: smart card · chips · 4 tiles · (search hidden)</td></tr>
+      <tr><td>WalkingLive · Reward · Campaign</td><td class="keep">KEEP</td><td>ไม่แตะ</td></tr>
+    </table>
+  </div>
+
+</div>
+</body>
+</html>

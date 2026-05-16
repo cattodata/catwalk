@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 
 import { CattoPill } from '../components/CattoPill'
+import { MultiModalOptimizer } from '../components/MultiModalOptimizer'
 import { useRealShops } from '../hooks/useRealShops'
 import { useGooglePlaces } from '../hooks/useGooglePlaces'
 import { useWeather } from '../hooks/useWeather'
@@ -155,6 +156,18 @@ export function SmartPickScreen() {
           <div className="cc-pick-stat-l">TODAY</div>
         </div>
       </div>
+
+      <MultiModalOptimizer
+        shop={shop}
+        reasons={pick.reasons}
+        isRain={weather?.isRain ?? false}
+        onPick={(mode) => {
+          sessionStorage.setItem('cc:transport', mode)
+          sessionStorage.setItem('cc:selectedShopId', shop.id)
+          sessionStorage.removeItem('cc:smartPickShopId')
+          navigate('/walk/live')
+        }}
+      />
 
       <button type="button" className="cc-pick-cta" onClick={onStart}>
         <span>Walk me there</span>

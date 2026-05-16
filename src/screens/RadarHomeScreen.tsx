@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Map as MapIcon, Table as TableIcon, Filter, ChevronUp } from 'lucide-react'
+import { ArrowLeft, Map as MapIcon, Table as TableIcon, Filter, ChevronUp, Mail, Sparkles } from 'lucide-react'
 
 import { useRealShops } from '../hooks/useRealShops'
 import { useGooglePlaces } from '../hooks/useGooglePlaces'
@@ -63,6 +63,20 @@ export function RadarHomeScreen() {
   const [aiBrief, setAiBrief] = useState<string | null>(null)
   const [aiLoading, setAiLoading] = useState(false)
 
+  // v6 — Mobile (<900px) renders a simpler list-first layout. Desktop keeps the
+  // 3-pane "power view". Watch for resize so a rotated tablet/devtools switch
+  // re-routes the layout without a refresh.
+  const [isMobile, setIsMobile] = useState<boolean>(() =>
+    typeof window !== 'undefined' ? window.innerWidth < 900 : false,
+  )
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 899px)')
+    const onChange = () => setIsMobile(mq.matches)
+    onChange()
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
   const filtered = useMemo(() => {
     return records.filter((r) => {
       if (filters.types.size && !filters.types.has(r.type)) return false
@@ -85,6 +99,16 @@ export function RadarHomeScreen() {
     [filtered, records, selectedId],
   )
   const recipients = useMemo(() => records.filter((r) => basketIds.has(r.id)), [records, basketIds])
+
+  // Critical & at-risk top 10 (worst health first) for the mobile list-first view.
+  const criticalList = useMemo(
+    () =>
+      [...filtered]
+        .filter((r) => r.tier === 'critical' || r.tier === 'at-risk' || r.tier === 'watch')
+        .sort((a, b) => a.health - b.health)
+        .slice(0, 10),
+    [filtered],
+  )
 
   const toggleBasket = (id: string) => {
     setBasketIds((prev) => {
@@ -181,6 +205,117 @@ export function RadarHomeScreen() {
 
       <RadarKpiStrip records={records} filteredCount={filtered.length} />
 
+      {/* v6 Calm Complete · Mobile list-first view (KPI + AI brief + critical
+          list + bulk CTA). Desktop ≥900px gets the full 3-pane power view below. */}
+      {isMobile && (
+        <div className="cc-radar-mobile">
+          {aiLoading ? (
+            <div className="cc-radar-brief is-loading">Catto is reading the radar…</div>
+          ) : (
+            <div className="cc-radar-brief">
+              <header>
+                <b>AI weekly brief</b>
+                {!aiBrief && (
+                  <button type="button" onClick={onAiBrief}>
+                    <Sparkles size={11} strokeWidth={2.2} /> generate
+                  </button>
+                )}
+              </header>
+              <p>
+                {aiBrief ?? (
+                  <>
+                    {filtered.length} businesses in scope · avg health{' '}
+                    {Math.round(
+                      filtered.reduce((s, r) => s + r.health, 0) / Math.max(1, filtered.length),
+                    )}
+                    /100 · {criticalList.length} need outreach this week. Tap "generate" for
+                    the full AI brief.
+                  </>
+                )}
+              </p>
+            </div>
+          )}
+
+          <section className="cc-radar-mobile-list">
+            <header>
+              <h5>Critical & at-risk · this week</h5>
+              <small>{criticalList.length} of {filtered.length} businesses</small>
+            </header>
+            <ul>
+              {criticalList.map((r) => {
+                const inBasket = basketIds.has(r.id)
+                return (
+                  <li key={r.id}>
+                    <button
+                      type="button"
+                      className={`cc-radar-mobile-row${inBasket ? ' is-basket' : ''}`}
+                      onClick={() => onSelect(r)}
+                    >
+                      <span
+                        className="cc-radar-mobile-swatch"
+                        style={{ background: colorForTier(r.tier) }}
+                        aria-hidden="true"
+                      />
+                      <span className="cc-radar-mobile-name">
+                        <b>{r.name}</b>
+                        <small>
+                          {(r.street ?? 'Chatswood').toUpperCase()} · {r.type}
+                        </small>
+                      </span>
+                      <span
+                        className="cc-radar-mobile-score"
+                        style={{ color: colorForTier(r.tier) }}
+                      >
+                        {r.health}
+                      </span>
+                      <button
+                        type="button"
+                        className={`cc-radar-mobile-basket${inBasket ? ' is-on' : ''}`}
+                        aria-label={inBasket ? 'Remove from bulk' : 'Add to bulk'}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          toggleBasket(r.id)
+                        }}
+                      >
+                        {inBasket ? '✓' : '+'}
+                      </button>
+                    </button>
+                  </li>
+                )
+              })}
+              {criticalList.length === 0 && (
+                <li className="cc-radar-mobile-empty">
+                  No at-risk or critical merchants in the current filter set — system is healthy.
+                </li>
+              )}
+            </ul>
+          </section>
+
+          <button
+            type="button"
+            className="cc-radar-mobile-bulk-cta"
+            onClick={() => setBulkOpen(true)}
+            disabled={basketIds.size === 0 && criticalList.length === 0}
+          >
+            <Mail size={15} strokeWidth={2.2} />
+            <span>
+              Bulk multilingual outreach
+              {basketIds.size > 0 ? ` (${basketIds.size} selected)` : ''}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            className="cc-radar-mobile-power"
+            onClick={() => setMobileSheet(mobileSheet === 'filter' ? null : 'filter')}
+          >
+            <Filter size={13} /> Power view · filter · map · table ›
+          </button>
+        </div>
+      )}
+
+      {!isMobile && (
+      <>
       <div className="cc-radar-canvas-bar">
         <div className="cc-radar-view-toggle" role="tablist" aria-label="Canvas view">
           <button
@@ -292,6 +427,8 @@ export function RadarHomeScreen() {
           )}
         </div>
       </div>
+      </>
+      )}
 
       <RadarActionBar
         total={filtered.length}

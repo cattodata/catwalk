@@ -10530,3 +10530,295 @@ a.cc-owner-cta {
   padding: 8px 12px;
   border-radius: 10px;
 }
+
+/* ============================================================================
+   v6 CALM COMPLETE additions
+   ============================================================================
+   Each screen holds ≤ 4 vertical sections. New rules for moved/folded UI. */
+
+/* OwnerReading "+N more ↓" expand button (Owner forecast) */
+.cc-or-more {
+  align-self: flex-start;
+  margin-top: 4px;
+  padding: 6px 10px;
+  background: transparent;
+  border: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--coral);
+  cursor: pointer;
+}
+.cc-or-more:hover { text-decoration: underline; }
+
+/* Council Pulse · "Catto Radar · 892 businesses ›" link card */
+.cc-pulse-radar-link {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-top: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  font-family: var(--font-ui);
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: var(--shadow-card);
+  text-align: left;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+.cc-pulse-radar-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(45, 26, 34, 0.08);
+}
+.cc-pulse-radar-em { font-size: 22px; }
+.cc-pulse-radar-body { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.cc-pulse-radar-body b { font-family: var(--font-display); font-weight: 700; font-size: 14.5px; }
+.cc-pulse-radar-body small { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-soft); }
+.cc-pulse-radar-arr { font-size: 20px; font-weight: 700; color: var(--coral); }
+
+/* Council Pulse "+3 more proofs" foldable */
+.cc-pulse-more {
+  margin-top: 4px;
+}
+.cc-pulse-more summary {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--coral);
+  cursor: pointer;
+  padding: 6px 10px;
+  list-style: none;
+}
+.cc-pulse-more summary::-webkit-details-marker { display: none; }
+.cc-pulse-more[open] summary { color: var(--ink-soft); }
+.cc-pulse-more ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cc-pulse-more ul li {
+  display: flex;
+  gap: 8px;
+  padding: 8px 4px;
+}
+
+/* Council Impact · GoalRadarChart as optional <details> at the bottom */
+.cc-impact-radar-fold {
+  margin: 12px 16px 0;
+}
+.cc-impact-radar-fold summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 10px 14px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+.cc-impact-radar-fold summary::-webkit-details-marker { display: none; }
+.cc-impact-radar-fold summary::before { content: '▸  '; color: var(--coral); }
+.cc-impact-radar-fold[open] summary::before { content: '▾  '; }
+
+/* ----------------------------------------------------------------------------
+   Catto Radar · MOBILE list-first view (<900px). Desktop ≥900px hides this. */
+.cc-radar-mobile {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 14px 20px;
+}
+.cc-radar-mobile .cc-radar-brief {
+  margin: 0;
+  background: #1a1410;
+  color: #fff;
+  border: 0;
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+.cc-radar-mobile .cc-radar-brief header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.cc-radar-mobile .cc-radar-brief header b {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+.cc-radar-mobile .cc-radar-brief header button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 0;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  cursor: pointer;
+}
+.cc-radar-mobile .cc-radar-brief p {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.45;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.cc-radar-mobile-list {
+  display: flex;
+  flex-direction: column;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.cc-radar-mobile-list header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 12px 14px 8px;
+  border-bottom: 1px solid var(--line);
+}
+.cc-radar-mobile-list header h5 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+}
+.cc-radar-mobile-list header small {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--ink-soft);
+  letter-spacing: 0.04em;
+}
+.cc-radar-mobile-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.cc-radar-mobile-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 10px 1fr auto 36px;
+  gap: 10px;
+  align-items: center;
+  min-height: 56px;
+  padding: 10px 14px;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-ui);
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+}
+.cc-radar-mobile-row:hover { background: rgba(0, 0, 0, 0.02); }
+.cc-radar-mobile-row:active { background: rgba(255, 107, 157, 0.08); }
+.cc-radar-mobile-row.is-basket { box-shadow: inset 3px 0 0 var(--coral); }
+.cc-radar-mobile-swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.cc-radar-mobile-name { display: flex; flex-direction: column; min-width: 0; }
+.cc-radar-mobile-name b {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cc-radar-mobile-name small {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--ink-soft);
+  letter-spacing: 0.04em;
+}
+.cc-radar-mobile-score {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 17px;
+  letter-spacing: -0.4px;
+}
+.cc-radar-mobile-basket {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--coral);
+  background: #fff;
+  color: var(--coral);
+  font-size: 18px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.cc-radar-mobile-basket.is-on {
+  background: var(--coral);
+  color: #fff;
+  border-color: var(--coral);
+}
+.cc-radar-mobile-empty {
+  padding: 28px 18px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.cc-radar-mobile-bulk-cta {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 12px 16px;
+  background: var(--ink);
+  color: #fff;
+  border: 0;
+  border-radius: 14px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13.5px;
+  cursor: pointer;
+  box-shadow: var(--shadow-card);
+}
+.cc-radar-mobile-bulk-cta:disabled {
+  background: rgba(45, 26, 34, 0.25);
+  cursor: not-allowed;
+}
+
+.cc-radar-mobile-power {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: transparent;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.cc-radar-mobile-power:hover { color: var(--coral); border-color: var(--coral); }

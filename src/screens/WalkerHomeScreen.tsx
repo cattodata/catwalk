@@ -4,30 +4,32 @@ import type { Shop, TransportId, CuisineId } from '../types/shop'
 
 import { AppBarLockup } from '../components/AppBarLockup'
 import { BottomNav } from '../components/BottomNav'
-import { TierRibbon } from '../components/TierRibbon'
 import { MapFab } from '../components/MapFab'
-import { MapPulseChip } from '../components/MapPulseChip'
-import { MultiModalOptimizer } from '../components/MultiModalOptimizer'
+import { SmartPickCta } from '../components/SmartPickCta'
 import { ShopMiniRail } from '../components/ShopMini'
 import { ShopDetailSheet } from '../components/ShopDetailSheet'
 import { CuisineRow } from '../components/CuisineRow'
-import { ShopSearchBar, type SortBy } from '../components/ShopSearchBar'
-import { PlanBasketPill } from '../components/PlanBasketPill'
-import { PlanBasketToast } from '../components/PlanBasketToast'
 import { RealMap } from '../components/RealMap'
 
-import { usePlanBasket } from '../hooks/usePlanBasket'
-import { planBasket } from '../lib/planBasket'
 import { useGooglePlaces } from '../hooks/useGooglePlaces'
 import { useRealShops } from '../hooks/useRealShops'
 import { useWeather } from '../hooks/useWeather'
 import { useGeolocation } from '../hooks/useGeolocation'
 import { useNow } from '../hooks/useNow'
 import { smartPick } from '../lib/smartPick'
-import { tierFromCo2 } from '../data/tiers'
 import { getTodayEvent } from '../data/events'
-import { seedTotals } from '../data/walkHistory'
 
+// v6 Calm Complete refactor — Discover home holds 4 things only:
+//   1. h4 + condition row
+//   2. SmartPickCta (the dark AI moment)
+//   3. CuisineRow
+//   4. ShopMiniRail (with OFF X% badge from shop.off >= 15)
+// REMOVED from this screen (preserved elsewhere):
+//   - TierRibbon       → RewardsHomeScreen header
+//   - MapPulseChip     → cut (redundant with Catto ribbon)
+//   - MultiModalOptimizer → SmartPickScreen
+//   - ShopSearchBar    → 🔍 icon in AppBarLockup (expand inline) — TODO future
+//   - PlanBasketPill/Toast → PlanDayScreen only
 export function WalkerHomeScreen() {
   const navigate = useNavigate()
   const now = useNow(60_000)
@@ -35,25 +37,12 @@ export function WalkerHomeScreen() {
   const shops = useGooglePlaces(rawShops)
   const { weather } = useWeather()
   const geo = useGeolocation(true)
-  const totals = useMemo(() => seedTotals(), [])
-  const total_co2 = totals.co2
-  const tier = tierFromCo2(total_co2)
-  const tierLevel = tier.id === 'sprout' ? 1 : tier.id === 'bronze' ? 2 : tier.id === 'silver' ? 3 : 4
-  const tierPct = tier.next != null ? Math.round(((total_co2 - tier.min) / (tier.next - tier.min)) * 100) : 100
   const todayEvent = getTodayEvent(now)
 
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null)
   const [transport, setTransport] = useState<TransportId>('walk')
   const [recenterNonce, setRecenterNonce] = useState(0)
   const [cuisine, setCuisine] = useState<CuisineId>('all')
-  const [search, setSearch] = useState('')
-  const [sortBy, setSortBy] = useState<SortBy>('distance')
-  const basketIds = usePlanBasket()
-
-  const onTogglePlan = (s: Shop) => {
-    if (basketIds.includes(s.id)) planBasket.remove(s.id)
-    else planBasket.add(s.id)
-  }
 
   const filteredShops = useMemo(() => {
     if (cuisine === 'all') return shops
@@ -72,28 +61,12 @@ export function WalkerHomeScreen() {
     return shops.filter((s) => s.cuisine === cuisine)
   }, [shops, cuisine])
 
-  const searchedShops = useMemo(() => {
-    const q = search.trim().toLowerCase()
-    return q ? filteredShops.filter((s) => s.name.toLowerCase().includes(q)) : filteredShops
-  }, [filteredShops, search])
-
   const railShops = useMemo(() => {
-    const arr = [...searchedShops]
-    if (sortBy === 'rating') arr.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
-    else if (sortBy === 'points') arr.sort((a, b) => b.pts - a.pts)
-    else arr.sort((a, b) => a.dist - b.dist)
-    return arr
-  }, [searchedShops, sortBy])
+    return [...filteredShops].sort((a, b) => a.dist - b.dist)
+  }, [filteredShops])
 
   const hour = now.getHours()
   const smart = useMemo(() => smartPick(shops, weather, hour), [shops, weather, hour])
-
-  const onWheelsPick = (mode: TransportId) => {
-    if (!smart) return
-    sessionStorage.setItem('cc:smartPickShopId', smart.shop.id)
-    sessionStorage.setItem('cc:transport', mode)
-    navigate('/walk/pick')
-  }
 
   const onSmartRibbon = () => {
     if (!smart) return
@@ -116,18 +89,19 @@ export function WalkerHomeScreen() {
     return parts.join('  ·  ')
   }, [weather, todayEvent])
 
-  const shopsCount = shops.length
+  const smartSubtext = useMemo(() => {
+    if (!smart) return 'Finding the best pick…'
+    const bits: string[] = [`${smart.shop.mult}× points`]
+    if (weather?.isRain) bits.push('indoor pick')
+    else if (smart.shop.tags?.includes('Late-night') && hour >= 18) bits.push('open late')
+    else if (hour >= 17) bits.push('great for tonight')
+    return `${bits.join(' · ')} · ${smart.shop.name}`
+  }, [smart, weather, hour])
 
   return (
     <div className="cc-walker">
       <h1 className="cc-sr-only">Walker home — Chatswood discovery</h1>
       <AppBarLockup />
-      <TierRibbon
-        tierLevel={tierLevel}
-        tierName={tier.label}
-        progressPct={tierPct}
-        kgSaved={total_co2}
-      />
 
       <div className="cc-walker-map" aria-label="Chatswood map">
         <RealMap
@@ -154,16 +128,6 @@ export function WalkerHomeScreen() {
             <span className="cc-walker-ribbon-arr" aria-hidden="true">›</span>
           </button>
         )}
-        {/* Show pulse chip only when the Catto ribbon isn't already up (mobile audit M1) */}
-        {(!smart || selectedShop) && (
-          <div className="cc-map-overlays">
-            <MapPulseChip tone="sage">
-              {selectedShop
-                ? `ROUTE READY · ${Math.max(1, Math.round(selectedShop.dist / 80))} MIN`
-                : `${shopsCount || '…'} SHOPS OPEN`}
-            </MapPulseChip>
-          </div>
-        )}
         <MapFab onRecenter={() => setRecenterNonce((n) => n + 1)} />
       </div>
 
@@ -182,40 +146,23 @@ export function WalkerHomeScreen() {
             <h4 className="cc-sheet-h4">Where to today?</h4>
             {conditionRow && <div className="cc-sheet-cond">{conditionRow}</div>}
             {smart && (
-              <MultiModalOptimizer
-                shop={smart.shop}
-                reasons={smart.reasons}
-                isRain={weather?.isRain ?? false}
-                onPick={onWheelsPick}
-              />
+              <SmartPickCta subtext={smartSubtext} reasons={smart.reasons} onClick={onSmartRibbon} />
             )}
             <CuisineRow active={cuisine} onChange={setCuisine} />
-            <ShopSearchBar
-              query={search}
-              onQueryChange={setSearch}
-              sortBy={sortBy}
-              onSortChange={setSortBy}
-            />
             {railShops.length > 0 ? (
               <ShopMiniRail
                 shops={railShops}
                 onSelect={(s) => setSelectedShop(s)}
-                onAdd={onTogglePlan}
-                pickedIds={basketIds}
               />
             ) : (
               <div className="cc-empty-row">
-                {search.trim()
-                  ? `No shops match "${search}". Try a different name or clear search.`
-                  : `No ${cuisine === 'all' ? 'shops' : cuisine.toLowerCase()} nearby. Try a different filter.`}
+                No {cuisine === 'all' ? 'shops' : cuisine.toLowerCase()} nearby. Try a different filter.
               </div>
             )}
           </>
         )}
       </section>
 
-      <PlanBasketToast />
-      <PlanBasketPill shops={shops} />
       <BottomNav />
     </div>
   )

@@ -93,7 +93,13 @@ export function CouncilSandboxScreen() {
 
       {tab === 'pulse' && (
         <div className="cc-pulse-v52">
-          {/* MEGA PULSE — pink gradient "12" in Chatswood */}
+          {/* v6 Calm Complete · Pulse tab:
+              1. hero "12 walking right now"
+              2. 3 totals row
+              3. TOP 3 proofs (fold remaining 3 behind tap-expand)
+              4. 1-tap link card to Catto Radar
+             MOVED: cost-transparency → Trajectory tab · 2036 outcomes → Impact tab */}
+
           <div className="cc-pulse-hero">
             <CattoPill tone="gradient">WALKING RIGHT NOW</CattoPill>
             <div className="cc-pulse-mega">
@@ -105,66 +111,6 @@ export function CouncilSandboxScreen() {
             </div>
           </div>
 
-          {/* WHAT THE PILOT SHOWS — 4 insight rows (signal → conclusion) */}
-          <div className="cc-pilot-shows">
-            <header>
-              <span className="cc-or-dot" aria-hidden="true" />
-              <span className="cc-or-h">WHY THIS WORKS</span>
-              <span className="cc-or-src">6 proofs · wk 3</span>
-            </header>
-            <ul>
-              <li>
-                <span className="cc-or-ico" aria-hidden="true">🧪</span>
-                <p>
-                  <span>Boosted streets <mark>+312%</mark> vs control +4%</span>
-                  <span className="cc-or-arr">→</span>
-                  <span className="cc-or-conc">A/B test wk3 · causation <mark>p&lt;0.01</mark></span>
-                </p>
-              </li>
-              <li>
-                <span className="cc-or-ico" aria-hidden="true">💰</span>
-                <p>
-                  <span><mark>$0.18</mark> reward · <mark>$0.45</mark> fully-loaded</span>
-                  <span className="cc-or-arr">→</span>
-                  <span className="cc-or-conc">vs typical mode-shift programs ~$3/walk</span>
-                </p>
-              </li>
-              <li>
-                <span className="cc-or-ico" aria-hidden="true">🗓</span>
-                <p>
-                  <span>Event-aware: <mark>+28%</mark> Lunar New Year walks</span>
-                  <span className="cc-or-arr">→</span>
-                  <span className="cc-or-conc">AI auto-boosts cuisines that match civic calendar</span>
-                </p>
-              </li>
-              <li>
-                <span className="cc-or-ico" aria-hidden="true">🗺</span>
-                <p>
-                  <span>5 footpath bottlenecks found</span>
-                  <span className="cc-or-arr">→</span>
-                  <span className="cc-or-conc">Endeavour Lane fix = <mark>+89 walks/wk</mark></span>
-                </p>
-              </li>
-              <li>
-                <span className="cc-or-ico" aria-hidden="true">👪</span>
-                <p>
-                  <span><mark>892</mark> unique households · <mark>$4.20</mark>/walk saved</span>
-                  <span className="cc-or-arr">→</span>
-                  <span className="cc-or-conc"><mark>$5.2k</mark> back to residents this month</span>
-                </p>
-              </li>
-              <li>
-                <span className="cc-or-ico" aria-hidden="true">📈</span>
-                <p>
-                  <span>Stage 2 · scale to 5 suburbs</span>
-                  <span className="cc-or-arr">→</span>
-                  <span className="cc-or-conc">projected <mark>+4,200 walks/wk</mark> · payback month 4</span>
-                </p>
-              </li>
-            </ul>
-          </div>
-
-          {/* 3 small totals at bottom */}
           <div className="cc-pulse-tots">
             <div>
               <div className="cc-pulse-tot-v">
@@ -189,46 +135,77 @@ export function CouncilSandboxScreen() {
             </div>
           </div>
 
-          {/* For-the-boardroom deeper details fold */}
-          <details className="cc-council-deeper">
-            <summary>For the boardroom · cost transparency</summary>
-            <div className="cc-cost-card">
-              <CattoPill tone="light">COST · PILOT TO DATE</CattoPill>
-              <h4>Public dollar performance</h4>
-              <div className="cc-cost-row">
-                <div>
-                  <div className="cc-cost-v">${(((council.stats.total_walks || 1247) * 0.18)).toFixed(0)}</div>
-                  <div className="cc-cost-l">REWARDS PAID</div>
-                </div>
-                <div>
-                  <div className="cc-cost-v">$0.18</div>
-                  <div className="cc-cost-l">REWARD / WALK</div>
-                </div>
-                <div>
-                  <div className="cc-cost-v">$0.45</div>
-                  <div className="cc-cost-l">FULLY-LOADED / WALK</div>
-                </div>
-              </div>
-              <p className="cc-cost-bench">
-                $0.18 reward + $0.27 platform &amp; ops · vs typical Council mode-shift programs at $2.50–$4.00/walk.
-              </p>
-            </div>
-            <div className="cc-outcomes-card">
-              <CattoPill tone="light">OUR FUTURE WILLOUGHBY · 2036</CattoPill>
-              <h4>Outcome alignment</h4>
-              <ul className="cc-outcomes-list">
-                {COUNCIL_OUTCOMES.map((o, i) => (
-                  <li key={i} className="cc-outcome-row">
-                    <span className="cc-outcome-em" aria-hidden="true">{o.em}</span>
-                    <div className="cc-outcome-body">
-                      <b>{o.b}</b>
-                      <p>{o.t}</p>
-                    </div>
-                  </li>
-                ))}
+          <div className="cc-pilot-shows">
+            <header>
+              <span className="cc-or-dot" aria-hidden="true" />
+              <span className="cc-or-h">TOP 3 PROOFS</span>
+              <span className="cc-or-src">tap for all 6 ↓</span>
+            </header>
+            <ul>
+              <li>
+                <span className="cc-or-ico" aria-hidden="true">🧪</span>
+                <p>
+                  <span>Boosted streets <mark>+312%</mark> vs control +4%</span>
+                  <span className="cc-or-arr">→</span>
+                  <span className="cc-or-conc">A/B test wk3 · causation <mark>p&lt;0.01</mark></span>
+                </p>
+              </li>
+              <li>
+                <span className="cc-or-ico" aria-hidden="true">💰</span>
+                <p>
+                  <span><mark>$0.18</mark> reward · <mark>$0.45</mark> fully-loaded</span>
+                  <span className="cc-or-arr">→</span>
+                  <span className="cc-or-conc">cheapest mode-shift in NSW</span>
+                </p>
+              </li>
+              <li>
+                <span className="cc-or-ico" aria-hidden="true">📈</span>
+                <p>
+                  <span>Scale 5 suburbs</span>
+                  <span className="cc-or-arr">→</span>
+                  <span className="cc-or-conc"><mark>+$47k/wk</mark> · payback month 4</span>
+                </p>
+              </li>
+            </ul>
+            <details className="cc-pulse-more">
+              <summary>+3 more proofs</summary>
+              <ul>
+                <li>
+                  <span className="cc-or-ico" aria-hidden="true">🗓</span>
+                  <p>
+                    <span>Event-aware: <mark>+28%</mark> Lunar New Year walks</span>
+                    <span className="cc-or-arr">→</span>
+                    <span className="cc-or-conc">AI auto-boosts cuisines that match civic calendar</span>
+                  </p>
+                </li>
+                <li>
+                  <span className="cc-or-ico" aria-hidden="true">🗺</span>
+                  <p>
+                    <span>5 footpath bottlenecks found</span>
+                    <span className="cc-or-arr">→</span>
+                    <span className="cc-or-conc">Endeavour Lane fix = <mark>+89 walks/wk</mark></span>
+                  </p>
+                </li>
+                <li>
+                  <span className="cc-or-ico" aria-hidden="true">👪</span>
+                  <p>
+                    <span><mark>892</mark> unique households · <mark>$4.20</mark>/walk saved</span>
+                    <span className="cc-or-arr">→</span>
+                    <span className="cc-or-conc"><mark>$5.2k</mark> back to residents this month</span>
+                  </p>
+                </li>
               </ul>
-            </div>
-          </details>
+            </details>
+          </div>
+
+          <button type="button" className="cc-pulse-radar-link" onClick={() => navigate('/radar')}>
+            <span className="cc-pulse-radar-em" aria-hidden="true">📡</span>
+            <span className="cc-pulse-radar-body">
+              <b>Catto Radar</b>
+              <small>892 businesses · health + multilingual outreach</small>
+            </span>
+            <span className="cc-pulse-radar-arr" aria-hidden="true">›</span>
+          </button>
         </div>
       )}
       {tab === 'trajectory' && (
@@ -258,22 +235,53 @@ export function CouncilSandboxScreen() {
               </>
             }
           />
+
+          {/* v6 — cost-transparency moved here from Pulse */}
+          <details className="cc-council-deeper">
+            <summary>For the boardroom · cost transparency</summary>
+            <div className="cc-cost-card">
+              <CattoPill tone="light">COST · PILOT TO DATE</CattoPill>
+              <h4>Public dollar performance</h4>
+              <div className="cc-cost-row">
+                <div>
+                  <div className="cc-cost-v">${(((council.stats.total_walks || 1247) * 0.18)).toFixed(0)}</div>
+                  <div className="cc-cost-l">REWARDS PAID</div>
+                </div>
+                <div>
+                  <div className="cc-cost-v">$0.18</div>
+                  <div className="cc-cost-l">REWARD / WALK</div>
+                </div>
+                <div>
+                  <div className="cc-cost-v">$0.45</div>
+                  <div className="cc-cost-l">FULLY-LOADED / WALK</div>
+                </div>
+              </div>
+              <p className="cc-cost-bench">
+                $0.18 reward + $0.27 platform &amp; ops · vs typical Council mode-shift programs at $2.50–$4.00/walk.
+              </p>
+            </div>
+          </details>
         </div>
       )}
       {tab === 'impact' && (
         <div className="cc-impact-body">
+          {/* v6 Calm Complete · Impact tab — order:
+              1. KPI dial grid (% of 2036 target — quick scan)
+              2. Street heatmap
+              3. 2036 outcomes card (moved from Pulse)
+              4. GoalRadarChart in optional <details> (deeper view) */}
+
           <section className="cc-impact-card">
             <header>
-              <span className="cc-impact-h">GOAL ALIGNMENT · 2036</span>
-              <span className="cc-impact-h-r">5 KPIs</span>
+              <span className="cc-impact-h">% OF 2036 TARGET</span>
+              <span className="cc-impact-h-r">at week 3</span>
             </header>
-            <GoalRadarChart
-              axes={[
-                { key: 'co2', label: 'CO₂', current: 0.23 },
-                { key: 'active', label: 'Active', current: 0.31 },
-                { key: 'spend', label: 'Local $', current: 0.18 },
-                { key: 'community', label: 'Community', current: 0.27 },
-                { key: 'equity', label: 'Equity', current: 0.12 },
+            <KpiDialGrid
+              dials={[
+                { id: 'co2', emoji: '🌿', label: 'CO₂ avoided', pct: 0.23, caption: '1.5t of 6.5t target' },
+                { id: 'active', emoji: '🚶', label: 'Active mode', pct: 0.11, caption: '47% of 65% target' },
+                { id: 'spend', emoji: '💰', label: 'Local spend', pct: 0.08, caption: '$8.4k of $100k' },
+                { id: 'residents', emoji: '👪', label: 'Residents', pct: 0.05, caption: '892 of 17.8k' },
               ]}
             />
           </section>
@@ -289,44 +297,40 @@ export function CouncilSandboxScreen() {
             </p>
           </section>
 
-          <section className="cc-impact-card">
-            <header>
-              <span className="cc-impact-h">% OF 2036 TARGET</span>
-              <span className="cc-impact-h-r">at week 3</span>
-            </header>
-            <KpiDialGrid
-              dials={[
-                {
-                  id: 'co2',
-                  emoji: '🌿',
-                  label: 'CO₂ avoided',
-                  pct: 0.23,
-                  caption: '1.5t of 6.5t target',
-                },
-                {
-                  id: 'active',
-                  emoji: '🚶',
-                  label: 'Active mode',
-                  pct: 0.11,
-                  caption: '47% of 65% target',
-                },
-                {
-                  id: 'spend',
-                  emoji: '💰',
-                  label: 'Local spend',
-                  pct: 0.08,
-                  caption: '$8.4k of $100k',
-                },
-                {
-                  id: 'residents',
-                  emoji: '👪',
-                  label: 'Residents',
-                  pct: 0.05,
-                  caption: '892 of 17.8k',
-                },
-              ]}
-            />
+          <section className="cc-impact-card cc-outcomes-card">
+            <CattoPill tone="light">OUR FUTURE WILLOUGHBY · 2036</CattoPill>
+            <h4>Outcome alignment</h4>
+            <ul className="cc-outcomes-list">
+              {COUNCIL_OUTCOMES.map((o, i) => (
+                <li key={i} className="cc-outcome-row">
+                  <span className="cc-outcome-em" aria-hidden="true">{o.em}</span>
+                  <div className="cc-outcome-body">
+                    <b>{o.b}</b>
+                    <p>{o.t}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </section>
+
+          <details className="cc-impact-radar-fold">
+            <summary>Deeper · goal-alignment radar</summary>
+            <section className="cc-impact-card">
+              <header>
+                <span className="cc-impact-h">GOAL ALIGNMENT · 2036</span>
+                <span className="cc-impact-h-r">5 KPIs</span>
+              </header>
+              <GoalRadarChart
+                axes={[
+                  { key: 'co2', label: 'CO₂', current: 0.23 },
+                  { key: 'active', label: 'Active', current: 0.31 },
+                  { key: 'spend', label: 'Local $', current: 0.18 },
+                  { key: 'community', label: 'Community', current: 0.27 },
+                  { key: 'equity', label: 'Equity', current: 0.12 },
+                ]}
+              />
+            </section>
+          </details>
         </div>
       )}
 
