@@ -28,7 +28,7 @@ function aiSummary(r: BusinessRecord): string {
         r.signals.multilingual ? 'maintain multilingual coverage' : 'add 中文/한국어 signage subsidy ($240 cap) to lift discoverability'
       }.`
     case 'watch':
-      return `${r.name} drifting (health ${r.health}/100). Footprint thinning on ${street}: ${reviewCite}, ${sourceCite}, ${webCite}. Suggest week-of check-in via Catto Compass bulk contact.`
+      return `${r.name} drifting (health ${r.health}/100). Footprint thinning on ${street}: ${reviewCite}, ${sourceCite}, ${webCite}. Suggest week-of check-in via CatWalk bulk contact.`
     case 'at-risk':
       return `${r.name} flagged at-risk (health ${r.health}/100) on ${street}. Drivers — ${ratingCite}, ${reviewCite}, ${webCite}. Recommend immediate outreach: business-name registration + signage subsidy + multilingual inclusion.`
     case 'critical':

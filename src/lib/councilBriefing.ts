@@ -14,7 +14,7 @@ interface BriefingStats {
 export function downloadCouncilBriefing(stats: BriefingStats): void {
   const today = new Date().toISOString().slice(0, 10)
   const rows: string[][] = [
-    ['Catto Compass · Willoughby Pilot · Briefing pack', '', '', ''],
+    ['CatWalk · Willoughby Pilot · Briefing pack', '', '', ''],
     ['Generated', today, '', ''],
     ['Source', 'Chatswood SA2 · 21-day pilot · n=892 unique residents', '', ''],
     [],

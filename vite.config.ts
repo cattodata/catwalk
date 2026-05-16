@@ -68,10 +68,10 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['assets/cattodata-logo.png', 'assets/cattodata-brand.png'],
       manifest: {
-        name: 'Catto Compass · Chatswood',
-        short_name: 'Catto',
+        name: 'CatWalk · Chatswood',
+        short_name: 'CatWalk',
         description:
-          'Walk Chatswood. Earn rewards. Help shops thrive. AI-powered civic engagement for Willoughby City Council.',
+          'CatWalk — walk Chatswood, earn rewards, help shops thrive. AI-powered civic engagement for Willoughby City Council.',
         theme_color: '#FAF7F0',
         background_color: '#FAF7F0',
         display: 'standalone',

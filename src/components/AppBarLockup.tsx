@@ -12,7 +12,7 @@ interface Props {
  * Walker/Owner/Council home app bar — gradient pill logo + brand text + bell + settings gear.
  */
 export function AppBarLockup({
-  title = 'Catto Compass',
+  title = 'CatWalk',
   sub = 'CHATSWOOD',
   hasUnread = false,
   showGear = true,

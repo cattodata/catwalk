@@ -10,7 +10,7 @@ export const MOCK_CAMPAIGNS: Record<BizType, Campaign> = {
     chosen: 'bundle',
     name: 'Matcha Reset Hour',
     tag: 'Skip the slump. Sip the green.',
-    offer: 'Matcha latte + warm yuzu cookie — $9.50 from 2–4pm. Locals who walk 300m+ from the station get an extra 1× pts on Catto Compass.',
+    offer: 'Matcha latte + warm yuzu cookie — $9.50 from 2–4pm. Locals who walk 300m+ from the station get an extra 1× pts on CatWalk.',
     why: 'Rain pushes commuters indoor; afternoon slump kills basket size; 47 cafes within 700m means a discount is invisible. A warm bundle wins the moment without bleeding margin.',
     visionRead: 'Matcha latte with delicate white tulip latte art on a smooth ceramic cup, photographed from above with natural daylight.',
     signals: [
@@ -27,13 +27,13 @@ export const MOCK_CAMPAIGNS: Record<BizType, Campaign> = {
     windowText: '2:00 – 4:00 PM',
     assets: {
       ig: {
-        en: '🍵 Rainy arvo? Reset with a Matcha + warm yuzu cookie — $9.50 from 2–4pm. Walk 300m from Chatswood Station and earn extra Catto points. We\'ll save the green seat by the window for you. ☔💚\n\n#chatswoodeats #matchareset #cattocompass #willoughbylocal',
+        en: '🍵 Rainy arvo? Reset with a Matcha + warm yuzu cookie — $9.50 from 2–4pm. Walk 300m from Chatswood Station and earn extra Catto points. We\'ll save the green seat by the window for you. ☔💚\n\n#chatswoodeats #matchareset #catwalk #willoughbylocal',
         zh: '🍵 雨天下午来一杯抹茶+柚子饼干，$9.50（2–4pm 限定）。从 Chatswood 车站走 300 米过来，还能多拿 Catto 积分哦！我们留好那个靠窗的小绿位等你 ☔💚\n\n#查茨伍德美食 #抹茶时光 #猫咪指南',
         ko: '🍵 비 오는 오후, 말차 + 따뜻한 유자 쿠키 세트 — 오후 2–4시, $9.50. 차츠우드 역에서 300m만 걸어오면 캐토 포인트도 추가로 적립! 창가 초록 자리, 비워둘게요 ☔💚\n\n#차츠우드맛집 #말차리셋 #캐토컴퍼스',
       },
       google: {
-        en: 'Today only · 2–4pm: Matcha Reset Hour. Matcha latte + warm yuzu cookie $9.50. Walk-in special. Catto Compass walkers earn 2× points.',
-        zh: '今日限定 · 2–4pm：抹茶下午茶时光。抹茶拿铁 + 温热柚子饼干 $9.50。仅限堂食。Catto Compass 步行用户积分翻倍。',
+        en: 'Today only · 2–4pm: Matcha Reset Hour. Matcha latte + warm yuzu cookie $9.50. Walk-in special. CatWalk walkers earn 2× points.',
+        zh: '今日限定 · 2–4pm：抹茶下午茶时光。抹茶拿铁 + 温热柚子饼干 $9.50。仅限堂食。CatWalk 步行用户积分翻倍。',
         ko: '오늘 한정 · 오후 2–4시: 말차 리셋 아워. 말차 라떼 + 따뜻한 유자 쿠키 $9.50. 매장 한정. 캐토 컴퍼스 도보 방문 시 포인트 2배.',
       },
       sign: {
@@ -53,7 +53,7 @@ export const MOCK_CAMPAIGNS: Record<BizType, Campaign> = {
           '2:00 PM — Open. Greet first 3 walk-ins with Reset Hour line from staff script.',
           '2:30 PM — Quick check: cookie stock + matcha tin. Re-warm 4 cookies if needed.',
           '3:30 PM — Last call message on the chalkboard: \'⏰ 30 min left\'.',
-          '4:00 PM — Close offer, log sales count + walk-ins for Catto Compass dashboard.',
+          '4:00 PM — Close offer, log sales count + walk-ins for CatWalk dashboard.',
         ],
         zh: [
           '1:50 PM — 准备 6 杯抹茶 base，柚子饼干 140°C 烤箱回温 4 分钟。',
@@ -61,7 +61,7 @@ export const MOCK_CAMPAIGNS: Record<BizType, Campaign> = {
           '2:00 PM — 开场。前 3 位客人用员工脚本打招呼。',
           '2:30 PM — 快速盘点：饼干和抹茶粉。需要的话再回温 4 块饼干。',
           '3:30 PM — 黑板写上\'⏰ 还剩 30 分钟\'。',
-          '4:00 PM — 结束促销，记录销量和到店人数到 Catto Compass。',
+          '4:00 PM — 结束促销，记录销量和到店人数到 CatWalk。',
         ],
         ko: [
           '1:50 PM — 말차 6잔 분량 준비, 유자 쿠키 8개를 140°C 오븐에서 4분 데우기.',
@@ -69,7 +69,7 @@ export const MOCK_CAMPAIGNS: Record<BizType, Campaign> = {
           '2:00 PM — 오픈. 첫 손님 3명에게 스크립트 인사.',
           '2:30 PM — 빠른 점검: 쿠키 재고와 말차 가루. 필요시 쿠키 4개 재가열.',
           '3:30 PM — 칠판에 \'⏰ 30분 남음\' 표시.',
-          '4:00 PM — 프로모션 종료, 판매량과 방문 수를 Catto Compass에 기록.',
+          '4:00 PM — 프로모션 종료, 판매량과 방문 수를 CatWalk에 기록.',
         ],
       },
     },
@@ -79,7 +79,7 @@ export const MOCK_CAMPAIGNS: Record<BizType, Campaign> = {
     chosen: 'traffic',
     name: 'Commuter Quick-Plate',
     tag: 'Off the platform, into your seat.',
-    offer: 'Bibimbap + miso + drink — $14.90 from 5:30–7:30pm. Show the Catto Compass walk-screen and skip the queue.',
+    offer: 'Bibimbap + miso + drink — $14.90 from 5:30–7:30pm. Show the CatWalk walk-screen and skip the queue.',
     why: '~50K daily Opal taps. Evening commuters want fast, hot, filling — not a 45-min sit-down. A pre-plated set targets the 17:30–19:00 platform exit surge.',
     visionRead: 'Hot stone bibimbap with sizzling beef, vegetables and a runny egg yolk on top, served in a black ceramic dolsot.',
     signals: [
@@ -96,13 +96,13 @@ export const MOCK_CAMPAIGNS: Record<BizType, Campaign> = {
     windowText: '5:30 – 7:30 PM',
     assets: {
       ig: {
-        en: '🍲 Off-the-train special: Bibimbap + miso + drink, $14.90, 5:30–7:30pm. Hot stone bowl, ready in 4 min. Show your Catto walk-screen, skip the queue.\n\n#chatswoodeats #commuterdinner #seoulbbq #cattocompass',
+        en: '🍲 Off-the-train special: Bibimbap + miso + drink, $14.90, 5:30–7:30pm. Hot stone bowl, ready in 4 min. Show your Catto walk-screen, skip the queue.\n\n#chatswoodeats #commuterdinner #seoulbbq #catwalk',
         zh: '🍲 下班直达套餐：石锅拌饭 + 味噌 + 饮料，$14.90，5:30–7:30pm。热乎乎，4 分钟上桌。出示 Catto 步行屏幕免排队。\n\n#查茨伍德美食 #下班晚餐 #首尔烤肉',
         ko: '🍲 퇴근 후 빠른 한 그릇: 비빔밥 + 된장국 + 음료, $14.90, 5:30–7:30pm. 4분이면 식탁에. 캐토 워크 화면 보여주시면 줄 안 서도 됩니다.\n\n#차츠우드맛집 #퇴근저녁 #서울바비큐',
       },
       google: {
-        en: 'Tonight 5:30–7:30pm: Commuter Quick-Plate. Bibimbap + miso + drink $14.90. Show Catto Compass walk = skip queue.',
-        zh: '今晚 5:30–7:30pm：下班快餐套餐。石锅拌饭+味噌+饮料 $14.90。出示 Catto Compass 即可免排队。',
+        en: 'Tonight 5:30–7:30pm: Commuter Quick-Plate. Bibimbap + miso + drink $14.90. Show CatWalk walk = skip queue.',
+        zh: '今晚 5:30–7:30pm：下班快餐套餐。石锅拌饭+味噌+饮料 $14.90。出示 CatWalk 即可免排队。',
         ko: '오늘 저녁 5:30–7:30pm: 퇴근 빠른 한 그릇. 비빔밥+된장국+음료 $14.90. 캐토 컴퍼스 보여주면 줄 면제.',
       },
       sign: {
@@ -148,7 +148,7 @@ export const MOCK_CAMPAIGNS: Record<BizType, Campaign> = {
     chosen: 'aware',
     name: 'Morning Pair-Up',
     tag: 'Pastry + coffee. The walk to the station starts here.',
-    offer: 'Croissant + flat white = $7.50 from 7–10am. Show your Catto Compass screen for double points.',
+    offer: 'Croissant + flat white = $7.50 from 7–10am. Show your CatWalk screen for double points.',
     why: 'Bakeries win the morning commute window. 50K Opal taps surge 7:00–9:30am. The pair-up beats coffee-shop margins by tying you to the station-arrival ritual.',
     visionRead: 'Golden butter croissant with visible flaky layers, fresh from the oven on a wooden board with a small dusting of sugar.',
     signals: [
@@ -165,13 +165,13 @@ export const MOCK_CAMPAIGNS: Record<BizType, Campaign> = {
     windowText: '7:00 – 10:00 AM',
     assets: {
       ig: {
-        en: '🥐 Morning Pair-Up: croissant + flat white = $7.50 from 7–10am. Fresh out of the oven, ready as you walk to the platform. Catto Compass walkers earn 2× points.\n\n#chatswoodbakery #morningfix #cattocompass #willoughbylocal',
+        en: '🥐 Morning Pair-Up: croissant + flat white = $7.50 from 7–10am. Fresh out of the oven, ready as you walk to the platform. CatWalk walkers earn 2× points.\n\n#chatswoodbakery #morningfix #catwalk #willoughbylocal',
         zh: '🥐 早餐套餐：可颂 + 拿铁咖啡 = $7.50（7–10am）。刚出炉的酥皮可颂，赶车路上正好。Catto 步行用户积分翻倍！\n\n#查茨伍德烘焙 #早餐时光 #猫咪指南',
         ko: '🥐 모닝 페어업: 크루아상 + 플랫화이트 = $7.50 (7–10am). 갓 구운 크루아상, 출근길에 딱. 캐토 컴퍼스 도보 방문 시 포인트 2배!\n\n#차츠우드베이커리 #모닝커피 #캐토컴퍼스',
       },
       google: {
-        en: 'Today 7–10am: Morning Pair-Up. Croissant + flat white $7.50. Fresh-baked, station-ready. Catto Compass = 2× points.',
-        zh: '今日 7–10am：早餐套餐。可颂 + 拿铁 $7.50。刚出炉，赶车正好。Catto Compass 积分翻倍。',
+        en: 'Today 7–10am: Morning Pair-Up. Croissant + flat white $7.50. Fresh-baked, station-ready. CatWalk = 2× points.',
+        zh: '今日 7–10am：早餐套餐。可颂 + 拿铁 $7.50。刚出炉，赶车正好。CatWalk 积分翻倍。',
         ko: '오늘 7–10am: 모닝 페어업. 크루아상 + 플랫화이트 $7.50. 갓 구워 출근길 딱. 캐토 컴퍼스 = 포인트 2배.',
       },
       sign: {

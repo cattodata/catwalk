@@ -19,7 +19,7 @@ const TEMPLATES: Record<Template, { subject: string; body: string }> = {
   event: {
     subject: 'Lunar New Year Lantern Festival · feature your shop',
     body:
-      'Hi {{name}},\n\nThe Chatswood Lunar New Year Lantern Festival lands on Saturday. We would love to feature {{name}} in council comms across EN / 中文 / 한국어.\n\nAll we need: a 1-line offer (e.g. 10% off, free taster) by Thursday. We will include you in the council push and Catto Compass walker rewards.\n\n— Willoughby City Council',
+      'Hi {{name}},\n\nThe Chatswood Lunar New Year Lantern Festival lands on Saturday. We would love to feature {{name}} in council comms across EN / 中文 / 한국어.\n\nAll we need: a 1-line offer (e.g. 10% off, free taster) by Thursday. We will include you in the council push and CatWalk walker rewards.\n\n— Willoughby City Council',
   },
   survey: {
     subject: 'Quick 2-min survey · shop-front improvements 2026',
