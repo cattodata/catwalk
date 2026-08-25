@@ -35,3 +35,9 @@ dist-ssr
 *.sln
 *.sw?
 test-results/
+
+# build artifacts
+*.zip
+deploy-full.zip
+deploy-slim.zip
+dist.zip
