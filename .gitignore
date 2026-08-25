@@ -41,3 +41,6 @@ test-results/
 deploy-full.zip
 deploy-slim.zip
 dist.zip
+
+# local demo-stage exports
+demo/
