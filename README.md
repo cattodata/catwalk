@@ -9,11 +9,26 @@
 > Turn every verified walk into a reward for the resident, foot traffic for the shop,
 > and an anonymised movement signal for Council.
 
-**Live app** → https://cattocompressv2.azurewebsites.net
-**Demo video** → https://www.facebook.com/reel/1636653097607330
-
 Designed and built end-to-end — architecture, full-stack app, AI integration, and deployment.
 Won 1st place at the Chatswood Hackathon with **Team CatWalk**.
+
+<p align="center">
+  <img src="docs/screenshots/08-concept.png" alt="Introducing CatWalk — get your food while getting fit" width="900">
+</p>
+
+## See it running
+
+<p align="center">
+  <img src="docs/catwalk-demo.gif" alt="CatWalk live demo — walker picks a shop, chooses a travel mode, and starts the walk" width="720">
+</p>
+
+<div align="center">
+
+**[▶ Full 76-second walkthrough](docs/catwalk-demo.mp4)** ·
+**[Live app](https://cattocompressv2.azurewebsites.net)** ·
+**[Demo video on Facebook](https://www.facebook.com/reel/1636653097607330)**
+
+</div>
 
 <p align="center">
   <img src="docs/screenshots/09-three-roles.png" alt="CatWalk — one app, three roles" width="900">
