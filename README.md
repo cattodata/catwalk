@@ -9,8 +9,8 @@
 > Turn every verified walk into a reward for the resident, foot traffic for the shop,
 > and an anonymised movement signal for Council.
 
-Designed and built end-to-end — architecture, full-stack app, AI integration, and deployment.
-Won 1st place at the Chatswood Hackathon with **Team CatWalk**.
+Led the end-to-end design and delivery across architecture, application development, AI
+integration, and deployment. Won 1st place at the Chatswood Hackathon with **Team CatWalk**.
 
 <p align="center">
   <img src="docs/screenshots/00-intro.png" alt="Introducing CatWalk — get your food while getting fit" width="900">
@@ -40,7 +40,8 @@ People drive for trips that are a few minutes on foot. Councils have no live pic
 local high streets are actually doing, and small shops have no cheap way to reach the people
 already walking past them.
 
-Three separate problems, one shared cause: **local movement generates no data anyone can act on.**
+CatWalk connects resident mobility, local business engagement, and council insights through a
+shared data layer.
 
 ## The approach
 
@@ -52,7 +53,6 @@ One app, three roles on the same data:
 | 🏪 **Shop owner** | Upload a product photo | An AI marketing campaign in EN / 中文 / 한국어, generated from live weather, local events, ABS demographics and competitor density |
 | 🏛️ **Council** | Open the dashboard | Live walks, CO₂ saved, top streets, business-health radar — **aggregate only, never an individual walker** |
 
-> Residents move. Shops grow. Councils see impact.
 
 <p align="center">
   <img src="docs/screenshots/01-benefits.png" alt="Everyone benefits — residents, businesses, council" width="900">
@@ -75,7 +75,7 @@ flowchart TB
   end
 
   subgraph server["Express 5 on Node · Azure App Service"]
-    API["/api/claude · claude-ab · claude-policy<br/>/api/places · nominatim · events · resend"]
+    API["LLM / AI APIs<br/>/api/places · nominatim · events · resend"]
   end
 
   subgraph data["Supabase · Postgres + RLS"]
@@ -89,7 +89,7 @@ flowchart TB
     GP["Google Places"]
   end
 
-  LLM["Claude / Azure OpenAI<br/>campaign generation"]
+  LLM["Azure OpenAI / Anthropic<br/>campaign generation"]
 
   client --> API
   API --> LLM
@@ -117,9 +117,9 @@ flowchart TB
 | **Auth** | Supabase anonymous auth | Zero-friction — a resident walks without signing up | No cross-device history until they upgrade the account |
 | **Access control** | Postgres RLS on all 4 tables, not app-layer checks | The database refuses the query even if a client is compromised | Policies must be written and reviewed carefully; harder to debug than app-layer guards |
 | **Map** | Leaflet + OpenStreetMap (CartoDB tiles) | Free, no API key, real tiles for a real suburb | Fewer built-ins than Google/Azure Maps; heat + cluster added via plugins |
-| **AI provider** | Claude, with Azure OpenAI as the alternate path | Better multilingual campaign copy for EN/中文/한국어 | Two code paths to keep working (`api/claude.ts`, `api/claude-policy.ts`) |
-| **Prompt strategy** | Two campaign variants scored against each other in `src/lib/ai-ab.ts` — each returns predicted revenue + confidence, and the layer picks a winner; guardrails live in `ai-policy.ts` | Campaign copy *is* the product for a shop owner, so it needed to be comparable rather than a single unverifiable generation | Extra indirection, and the prediction model is heuristic — not trained on outcomes |
-| **Data** | Real public sources only (ABS, Open-Meteo, Overpass, Google Places) | Council can verify every number against its own sources | Slower to build than mock data; external APIs can rate-limit mid-demo |
+| **AI provider** | Azure OpenAI when configured, with Anthropic supported as an alternative provider | Supports multimodal and multilingual campaign generation through a configurable LLM provider layer | Two code paths to keep working (`api/claude.ts`, `api/claude-policy.ts`) |
+| **Prompt strategy** | Two campaign variants scored against each other in `src/lib/ai-ab.ts` — each returns a heuristic campaign score and confidence, and the layer picks a winner; guardrails live in `ai-policy.ts` | Campaign copy *is* the product for a shop owner, so it needed to be comparable rather than a single unverifiable generation | Extra indirection, and the prediction model is heuristic — not trained on outcomes |
+| **Data** | Real public sources only (ABS, Open-Meteo, Overpass, Google Places) | External signals are traceable to published data sources | Slower to build than mock data; external APIs can rate-limit mid-demo |
 | **Hosting** | Single Express server serving the SPA + API on Azure App Service | One deploy unit, one log stream, no CORS | No edge distribution; cold starts on the shared B1 plan |
 
 ## Privacy & security
@@ -137,12 +137,9 @@ flowchart TB
 | Layer | Tool | What it covers |
 |---|---|---|
 | Unit | Vitest + Testing Library | `geofence.test.ts` (check-in radius maths), `insights.test.ts` (council aggregates), `smartPick.test.ts` (shop recommendation) |
-| E2E | Playwright | `e2e/happy-path.spec.ts` — 9 specs across all three roles: boot with **zero console errors**, onboarding role-pick, walker map + smart-pick + shop rail, basket → plan hydration, owner campaign state **persisting across reload**, council pulse and trajectory charts in light and dark |
+| E2E | Playwright | `e2e/happy-path.spec.ts` — coverage across the walker, shop-owner and council workflows, including state persistence and accessibility checks |
 | Types | `tsc -b --noEmit` | Strict TypeScript across `src/` and `api/` |
 | Lint/format | ESLint 10 + Prettier | Enforced in CI |
-
-The E2E suite asserts accessibility properties directly — the plan picker sheet is checked for a
-correct ARIA role and for being dismissible by keyboard, not just for rendering.
 
 ```bash
 npm ci
@@ -184,7 +181,7 @@ Deployment steps and custom-domain setup are in [DEPLOY.md](DEPLOY.md).
 ## Stack
 
 React 19 · TypeScript 6 · Vite 8 · Supabase (Postgres + RLS + anon auth) · Leaflet + OpenStreetMap ·
-Express 5 · Claude / Azure OpenAI · Playwright · Vitest · PWA · Azure App Service
+Express 5 · Azure OpenAI · Anthropic · Playwright · Vitest · PWA · Azure App Service
 
 ---
 
