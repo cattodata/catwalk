@@ -6,6 +6,33 @@ import type { Shop, CuisineOption, ShopTag, Transport } from '../types/shop'
  * Coordinates are real Chatswood streets but the shop names are fictional.
  */
 export const SHOPS: Shop[] = [
+  // Demo anchor — guaranteed on the list even when live OSM is empty.
+  // Mirrors the Gongcha narrative used across walker/owner/reward/runbook.
+  {
+    id: 'demo-gongcha',
+    name: 'Gongcha',
+    emoji: '🧋',
+    type: 'Cafe',
+    cuisine: 'Drinks',
+    tags: [],
+    mult: 2,
+    x: 230,
+    y: 245,
+    dist: 95,
+    mins: 2,
+    pts: 200,
+    off: 15,
+    co2: 0.07,
+    route: [
+      [350, 340],
+      [310, 310],
+      [270, 280],
+      [230, 245],
+    ],
+    lat: -33.7975,
+    lng: 151.1828,
+    street: 'Chatswood Mall',
+  },
   {
     id: 'croissant',
     name: "Pierre's Patisserie",

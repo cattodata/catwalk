@@ -59,22 +59,22 @@ test.describe('Catto Compass — happy path (v5.4)', () => {
     await expect(sheet).toBeHidden()
   })
 
-  test('owner home: Saint Honoré + CATTO SEES + concrete CATTO READY play', async ({ page }) => {
+  test('owner home: Gongcha + CATTO SEES + concrete CATTO READY play', async ({ page }) => {
     await page.goto('/owner')
-    await expect(page.getByRole('heading', { name: /Saint Honoré/i })).toBeVisible()
+    await expect(page.getByRole('heading', { name: /Gongcha/i })).toBeVisible()
     await expect(page.getByText(/CATTO SEES/i)).toBeVisible()
     await expect(page.getByText(/Sources/i)).toBeVisible()
     await expect(page.getByText(/CATTO READY/i)).toBeVisible()
     await expect(page.getByRole('button', { name: /Generate today's play/i })).toBeVisible()
   })
 
-  test('owner campaign: STEP 1 eyebrow + Bakery default for Saint Honoré, persists across reload', async ({
+  test('owner campaign: STEP 1 eyebrow + Cafe default for Gongcha, persists across reload', async ({
     page,
   }) => {
     await page.goto('/owner/campaign')
     await expect(page.getByText(/STEP 1 · SNAP/i)).toBeVisible()
-    // BizPills uses role=radio
-    await expect(page.getByRole('radio', { name: 'Bakery' })).toBeVisible()
+    // BizPills uses role=radio — Gongcha maps to Cafe via defaultBizFromShopName
+    await expect(page.getByRole('radio', { name: 'Cafe' })).toBeVisible()
     await page.getByRole('radio', { name: 'Restaurant' }).click()
     await page.reload()
     await expect(page.getByText(/STEP 1 · SNAP/i)).toBeVisible()

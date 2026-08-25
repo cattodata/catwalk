@@ -293,7 +293,7 @@ export function CouncilSandboxScreen() {
             </header>
             <StreetHeatmap />
             <p className="cc-impact-cap">
-              Real-time walk density · boosted streets show <mark>+312% vs control</mark>.
+              Illustrative heatmap — wires to live walks at pilot kickoff. Boosted streets target <mark>+312% vs control</mark>.
             </p>
           </section>
 

@@ -7,6 +7,7 @@ export interface RadarFilters {
   streets: Set<string>
   sources: Set<'osm' | 'google' | 'abr' | 'council'>
   multilingualOnly: boolean
+  bubbleTeaOnly: boolean
 }
 
 interface Props {
@@ -137,6 +138,14 @@ export function RadarFilterPanel({ records, filtered, filters, onChange }: Props
             onChange={() => onChange({ ...filters, multilingualOnly: !filters.multilingualOnly })}
           />
           <span className="cc-radar-chip-lab">Multilingual signage only</span>
+        </label>
+        <label className={`cc-radar-chip is-toggle${filters.bubbleTeaOnly ? ' is-on' : ''}`}>
+          <input
+            type="checkbox"
+            checked={filters.bubbleTeaOnly}
+            onChange={() => onChange({ ...filters, bubbleTeaOnly: !filters.bubbleTeaOnly })}
+          />
+          <span className="cc-radar-chip-lab">🧋 Bubble tea only</span>
         </label>
       </div>
     </aside>

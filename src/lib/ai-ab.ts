@@ -25,7 +25,7 @@ function clientFallback(input: AbInput): AbResult {
   return {
     optionA: { copy: '15% off till 7pm', predRevenue: 185 + jitter, confidence: 78 },
     optionB: {
-      copy: input.weather?.isRain ? 'Free croissant w/ pour-over' : 'Buy 1 latte get 1 half',
+      copy: input.weather?.isRain ? 'Free brown sugar boba w/ milk tea' : 'Buy 1 pearl milk tea get 1 half',
       predRevenue: 285 + jitter + rainBump,
       confidence: 84,
     },

@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { fetchRealShops } from '../lib/realShops'
 import type { Shop } from '../types/shop'
@@ -46,8 +47,17 @@ export function useRealShops() {
   })
 
   // Fallback to fictional pilot personas if API fails or returns empty
-  const shops = query.data && query.data.length > 0 ? query.data : FALLBACK_SHOPS
+  const baseShops = query.data && query.data.length > 0 ? query.data : FALLBACK_SHOPS
   const isReal = query.data != null && query.data.length > 0
+
+  // Stable-reference merge — wrap in useMemo so downstream effects (useGooglePlaces, map render)
+  // don't see a new array identity on every parent render. Without this, panning the map
+  // causes useGooglePlaces' effect to refire continuously and shops can flicker out.
+  const shops = useMemo(() => {
+    const demoGongcha = FALLBACK_SHOPS.find((s) => s.id === 'demo-gongcha')
+    const hasGongcha = baseShops.some((s) => /gong\s*cha/i.test(s.name))
+    return !hasGongcha && demoGongcha ? [demoGongcha, ...baseShops] : baseShops
+  }, [baseShops])
 
   return {
     shops,

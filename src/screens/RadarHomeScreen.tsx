@@ -57,6 +57,7 @@ export function RadarHomeScreen() {
     streets: new Set(),
     sources: new Set(),
     multilingualOnly: false,
+    bubbleTeaOnly: false,
   })
   const [bulkOpen, setBulkOpen] = useState(false)
   const [mobileSheet, setMobileSheet] = useState<'filter' | 'detail' | null>(null)
@@ -90,6 +91,13 @@ export function RadarHomeScreen() {
         if (!any) return false
       }
       if (filters.multilingualOnly && !r.signals.multilingual) return false
+      if (filters.bubbleTeaOnly) {
+        const isBT =
+          r.emoji === '🧋' ||
+          /gong\s*cha|chatime|sharetea|coco|kung\s*fu\s*tea|bubble\s*tea|boba|pearl/i.test(r.name) ||
+          (r.cuisine === 'Drinks' && r.type === 'Cafe')
+        if (!isBT) return false
+      }
       return true
     })
   }, [records, filters])
@@ -344,7 +352,7 @@ export function RadarHomeScreen() {
         >
           <Filter size={13} /> Filters{' '}
           <span className="cc-radar-mobile-filter-n">
-            {filters.types.size + filters.tiers.size + filters.streets.size + filters.sources.size + (filters.multilingualOnly ? 1 : 0)}
+            {filters.types.size + filters.tiers.size + filters.streets.size + filters.sources.size + (filters.multilingualOnly ? 1 : 0) + (filters.bubbleTeaOnly ? 1 : 0)}
           </span>
         </button>
       </div>

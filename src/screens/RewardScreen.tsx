@@ -19,8 +19,8 @@ interface RewardData {
 }
 
 const DEMO: RewardData = {
-  shopName: 'Saint Honoré',
-  shopEmoji: '🥐',
+  shopName: 'Gongcha',
+  shopEmoji: '🧋',
   dist: 480,
   points: 96,
   co2Kg: 0.08,

@@ -15,6 +15,7 @@ import { useCompetitorCounts } from '../hooks/useCompetitorCounts'
 import { useDemographics } from '../hooks/useDemographics'
 import { useNow } from '../hooks/useNow'
 import { generateInsights } from '../lib/insights'
+import { MOCK_CAMPAIGNS } from '../data/mockCampaigns'
 import { getTodayEvent } from '../data/events'
 import { generateCampaign } from '../lib/claude'
 import type { Campaign } from '../types/campaign'
@@ -46,6 +47,7 @@ function writeCampaignState(s: PersistedState) {
 }
 function defaultBizFromShopName(name: string): BizType {
   const n = name.toLowerCase()
+  if (/(gongcha|bubble|boba|tea|milk[ -]?tea)/.test(n)) return 'Cafe'
   if (/(bakery|patisserie|honor|crois|cake|pastry|donut)/.test(n)) return 'Bakery'
   if (/(restaurant|ramen|sushi|thai|pho|noodle|grill|kitchen)/.test(n)) return 'Restaurant'
   return 'Cafe'
@@ -59,23 +61,23 @@ const LANGS: { id: Lang; label: string }[] = [
 
 const COPY_BY_LANG: Record<Lang, { title: string; head: string; body: string; uplift: string; ship: string }> = {
   en: {
-    title: 'Croissant + flat white · $9',
-    head: 'Beat the rain. Croissant + flat white for $9.',
-    body: 'Walk in before 1:30. Warm pastry, warm cup, dry seat. We speak EN · 中文 · 한국어.',
+    title: 'Pearl milk tea + brown sugar boba · $9',
+    head: 'Beat the rain. Pearl milk tea + brown sugar boba for $9.',
+    body: 'Walk in before 1:30. Warm cup, chewy pearls, dry seat. We speak EN · 中文 · 한국어.',
     uplift: 'Predicted uplift',
     ship: 'Ship to walkers nearby',
   },
   zh: {
-    title: '可颂 + 拿铁 · $9',
-    head: '雨天暖心套餐 · 可颂 + 拿铁 $9',
-    body: '1:30 之前到店。暖香酥皮、热咖啡、干净座位。',
+    title: '珍珠奶茶 + 黑糖珍珠 · $9',
+    head: '雨天暖心套餐 · 珍珠奶茶 + 黑糖珍珠 $9',
+    body: '1:30 之前到店。温暖的奶茶、Q 弹珍珠、干净的座位。',
     uplift: '预计提升',
     ship: '推送给附近的步行者',
   },
   ko: {
-    title: '크루아상 + 플랫화이트 · $9',
-    head: '비 오는 날 · 크루아상 + 플랫화이트 $9',
-    body: '1:30 전에 들러주세요. 따뜻한 페이스트리, 따뜻한 커피, 마른 자리.',
+    title: '펄밀크티 + 흑당버블 · $9',
+    head: '비 오는 날 · 펄밀크티 + 흑당버블 $9',
+    body: '1:30 전에 들러주세요. 따뜻한 버블티, 쫄깃한 펄, 마른 자리.',
     uplift: '예상 증가',
     ship: '근처 워커에게 보내기',
   },
@@ -92,10 +94,14 @@ export function OwnerCampaignScreen() {
   const linkedEvent = useMemo(() => CULTURAL_EVENTS.find((e) => e.id === eventId) ?? null, [eventId])
 
   // Persisted state — survives accidental refresh during demo.
-  // Shop name "Saint Honoré" → Bakery as default (real bakery)
-  const persisted = readCampaignState()
+  // Shop name "Gongcha" → Cafe as default (bubble tea shop maps to Cafe BizType)
+  // When URL has ?demo=1, always start fresh on STEP 1 (Snap & Scan) so the
+  // upload buttons are visible — otherwise sessionStorage could jump straight
+  // to step 3 (campaign result) and the presenter can't show the photo upload.
+  const isDemo = searchParams.get('demo') === '1'
+  const persisted = isDemo ? {} as ReturnType<typeof readCampaignState> : readCampaignState()
   const [step, setStep] = useState<Step>(persisted.step ?? 1)
-  const [bizType, setBizType] = useState<BizType>(persisted.bizType ?? defaultBizFromShopName('Saint Honoré'))
+  const [bizType, setBizType] = useState<BizType>(persisted.bizType ?? defaultBizFromShopName('Gongcha'))
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
   const [lang, setLang] = useState<Lang>(persisted.lang ?? 'en')
@@ -141,6 +147,15 @@ export function OwnerCampaignScreen() {
   const generate = async () => {
     setStep(2)
     setError(null)
+    // Demo mode: skip API call entirely, show pre-baked Gongcha campaign instantly
+    // (~800ms scan animation for visual effect, then jump to step 3 with mock)
+    if (isDemo) {
+      setTimeout(() => {
+        setCampaign(MOCK_CAMPAIGNS[bizType])
+        setStep(3)
+      }, 800)
+      return
+    }
     if (!photoFile) {
       // Mock fallback when no photo — keeps demo flow working
       setTimeout(() => setStep(3), 1800)
@@ -156,7 +171,7 @@ export function OwnerCampaignScreen() {
         weather,
         hour: now.getHours(),
         dayOfWeek: now.getDay(),
-        shopName: 'Saint Honoré',
+        shopName: 'Gongcha',
         competitorCounts: counts ? { cafes: counts.cafes, restaurants: counts.restaurants, bakeries: counts.bakeries } : undefined,
         demographics: demographics
           ? {
@@ -356,10 +371,10 @@ export function OwnerCampaignScreen() {
           <div className="cc-camp-asset-card">
             <header>
               <span className="cc-camp-asset-thumb" aria-hidden="true">
-                {photoUrl ? <img src={photoUrl} alt="" /> : <span>🥐</span>}
+                {photoUrl ? <img src={photoUrl} alt="" /> : <span>🧋</span>}
               </span>
               <div>
-                <b>@sainthonore_chatswood</b>
+                <b>@gongcha_chatswood</b>
                 <small>sponsored · 3 langs</small>
               </div>
             </header>

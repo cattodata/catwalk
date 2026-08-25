@@ -60,14 +60,14 @@ export function OwnerForecastScreen() {
     // 1) photo-engagement insight — image saves vs other products
     rows.push({
       icon: <Camera size={16} strokeWidth={2.2} aria-hidden="true" />,
-      signal: <>Croissant photo saves <mark>+47%</mark> vs lattes</>,
-      conclusion: <>make it the hero, not lattes</>,
+      signal: <>Pearl milk tea photo saves <mark>+47%</mark> vs plain black tea</>,
+      conclusion: <>make it the hero, not plain black tea</>,
     })
 
     // 2) repeat-buyer ratio — habit signal
     rows.push({
       icon: <Repeat size={16} strokeWidth={2.2} aria-hidden="true" />,
-      signal: <>Croissant buyers return <mark>3.2×</mark> more</>,
+      signal: <>Pearl milk tea buyers return <mark>3.2×</mark> more</>,
       conclusion: <>bundle, don't discount</>,
     })
 
@@ -109,7 +109,7 @@ export function OwnerForecastScreen() {
       icon: <Zap size={16} strokeWidth={2.2} aria-hidden="true" />,
       signal: (
         <>
-          Bean Plus dropped flat white <mark>$4.50</mark>
+          Chatime dropped regular milk tea <mark>$4.50</mark>
         </>
       ),
       conclusion: (
@@ -128,7 +128,7 @@ export function OwnerForecastScreen() {
       return {
         body: (
           <>
-            Bundle <mark>croissant + flat white</mark> at $9. Push <mark>11:30–13:30</mark> before
+            Bundle <mark>pearl milk tea + brown sugar boba</mark> at $9. Push <mark>11:30–13:30</mark> before
             rain · trilingual signage auto-generated.
           </>
         ),
@@ -147,7 +147,7 @@ export function OwnerForecastScreen() {
       return {
         body: (
           <>
-            Weekend brunch bundle <mark>11–1PM</mark>: croissant + iced latte $11. Korean caption tested last week.
+            Weekend bundle <mark>11–1PM</mark>: pearl milk tea + brown sugar boba $11. Korean caption tested last week.
           </>
         ),
       }
@@ -155,7 +155,7 @@ export function OwnerForecastScreen() {
     return {
       body: (
         <>
-          Mid-week loyalty bundle <mark>12–1PM</mark>: croissant + flat white $9, free top-up on 3rd visit.
+          Mid-week loyalty bundle <mark>12–1PM</mark>: pearl milk tea + brown sugar boba $9, free top-up on 3rd visit.
         </>
       ),
     }
@@ -168,7 +168,7 @@ export function OwnerForecastScreen() {
     <div className="cc-owner-forecast">
       <header className="cc-owner-bar">
         <div className="cc-owner-bar-title">
-          <h2>Saint Honoré</h2>
+          <h2>Gongcha</h2>
           <small>Yesterday's takings</small>
         </div>
         <div className="cc-owner-bar-actions">

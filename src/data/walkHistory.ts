@@ -13,7 +13,7 @@ export interface WalkHistoryEntry {
 }
 
 export const SEED_WALK_HISTORY: WalkHistoryEntry[] = [
-  { id: 'w1', shop: 'Saint Honoré', emoji: '🥐', pts: 96, daysAgo: 0, co2: 0.08 },
+  { id: 'w1', shop: 'Gongcha', emoji: '🧋', pts: 248, daysAgo: 0, co2: 0.05 },
   { id: 'w2', shop: 'Gong Cha', emoji: '🧋', pts: 248, daysAgo: 1, co2: 0.05 },
   { id: 'w3', shop: 'Mamak', emoji: '🍜', pts: 28, daysAgo: 2, co2: 0.04 },
   { id: 'w4', shop: 'Three Beans', emoji: '☕', pts: 16, daysAgo: 3, co2: 0.02 },
