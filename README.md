@@ -13,7 +13,7 @@ Designed and built end-to-end — architecture, full-stack app, AI integration, 
 Won 1st place at the Chatswood Hackathon with **Team CatWalk**.
 
 <p align="center">
-  <img src="docs/screenshots/08-concept.png" alt="Introducing CatWalk — get your food while getting fit" width="900">
+  <img src="docs/screenshots/00-intro.png" alt="Introducing CatWalk — get your food while getting fit" width="900">
 </p>
 
 ## See it running
@@ -30,9 +30,7 @@ Won 1st place at the Chatswood Hackathon with **Team CatWalk**.
 
 </div>
 
-<p align="center">
-  <img src="docs/screenshots/09-three-roles.png" alt="CatWalk — one app, three roles" width="900">
-</p>
+
 
 ---
 
@@ -55,6 +53,10 @@ One app, three roles on the same data:
 | 🏛️ **Council** | Open the dashboard | Live walks, CO₂ saved, top streets, business-health radar — **aggregate only, never an individual walker** |
 
 > Residents move. Shops grow. Councils see impact.
+
+<p align="center">
+  <img src="docs/screenshots/01-benefits.png" alt="Everyone benefits — residents, businesses, council" width="900">
+</p>
 
 <p align="center">
   <img src="docs/screenshots/01-onboarding.png" width="240">
@@ -97,6 +99,10 @@ flowchart TB
   client --> MET
   API --> GP
 ```
+
+<p align="center">
+  <img src="docs/screenshots/03-architecture.png" alt="How CatWalk is built, end to end" width="900">
+</p>
 
 **13 screens** across the three roles, in `src/screens/`:
 `OnboardingScreen` · `WalkerHomeScreen` · `WalkingLiveScreen` · `ParkAndWalkScreen` ·
@@ -151,7 +157,7 @@ deploys to Azure and polls `/api/health` before finishing. The Playwright suite 
 Built against *Our Future Willoughby 2036*:
 
 <p align="center">
-  <img src="docs/screenshots/10-council-vision.png" alt="Alignment to Our Future Willoughby 2036" width="900">
+  <img src="docs/screenshots/02-council-vision.png" alt="Alignment to Our Future Willoughby 2036" width="900">
 </p>
 
 ## What I'd do differently
